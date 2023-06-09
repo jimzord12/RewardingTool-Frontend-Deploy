@@ -35,7 +35,8 @@ Leveraging the power of blockchain technology, this decentralized application (D
 
 ### The MGS Tokens
 #### Usage
-he primary concept underlying these tokens is to foster a secure, decentralized, and automated reward system for our platform users. This system recognizes and rewards user participation in specific events or general usage of our platform's web services.
+The primary concept underlying these tokens is to foster a secure, decentralized, and automated reward system for our platform users. This system recognizes and rewards user participation in specific events or general usage of our platform's web services.
+Once a user has collected enough MGS Tokens, he/she shall be able to redeem them for a variety of rewards (which as of yet have not been decided).
 
 #### Acquisition of MGS Tokens
 Users can accumulate these tokens upon the successful completion of predefined actions or tasks.
@@ -43,3 +44,8 @@ Users can accumulate these tokens upon the successful completion of predefined a
 
 For instance, take the example of our Social Forum Web Application within the platform. Here, user actions like voting on a post or comment, or submitting a comment, trigger a pop-up notification informing the user of a potential reward. 
 This reward, in the form of MGS Tokens, serves as an acknowledgement of their contribution to the platform's community.
+<br />
+
+## Website Guide
+### Registering
+
