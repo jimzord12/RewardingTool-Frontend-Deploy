@@ -28,3 +28,18 @@ This Web Application was constructed using some of the most modern and popular W
 - **Webpack** (A powerful open-source JavaScript module bundler)
 - **Sass** (A preprocessor scripting language that is compiled into CSS, extending its capabilities with features)
 <br />
+
+## Description
+### Purpose
+Leveraging the power of blockchain technology, this decentralized application (DApp) seeks to heighten user engagement and foster loyalty within our platform by dispensing MGS Tokens as rewards to users.
+
+### The MGS Tokens
+#### Usage
+he primary concept underlying these tokens is to foster a secure, decentralized, and automated reward system for our platform users. This system recognizes and rewards user participation in specific events or general usage of our platform's web services.
+
+#### Acquisition of MGS Tokens
+Users can accumulate these tokens upon the successful completion of predefined actions or tasks.
+<br />
+
+For instance, take the example of our Social Forum Web Application within the platform. Here, user actions like voting on a post or comment, or submitting a comment, trigger a pop-up notification informing the user of a potential reward. 
+This reward, in the form of MGS Tokens, serves as an acknowledgement of their contribution to the platform's community.
