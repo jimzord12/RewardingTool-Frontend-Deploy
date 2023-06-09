@@ -1,0 +1,85 @@
+/*!
+
+=========================================================
+* BLK Design System React - v1.2.1
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/blk-design-system-react
+* Copyright 2022 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT (https://github.com/creativetimofficial/blk-design-system-react/blob/main/LICENSE.md)
+
+* Coded by Creative Tim
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+*/
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+
+import "assets/css/nucleo-icons.css";
+import "assets/scss/blk-design-system-react.scss";
+import "assets/demo/demo.css";
+
+import { MetaMaskContextProvider } from "./contexts/web3/MetaMaskContextProvider.js";
+import { GlobalContextProvider } from "./contexts/GlobalContextProvider.js";
+
+import Index from "views/Index.js";
+import LandingPage from "views/examples/LandingPage.js";
+import RegisterPage from "views/examples/RegisterPage.js";
+import ProfilePage from "views/examples/ProfilePage.js";
+import RewardsPage from "views/examples/RewardsPage.js";
+import LoginPage from "views/examples/LoginPage.js";
+
+// BLOCKCHAIN - START
+// import { Web3ReactProvider } from "@web3-react/core";
+// import { Web3Provider } from "@ethersproject/providers";
+// import { InjectedConnector } from "@web3-react/injected-connector";
+
+// const Injected = new InjectedConnector({
+//   supportedChainIds: [20231, 1, 3, 4, 5, 42],
+
+// function getLibrary(provider) {
+//   console.log(provider);
+//   return new Web3Provider(provider);
+// }
+// });
+
+// BLOCKCHAIN - END
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+
+root.render(
+  <MetaMaskContextProvider>
+    <GlobalContextProvider>
+      <BrowserRouter>
+        <Switch>
+          <Route path="/components" render={(props) => <Index {...props} />} />
+          <Route
+            path="/landing-page"
+            render={(props) => <LandingPage {...props} />}
+          />
+          <Route
+            path="/register-page"
+            render={(props) => <RegisterPage {...props} />}
+          />
+          <Route
+            path="/login-page"
+            render={(props) => <LoginPage {...props} />}
+          />
+          <Route
+            path="/profile-page"
+            render={(props) => <ProfilePage {...props} />}
+          />
+          <Route
+            path="/rewards-page"
+            render={(props) => <RewardsPage {...props} />}
+          />
+          <Redirect from="/" to="/rewards-page" />
+        </Switch>
+      </BrowserRouter>
+    </GlobalContextProvider>
+  </MetaMaskContextProvider>
+);
