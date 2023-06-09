@@ -51,7 +51,7 @@ This reward, in the form of MGS Tokens, serves as an acknowledgement of their co
 <br />
 
 ## Website Guide
-### Registering
+### Registering & Loggin In
 
 <img src="Website/RT-register-empty.png" alt="BootStrap" width="100%" height="100%" /> &nbsp;&nbsp;
 <br />
