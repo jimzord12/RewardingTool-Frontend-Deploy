@@ -2,6 +2,10 @@
 GENERA Project: The Rewarding Tool Web Application's Frontend (UI - Source Code).
 <br />
 This DApp provides a way for users to examine and spend their **MGS** (MyGreenScore) **Tokens**.
+<br />
+
+<img src="Website/RT-homePage.png" alt="BootStrap" width="100%" height="100%" /> &nbsp;&nbsp;
+<br />
 
 ## Technologies
 
@@ -49,3 +53,85 @@ This reward, in the form of MGS Tokens, serves as an acknowledgement of their co
 ## Website Guide
 ### Registering
 
+<img src="Website/RT-register-empty.png" alt="BootStrap" width="100%" height="100%" /> &nbsp;&nbsp;
+<br />
+
+User Registration Requirements: <br />
+To successfully register as a user, you will need to provide the following:
+<br />
+
+- A unique username
+- Your wallet address
+- A valid email address
+- A secure password
+
+Additionally, please ensure the following:
+<br />
+
+- A crypto wallet is installed and functional.
+- The crypto wallet is properly connected to our site.
+- The wallet is configured to point to the appropriate network.
+<br />
+
+Assuming the user has a crypto wallet (like Metamask) installed.
+<br />
+Let's start by connecting it to the site:
+1. Click the purple "Connect!" link
+2. This window will appear (see image below)
+<br />
+
+<img src="Website/RT-register-connecting-1.png" alt="BootStrap" width="100%" height="100%" /> &nbsp;&nbsp;
+<br />
+
+3. After confirming that you wish to connect with the site, metamask will try to connect:
+
+<img src="Website/RT-register-connecting-2.png" alt="BootStrap" width="100%" height="100%" /> &nbsp;&nbsp;
+<br />
+
+4. Next, we have to switch to the correct network
+5. To achieve this, simply click on the purple "Switch!" link
+<br />
+
+<img src="Website/RT-register-netSwitch-1.png" alt="BootStrap" width="100%" height="100%" /> &nbsp;&nbsp;
+<br />
+
+7. Another Metamask window will pop-up and ask you to confirm this action
+8. Press "Switch Network"
+<br />
+
+<img src="Website/RT-register-netSwitch-2.png" alt="BootStrap" width="100%" height="100%" /> &nbsp;&nbsp;
+<br />
+
+9. Now, we can create an Account
+10. Fill the required form fields
+11. Then, press the "Get Started" pink button 
+12. Metamask, will prompt you with a window to confirm a transaction
+(Dev: This transaction will create User object in the Blockchain. All state altering Smart Contact functions require the user to approve a transaction and pay some gas (using the network's native currency in our case ETH)
+
+<br />
+
+<img src="Website/RT-register-creatingAcc-1.png" alt="BootStrap" width="100%" height="100%" /> &nbsp;&nbsp;
+<br />
+
+13. Once the transaction is approved, the Account is created
+<br />
+
+<img src="Website/RT-register-creatingAcc-2.png" alt="BootStrap" width="100%" height="100%" /> &nbsp;&nbsp;
+<br />
+
+14. Now, let's try to log in. In the top of the page press the green "Log In" button
+You will be navigated to this page:
+<br />
+
+<img src="Website/RT-login-1.png" alt="BootStrap" width="100%" height="100%" /> &nbsp;&nbsp;
+<br />
+
+15. The email and wallet address should be inserted automatically. Just type your password.
+16. Press the "Let me in" button to log in with your newly created Account.
+<br />
+
+<img src="Website/RT-loggedIn.png" alt="BootStrap" width="100%" height="100%" /> &nbsp;&nbsp;
+<br />
+
+17. If you are navigated to the Home Page, and instead of the Log In and Sign Up buttons you see your username and MGS Tokens. You have successfully created and logged in with your Account
+18. Congratulations! Now, go and explore our Platform's services and start gathering MGS Tokens!
