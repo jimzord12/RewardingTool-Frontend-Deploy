@@ -2062,7 +2062,8 @@ pre code {
 }
 .form-control:disabled,
 .form-control[readonly] {
-  background-color: #e9ecef;
+  /* background-color: #e9ecef; */
+  background-color: none !important;
   opacity: 1;
 }
 
@@ -4210,7 +4211,7 @@ input[type="button"].btn-block {
 }
 .custom-select:disabled {
   color: #6c757d;
-  background-color: #e9ecef;
+  /* background-color: #e9ecef; */
 }
 .custom-select::-ms-expand {
   display: none;
@@ -4258,7 +4259,7 @@ input[type="button"].btn-block {
 }
 .custom-file-input[disabled] ~ .custom-file-label,
 .custom-file-input:disabled ~ .custom-file-label {
-  background-color: #e9ecef;
+  /* background-color: #e9ecef; */
 }
 .custom-file-input:lang(en) ~ .custom-file-label::after {
   content: "Browse";
@@ -5767,7 +5768,7 @@ a.badge-darker.focus {
 }
 .list-group-item-action:active {
   color: #525f7f;
-  background-color: #e9ecef;
+  /* background-color: #e9ecef; */
 }
 
 .list-group-item {
@@ -18369,8 +18370,8 @@ code {
 .form-control[readonly],
 fieldset[disabled] .form-control {
   background-color: #1d253b;
-  color: #344675;
-  cursor: not-allowed;
+  color: #cad1d7;
+  /* cursor: not-allowed; */
 }
 
 .input-group-btn .btn {

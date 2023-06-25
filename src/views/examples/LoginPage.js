@@ -114,7 +114,7 @@ export default function LoginPage() {
       document.body.classList.toggle("register-page");
       document.documentElement.removeEventListener("mousemove", followCursor);
     };
-  }, [isLoggedIn]);
+  }, [isLoggedIn, wallet.accounts[0]]);
   const followCursor = (event) => {
     let posX = event.clientX - window.innerWidth / 2;
     let posY = event.clientY - window.innerWidth / 6;
@@ -338,6 +338,7 @@ export default function LoginPage() {
                           </InputGroupAddon>
                           <Input
                             // {...register("nameSKATA")}
+                            style={{ backgroundColor: "transparent" }}
                             placeholder={
                               wallet.accounts[0]
                                 ? wallet.accounts[0]
@@ -345,6 +346,7 @@ export default function LoginPage() {
                             }
                             type="text"
                             name="wallet"
+                            readOnly
                             onChange={(e) => {
                               setWalletField(e.target.value);
                               console.log(e.target.value);

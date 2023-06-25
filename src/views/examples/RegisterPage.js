@@ -170,7 +170,7 @@ export default function LoginPage() {
       document.body.classList.toggle("register-page");
       document.documentElement.removeEventListener("mousemove", followCursor);
     };
-  }, [wallet.accounts.length, contractInitCompleted]);
+  }, [wallet.accounts.length, wallet.accounts[0], contractInitCompleted]);
 
   const followCursor = (event) => {
     let posX = event.clientX - window.innerWidth / 2;
@@ -361,19 +361,18 @@ export default function LoginPage() {
                           </InputGroupAddon>
                           <Input
                             // {...register("nameSKATA")}
-                            placeholder={
-                              wallet.accounts[0]
-                                ? wallet.accounts[0]
-                                : "Wallet Address*"
-                            }
+                            style={{ backgroundColor: "transparent" }}
+                            placeholder={"Wallet Address*"}
                             type="text"
                             name="wallet"
-                            onChange={(e) => {
-                              setWalletField((prev) => {
-                                return { ...prev, value: e.target.value };
-                              });
-                              // console.log(e.target.value);
-                            }}
+                            readOnly
+                            value={walletField.value}
+                            // onChange={(e) => {
+                            //   setWalletField((prev) => {
+                            //     return { ...prev, value: e.target.value };
+                            //   });
+                            //   // console.log(e.target.value);
+                            // }}
                             // ref={register}
                             onFocus={(e) => setWalletFocus(true)}
                             onBlur={(e) => setWalletFocus(false)}
