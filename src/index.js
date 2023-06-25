@@ -16,7 +16,7 @@
 
 */
 import React from "react";
-import ReactDOM from "react-dom/client";
+import ReactDOM from "react-dom";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
 import "assets/css/nucleo-icons.css";
@@ -49,8 +49,48 @@ import LoginPage from "views/examples/LoginPage.js";
 
 // BLOCKCHAIN - END
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+ReactDOM.render(
+  <React.StrictMode>
+    <MetaMaskContextProvider>
+      <GlobalContextProvider>
+        <BrowserRouter>
+          <Switch>
+            <Route
+              path="/components"
+              render={(props) => <Index {...props} />}
+            />
+            <Route
+              path="/landing-page"
+              render={(props) => <LandingPage {...props} />}
+            />
+            <Route
+              path="/register-page"
+              render={(props) => <RegisterPage {...props} />}
+            />
+            <Route
+              path="/login-page"
+              render={(props) => <LoginPage {...props} />}
+            />
+            <Route
+              path="/profile-page"
+              render={(props) => <ProfilePage {...props} />}
+            />
+            <Route
+              path="/rewards-page"
+              render={(props) => <RewardsPage {...props} />}
+            />
+            <Redirect from="/" to="/rewards-page" />
+          </Switch>
+        </BrowserRouter>
+      </GlobalContextProvider>
+    </MetaMaskContextProvider>
+  </React.StrictMode>,
+  document.getElementById("root")
+);
 
+// For React v18+
+/*
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <MetaMaskContextProvider>
     <GlobalContextProvider>
@@ -83,3 +123,4 @@ root.render(
     </GlobalContextProvider>
   </MetaMaskContextProvider>
 );
+*/

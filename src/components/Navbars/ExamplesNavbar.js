@@ -43,7 +43,7 @@ import {
   UncontrolledTooltip,
 } from "reactstrap";
 
-import ConnectModal from "../custom/ConnectModal/ConnectModal.js";
+// import ConnectModal from "../custom/ConnectModal/ConnectModal.js";
 
 export default function ExamplesNavbar() {
   const [collapseOpen, setCollapseOpen] = React.useState(false);
@@ -147,7 +147,7 @@ export default function ExamplesNavbar() {
   return (
     <Navbar className={"fixed-top " + color} color-on-scroll="100" expand="lg">
       <Container>
-        <ConnectModal />
+        {/* <ConnectModal /> */}
         <div className="navbar-translate">
           <NavbarBrand to="/" id="navbar-brand" tag={Link}>
             <span>GENERA• </span>
