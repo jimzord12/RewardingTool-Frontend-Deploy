@@ -22,7 +22,7 @@ const ValidationModal = (props) => {
 
   return (
     <div style={{ overflow: "hidden" }}>
-      {console.log("From Modal: State: ", isOpen)}
+      {/* {console.log("From Modal: State: ", isOpen)} */}
       <Modal
         isOpen={isOpen}
         toggle={toggle}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 
 import "./RedeemModal.styles.css"; // Assuming styles.css is in the same folder
@@ -16,6 +16,9 @@ import "./RedeemModal.styles.css"; // Assuming styles.css is in the same folder
 //     element.scrollIntoView({ behavior: "smooth", block: "start" });
 //   }
 // };
+function isScrollable(element) {
+  return element.scrollHeight > element.clientHeight;
+}
 
 const SubWindow = (props) => {
   const { setIsRedeemClicked, onRedeem, didTxFinish } = props;
@@ -69,12 +72,12 @@ const RedeemModal = (props) => {
     didTxFinish,
     gmapsLink,
   } = props;
-  console.log("FROM MODAL: ", isOpen);
+  // console.log("FROM MODAL: ", isOpen);
 
   //   const [modal, setModal] = useState(isOpen);
   const [isRedeemClicked, setIsRedeemClicked] = useState(false);
 
-  //   const modalRef = useRef(null);
+  const modalRef = useRef(null);
 
   // Define a function to handle when the "Redeem" button is clicked
   const handleRedeemClick = () => {
@@ -91,6 +94,7 @@ const RedeemModal = (props) => {
         className={className}
         backdropClassName="backdrop"
         onClosed={() => setIsRedeemClicked(false)}
+        ref={modalRef}
         // modalTransition={{ timeout: 700 }} // customize the transition duration here
       >
         <ModalHeader
@@ -103,8 +107,8 @@ const RedeemModal = (props) => {
         <ModalBody style={{ border: "none" }}>
           {/* <img src={imageSrc} alt={title} width="100%" /> */}
           <div style={{ borderRadius: "10px" }}>
-            {console.log("The Modals Image: ", imageSrc)}
-            {console.log("The Modals Image: ", imageSrc === undefined)}
+            {/* {console.log("The Modals Image: ", imageSrc)} */}
+            {/* {console.log("The Modals Image: ", imageSrc === undefined)} */}
             <img
               src={
                 imageSrc !== undefined
@@ -152,10 +156,38 @@ const RedeemModal = (props) => {
               color="warning"
               style={{ fontSize: "16px" }}
               onClick={() => {
-                // const modal = document.querySelector(".modal.fade.show");
+                const modal = document.querySelector(".modal.fade.show");
                 handleRedeemClick();
-                // console.log("This the Modal's Ref: ", modal);
+                modal.style.overflow = "auto";
+                if (typeof modal.scrollTo === "function") {
+                  console.log("Modal has the scrollTo method");
+                  console.log(String(modal.scrollTo));
+                } else {
+                  console.log("Modal does not have the scrollTo method");
+                }
                 // scrollElementDown(modal, 2000);
+                // console.log("1. Modal Ref: ", modalRef);
+                // console.log("2. Modal Element Ref: ", modalRef.current);
+                // console.log(
+                //   "3. Modal Element Ref: ",
+                //   modalRef.current._element
+                // );
+                // console.log("4. Modal Raw Ref: ", modal);
+                // console.log("=====================================");
+                // console.log();
+                // console.log("1) => ", isScrollable(modalRef));
+                // console.log("2) => ", isScrollable(modalRef.current));
+                // console.log("3) => ", isScrollable(modalRef.current._element));
+                // console.log("4) => ", isScrollable(modal));
+                // modalRef.current._element.scrollTo(0, 50000);
+                // modalRef.current.scrollTo(0, 500);
+                // modal.scrollTo(0, 50000);
+                setTimeout(() => {
+                  modal.scrollTo({
+                    top: 500,
+                    behavior: "smooth",
+                  });
+                }, 500);
                 return;
               }}
             >

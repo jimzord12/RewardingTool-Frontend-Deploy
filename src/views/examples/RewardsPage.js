@@ -123,7 +123,7 @@ export default function RewardsPage() {
   }, []);
   return (
     <>
-      {console.log("Modal's State: ", modalState)}
+      {/* {console.log("Modal's State: ", modalState)} */}
       <Navbar />
       <div className="wrapper">
         <PageHeader />
