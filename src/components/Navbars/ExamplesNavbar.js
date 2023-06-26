@@ -144,6 +144,10 @@ export default function ExamplesNavbar() {
     setCollapseOut("");
   };
 
+  const handleValidation = () => {
+    navigate("/validation-page");
+  };
+
   return (
     <Navbar className={"fixed-top " + color} color-on-scroll="100" expand="lg">
       <Container>
@@ -260,26 +264,50 @@ export default function ExamplesNavbar() {
                 </NavItem>
               )}
 
+            {/* ************************************************************************ */}
+
             {/* If User is on the <Rewards Page> AND IS Logged In => Show User's Name + MGS Balance */}
-            {location.pathname.includes("rewards") && userData.isLoggedIn && (
-              <NavItem>
-                <LoadingButtonInfo isLoading={isLoading}>
-                  <div
-                    className={`user-details ${
-                      tokenEventAnimate ? "vibrate-3" : ""
-                    }`}
-                  >
-                    <div>
-                      <i className="fa fa-user" /> {userData.name}
+            {true && (
+              // {location.pathname.includes("rewards") && userData.isLoggedIn && (
+              <>
+                <NavItem>
+                  <LoadingButtonInfo isLoading={isLoading}>
+                    <div
+                      className={`user-details ${
+                        tokenEventAnimate ? "vibrate-3" : ""
+                      }`}
+                    >
+                      <div>
+                        <i className="fa fa-user" /> {userData.name}
+                      </div>
+                      <div>
+                        <i className="icon tim-icons icon-coins" />{" "}
+                        {userData.tokens}
+                      </div>
                     </div>
-                    <div>
-                      <i className="icon tim-icons icon-coins" />{" "}
-                      {userData.tokens}
-                    </div>
-                  </div>
-                </LoadingButtonInfo>
-              </NavItem>
+                  </LoadingButtonInfo>
+                </NavItem>
+
+                {true && (
+                  // {userData.accessLevel === "manager" && (
+                  <NavItem>
+                    <LoadingButtonInfo
+                      isLoading={isLoading}
+                      onClick={handleValidation}
+                    >
+                      <div className={"validate-reward"}>
+                        <div>
+                          <i className="icon tim-icons icon-check-2" /> Validate
+                        </div>
+                      </div>
+                    </LoadingButtonInfo>
+                  </NavItem>
+                )}
+              </>
             )}
+
+            {/* ************************************************************************ */}
+
             <NavItem>
               <Button
                 className={`nav-link d-none d-lg-block genera-login-singup-btn ${

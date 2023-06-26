@@ -1,0 +1,5 @@
+/* The Mojority of the Styles reside in RedeemModal.styles.css */
+.modal.show.modal-dialog.validation-modal {
+  transform: translate(0, 150px);
+  margin-bottom: 80px;
+}

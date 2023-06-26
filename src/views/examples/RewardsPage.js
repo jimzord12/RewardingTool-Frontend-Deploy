@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useState } from "react";
 
 // core components
 import Navbar from "components/Navbars/ExamplesNavbar.js";
@@ -23,7 +23,8 @@ import { MyPageHeader as PageHeader } from "components/PageHeader/MyPageHeader.j
 import CarouselSection from "components/custom/MyCarousel/CarouselSection.js";
 import CardsSection from "components/custom/ProductSection/CardsSection.js";
 import Footer from "components/Footer/Footer.js";
-import BaseModal from "components/custom/MyModals/BaseModal.js";
+// import BaseModal from "components/custom/MyModals/BaseModal.js";
+import RedeemModal from "components/custom/MyModals/RedeemModal.js";
 
 import {
   acropolis,
@@ -48,6 +49,7 @@ import Download from "views/IndexSections/Download.js";
 
 const testing_items = [
   {
+    id: 0,
     title: "Crete's Famous Cheese",
     description: "This is the description for Book 1.",
     image: greek_feta,
@@ -56,6 +58,7 @@ const testing_items = [
     location: "Crete",
   },
   {
+    id: 1,
     title: " Mykono's Traditional Sausage",
     description: "This is a wondeful description for this prodect.",
     image: loukaniko,
@@ -64,6 +67,7 @@ const testing_items = [
     location: "Mykonos",
   },
   {
+    id: 2,
     title: "Acropolis Tickets",
     description: "This is a wondeful description for this prodect.",
     image: acropolis,
@@ -72,6 +76,7 @@ const testing_items = [
     location: "N/A",
   },
   {
+    id: 3,
     title: "Guided Tour",
     description: "This is a wondeful description for this prodect.",
     image: guided_tour,
@@ -80,6 +85,7 @@ const testing_items = [
     location: "Tinos",
   },
   {
+    id: 4,
     title: "In-Game Gold",
     description: "This is a wondeful description for this prodect.",
     image: convert,
@@ -88,6 +94,7 @@ const testing_items = [
     location: "N/A",
   },
   {
+    id: 5,
     title: "Hotel Accommodation",
     description: "This is a wondeful description for this prodect.",
     image: hotel,
@@ -97,7 +104,16 @@ const testing_items = [
   },
 ];
 
-export default function Index() {
+export default function RewardsPage() {
+  const [modalState, setModal] = useState(false);
+  const [selectedReward, setSelectedReward] = useState(null);
+  const [didTxFinish, setDidTxFinish] = useState("not started");
+
+  const handleRedeemReward = () => {
+    setDidTxFinish("waiting confimation");
+    // 1. Call the "productClaimer" => contract.productClaimer()
+  };
+
   React.useEffect(() => {
     document.body.classList.toggle("index-page");
 
@@ -107,6 +123,7 @@ export default function Index() {
   }, []);
   return (
     <>
+      {console.log("Modal's State: ", modalState)}
       <Navbar />
       <div className="wrapper">
         <PageHeader />
@@ -118,9 +135,40 @@ export default function Index() {
           {/* <Pagination /> */}
           {/* <Notifications /> */}
           {/* <Typography /> */}
+          {/* <RedeemModal
+            isOpen={modalState}
+            setModal={setModal}
+            title={testing_items[0].title}
+            imageSrc={testing_items[0].image}
+            price={testing_items[0].price}
+            status="Available"
+            location={testing_items[0].location}
+            shopName="My Shop"
+            description={testing_items[0].description}
+            isDescriptionVisible={true}
+            onRedeem={() => console.log("Redeem clicked")}
+          /> */}
+          <RedeemModal
+            isOpen={modalState}
+            setModal={setModal}
+            title={selectedReward?.title}
+            imageSrc={selectedReward?.image}
+            price={selectedReward?.price}
+            status="Available"
+            location={selectedReward?.location}
+            shopName="My Shop"
+            description={selectedReward?.description}
+            isDescriptionVisible={true}
+            didTxFinish={didTxFinish}
+            onRedeem={() => console.log("Redeem clicked")}
+          />
           <CarouselSection />
           {/* <JavaScript /> */}
-          <CardsSection items={testing_items} />
+          <CardsSection
+            items={testing_items}
+            setModal={setModal}
+            setSelectedReward={setSelectedReward}
+          />
           {/* <NucleoIcons /> */}
           {/* <Signup /> */}
           {/* <Examples /> */}

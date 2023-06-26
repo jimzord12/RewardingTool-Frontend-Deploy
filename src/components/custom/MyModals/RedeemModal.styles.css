@@ -1,0 +1,71 @@
+/* styles.css */
+
+.modal.show .modal-dialog {
+  transform: translate(0, 50px);
+  margin-bottom: 80px;
+}
+
+.modal-content {
+  background-color: #2082a9; /* Light Blue */
+}
+
+.modal-header,
+.modal-body,
+.modal-footer {
+  border: 1.25px solid #000;
+  /* Black */
+  padding-bottom: 24px;
+}
+
+.modal-body img {
+  margin-bottom: 10px;
+  /* border-radius: 6px; */
+}
+
+.modal-body div {
+  padding: 10px;
+  /* margin-bottom: 10px; */
+}
+
+.modal-body p {
+  border-top: 1.25px solid #000;
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.modal-footer {
+  padding-top: 24px !important;
+  justify-content: center !important;
+}
+
+.modal-footer button {
+  max-width: 60%;
+  flex-grow: 1;
+}
+
+.backdrop {
+  background-color: rgb(157, 26, 140);
+}
+
+.modal.fade.show span {
+  font-size: 48px;
+}
+
+.modal .modal-header .close {
+  /* color: #ce510e; */
+  text-shadow: 2px 1px 1px rgba(0, 0, 0, 1);
+  padding-top: 8px;
+}
+
+.modal-body a {
+  color: aquamarine;
+  font-weight: bold;
+  /* Add transition property here */
+  transition: color 0.3s ease, font-weight 0.3s ease, letter-spacing 0.3s ease;
+}
+
+.modal-body a:hover {
+  color: purple;
+  font-weight: normal;
+  letter-spacing: 2px;
+}

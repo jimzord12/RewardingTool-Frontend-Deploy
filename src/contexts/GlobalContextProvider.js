@@ -17,13 +17,29 @@ export const GlobalContextProvider = ({ children }) => {
   const [contract, setContract] = useState(null);
   const [tokenEventFired, setTokenEventFired] = useState(false);
   const [contractInitCompleted, setContractInitCompleted] = useState(false);
+  const [isProductsLoading, setIsProductsLoading] = useState(true);
 
   const [userData, setUserData] = useState({
     name: undefined,
     tokens: undefined,
     wallet: undefined,
+    accessLevel: undefined,
     isLoggedIn: false,
+    pendingRewards: [],
   });
+
+  const [rewards, setRewards] = useState([]);
+  // Reward Data Structure
+  /*
+    id: undefined,
+    price: undefined,
+    amount: undefined,
+    isEmpty: undefined,
+    isInfinite: undefined,
+    isDisabled: undefined,
+    name: undefined,
+    location: undefined
+  */
 
   // Hooks
   const {
@@ -53,6 +69,14 @@ export const GlobalContextProvider = ({ children }) => {
     setUserData((prev) => {
       return { ...prev, tokens: userTokens.toNumber() };
     });
+  }
+
+  async function getRewards() {
+    try {
+      const rewards = await contract.getAllProducts(); // Returns all an Array containing all products
+      setIsProductsLoading(false);
+      setRewards(rewards);
+    } catch (error) {}
   }
 
   async function attachEventListeners() {
@@ -233,6 +257,7 @@ export const GlobalContextProvider = ({ children }) => {
         setTokenEventFired,
         contract,
         contractInitCompleted,
+        rewards,
       }}
     >
       {hasMetaMaskRun ? (

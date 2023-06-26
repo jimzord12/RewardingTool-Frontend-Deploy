@@ -3,7 +3,7 @@ import { Container } from "reactstrap";
 
 import CardGrid from "./CardGrid.js";
 
-function CardsSection({ items }) {
+function CardsSection({ items, setModal, setSelectedReward }) {
   return (
     <div id="available-rewards-section" className="section">
       <Container>
@@ -12,7 +12,11 @@ function CardsSection({ items }) {
           You can obtain the following products/services by using our platform's
           tokens
         </h4>
-        <CardGrid items={items} />
+        <CardGrid
+          items={items}
+          setModal={setModal}
+          setSelectedReward={setSelectedReward}
+        />
       </Container>
     </div>
   );

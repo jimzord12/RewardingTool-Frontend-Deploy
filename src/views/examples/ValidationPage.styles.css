@@ -1,0 +1,13 @@
+@media only screen and (max-width: 576px) {
+  .validation-btn {
+    margin-top: 16px;
+  }
+}
+
+div[data-testid="three-circles-wrapper"] {
+  justify-content: center;
+}
+
+div[data-testid="three-circles-wrapper"] > svg {
+  transform: translateY(-6px);
+}

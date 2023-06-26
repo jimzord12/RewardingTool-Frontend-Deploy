@@ -32,6 +32,7 @@ import RegisterPage from "views/examples/RegisterPage.js";
 import ProfilePage from "views/examples/ProfilePage.js";
 import RewardsPage from "views/examples/RewardsPage.js";
 import LoginPage from "views/examples/LoginPage.js";
+import ValidationPage from "views/examples/ValidationPage.js";
 
 // BLOCKCHAIN - START
 // import { Web3ReactProvider } from "@web3-react/core";
@@ -78,6 +79,10 @@ ReactDOM.render(
             <Route
               path="/rewards-page"
               render={(props) => <RewardsPage {...props} />}
+            />
+            <Route
+              path="/validation-page"
+              render={(props) => <ValidationPage {...props} />}
             />
             <Redirect from="/" to="/rewards-page" />
           </Switch>

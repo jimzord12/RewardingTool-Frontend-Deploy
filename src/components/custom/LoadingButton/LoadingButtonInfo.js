@@ -9,6 +9,7 @@ export default function LoadingButtonInfo({
   onClick,
   children,
   loginFailed,
+  styles,
 }) {
   //   const { navigate } = useNavigation();
 
@@ -19,6 +20,7 @@ export default function LoadingButtonInfo({
       size="md"
       onClick={onClick}
       disabled={isLoading}
+      style={styles}
     >
       {isLoading ? (
         <ThreeCircles
