@@ -19,6 +19,7 @@
 */
 import React from "react";
 import classnames from "classnames";
+import axios from "axios";
 // reactstrap components
 import {
   // Button,
@@ -46,6 +47,7 @@ import Footer from "components/Footer/Footer.js";
 import LoadingButton from "components/custom/LoadingButton/LoadingButton.js";
 import { useLogin } from "hooks/useLogin.js";
 import { useNavigation } from "hooks/useNavigation";
+// import { getNonce } from "api/api";
 
 import { ReactComponent as MetamaskIcon } from "../../assets/img/genera/metamask.svg";
 
@@ -76,8 +78,14 @@ export default function LoginPage() {
   const { loginUser, loggedOut, isLoggedIn, isLoading } = useLogin();
   const { navigate } = useNavigation();
 
-  const { hasProvider, wallet, connectMetaMask, switchNetwork, addNetwork } =
-    useMetaMask();
+  const {
+    hasProvider,
+    wallet,
+    connectMetaMask,
+    switchNetwork,
+    addNetwork,
+    provider,
+  } = useMetaMask();
 
   // const {
   //   validateForm,
@@ -115,6 +123,7 @@ export default function LoginPage() {
       document.documentElement.removeEventListener("mousemove", followCursor);
     };
   }, [isLoggedIn, wallet.accounts[0]]);
+
   const followCursor = (event) => {
     let posX = event.clientX - window.innerWidth / 2;
     let posY = event.clientY - window.innerWidth / 6;
@@ -133,6 +142,39 @@ export default function LoginPage() {
         "deg)"
     );
   };
+
+  // 🧪 Testing: Login using Message Signing - START
+
+  // async function signMessage() {
+  //   const nonce = await getNonce();
+  //   // If nonce fetching failed, nonce will be null. Add error handling as necessary.
+
+  //   if (nonce && hasProvider) {
+  //     const signer = provider.getSigner();
+  //     const signedMessage = await signer.signMessage(nonce.toString());
+
+  //     try {
+  //       const response = await axios.post(
+  //         "http://localhost:3033/verify-signature",
+  //         {
+  //           nonce: nonce.toString(),
+  //           userAddress: await signer.getAddress(),
+  //           signedMessage: signedMessage,
+  //         }
+  //       );
+
+  //       if (response.data.verified) {
+  //         console.log("The signature is valid!");
+  //       } else {
+  //         console.log("The signature is invalid!");
+  //       }
+  //     } catch (error) {
+  //       console.error("Failed to verify signed message:", error);
+  //     }
+  //   }
+  // }
+
+  // 🧪 Testing: Login using Message Signing - END
 
   // Function to validate form
   const validateForm = () => {

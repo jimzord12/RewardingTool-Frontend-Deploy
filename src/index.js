@@ -18,10 +18,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
 import "assets/css/nucleo-icons.css";
 import "assets/scss/blk-design-system-react.scss";
 import "assets/demo/demo.css";
+import "react-toastify/dist/ReactToastify.css";
 
 import { MetaMaskContextProvider } from "./contexts/web3/MetaMaskContextProvider.js";
 import { GlobalContextProvider } from "./contexts/GlobalContextProvider.js";
@@ -52,6 +54,7 @@ import ValidationPage from "views/examples/ValidationPage.js";
 
 ReactDOM.render(
   <React.StrictMode>
+    <ToastContainer />
     <MetaMaskContextProvider>
       <GlobalContextProvider>
         <BrowserRouter>

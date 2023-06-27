@@ -19,6 +19,8 @@ import React, { useState } from "react";
 // react plugin used to create charts
 // import { Line } from "react-chartjs-2";
 import classnames from "classnames";
+import { ThreeCircles } from "react-loader-spinner";
+import { toast } from "react-toastify";
 
 import "./ValidationPage.styles.css";
 
@@ -69,14 +71,7 @@ import ValidationModal from "components/custom/MyModals/ValidationModal";
 
 const testing_items = [
   {
-    title: "Crete's Famous Cheese",
-    description: "This is the description for Book 1.",
-    image: greek_feta,
-    price: 13.5 + " MGS",
-    amount: 23,
-    location: "Crete",
-  },
-  {
+    id: 1,
     title: " Mykono's Traditional Sausage",
     description: "This is a wondeful description for this prodect.",
     image: loukaniko,
@@ -84,23 +79,9 @@ const testing_items = [
     amount: 11,
     location: "Mykonos",
   },
+
   {
-    title: "Acropolis Tickets",
-    description: "This is a wondeful description for this prodect.",
-    image: acropolis,
-    price: 28.6 + " MGS",
-    amount: 5,
-    location: "N/A",
-  },
-  {
-    title: "Guided Tour",
-    description: "This is a wondeful description for this prodect.",
-    image: guided_tour,
-    price: 33.2 + " MGS",
-    amount: 36,
-    location: "Tinos",
-  },
-  {
+    id: 4,
     title: "In-Game Gold",
     description: "This is a wondeful description for this prodect.",
     image: convert,
@@ -108,15 +89,14 @@ const testing_items = [
     amount: "Infinite",
     location: "N/A",
   },
-  {
-    title: "Hotel Accommodation",
-    description: "This is a wondeful description for this prodect.",
-    image: hotel,
-    price: 127.5 + " MGS",
-    amount: 3,
-    location: "Sikelia",
-  },
 ];
+
+const CustomErrorToast = ({ text, closeToast, toastProps }) => (
+  <div style={{ background: "#yourColor", color: "#otherColor" }}>
+    {text}
+    {/* <button onClick={closeToast}>Close</button> */}
+  </div>
+);
 
 export default function LandingPage() {
   React.useEffect(() => {
@@ -127,7 +107,8 @@ export default function LandingPage() {
     };
   }, []);
 
-  const { userData, setUserData } = useGlobalContext();
+  const { userData, setUserData, rewards, getRewards } = useGlobalContext();
+  const [customerRewards, setCustomerRewards] = React.useState([]);
 
   const [userNameFocus, setUserNameFocus] = React.useState(false);
   const [userCodeFocus, setUserCodeFocus] = React.useState(false);
@@ -136,32 +117,174 @@ export default function LandingPage() {
     type: "Username",
     value: "",
   });
+  const [userCodeField, setUserCodeField] = React.useState({
+    type: "Username",
+    value: "",
+  });
+
   const [isModalOpen, setIsOpenOpen] = useState(false);
-  const [modalStatus, setModalStatus] = useState(false);
+  const [modalStatus, setModalStatus] = useState({
+    state: "not started",
+    success: undefined,
+  });
   const [isPendingRewardSelected, setIsPendingRewardSelected] = useState(null);
+  const [rewardsLoading, setRewardsLoading] = React.useState(false);
 
   const [saveUsername, getUsername, removeUsername] = useLS("username", "");
 
+  const reset = () => {
+    setModalStatus({
+      state: "not started",
+      success: undefined,
+    });
+  };
+
   const handleFetchUserDetails = () => {
-    setIsLoading(true);
-    // 1. Use the "userNameField" to call: contract.getUserProducts(userNameField)
-    // 2. When is done...
-    // 3. Update userData (Import Global Context)
-    setTimeout(() => {
-      setIsLoading(false);
-      setUserData((prev) => {
-        return { ...prev, pendingRewards: testing_items };
+    if (userNameField.value === "") {
+      toast.error(<CustomErrorToast text={"You must provide a username"} />, {
+        position: "top-center",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
       });
-    }, 3000);
+      return console.log("You must provide a username");
+    }
+
+    setIsLoading(true);
+    try {
+      console.log("The Username Field is: ", userNameField.value);
+      console.log(
+        "(Faking): Calling Contract's:  getUserProducts(userNameField)..."
+      );
+      // 1. Use the "userNameField" to call: contract.getUserProducts(userNameField.value)
+      // 2. When is done...
+      // 3. Update userData (Import Global Context)
+      setTimeout(() => {
+        console.log("(Faking): Waiting for the Tx to finish...");
+
+        setTimeout(() => {
+          console.log("(Faking): ✅ Tx Comfirmed!");
+          setCustomerRewards(testing_items);
+          setIsLoading(false);
+        }, 2000);
+
+        // setUserData((prev) => {
+        //   return { ...prev, pendingRewards: testing_items };
+        // });
+      }, 2000);
+    } catch (error) {
+      console.log("⛔ Contract Error: ", error);
+    }
     // setIsLoading(false);
   };
 
   const handleRewardValidation = () => {
-    setIsOpenOpen(true);
+    console.log("================================================");
+    console.log("*****  Reward Validation  *****");
+    console.log("================================================");
+
+    // TODO: Add an Alert component!
+    console.log("1 >>> : ", userCodeField.value.length);
+    console.log("1.1 >>> : ", !(userCodeField.value.length === 6));
+    console.log("2 >>> : ", userCodeField.value);
+    console.log("2. >>> : ", userCodeField.value === "");
+    if (userCodeField.value === "" || !(userCodeField.value.length === 6)) {
+      toast.error(
+        <CustomErrorToast text={"You must provide a 6-digit Redeem Code"} />,
+        {
+          position: "top-center",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        }
+      );
+      return console.log("⛔ Error: You must provide a 6-digit Redeem Code");
+    }
+
+    // TODO: Add an Alert component!
+    console.log("3 >>> : ", isNaN(Number(userCodeField.value)));
+    if (isNaN(Number(userCodeField.value))) {
+      toast.error(
+        <CustomErrorToast text={"You must only use characters from 0-9"} />,
+        {
+          position: "top-center",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        }
+      );
+      return console.log("⛔ Error: You must only use characters from 0-9");
+    }
+
+    setIsLoading(true);
+
+    try {
+      console.log("The Redeem Code Field is: ", userCodeField.value);
+      console.log(
+        "(Faking): Calling Contract's:  redeemerValidator(userNameField)..."
+      );
+      setIsOpenOpen(true);
+
+      // 1. Use the "userNameField" to call: contract.getUserProducts(userCodeField.value)
+      // 2. When is done...
+      // 3. Update userData (Import Global Context)
+      setModalStatus((prev) => {
+        return {
+          ...prev,
+          state: "waiting",
+          success: true,
+        };
+      });
+
+      setTimeout(() => {
+        console.log("(Faking): Waiting for the Tx to finish...");
+
+        setTimeout(() => {
+          console.log("(Faking): ✅ Tx Comfirmed!");
+          setModalStatus((prev) => {
+            return {
+              ...prev,
+              state: "completed",
+              success: false,
+              // success: true,
+            };
+          });
+          refetchUserRewards();
+        }, 3000);
+
+        setIsLoading(false);
+        // setUserData((prev) => {
+        //   return { ...prev, pendingRewards: testing_items };
+        // });
+      }, 3000);
+    } catch (error) {
+      console.log("⛔ Contract Error: ", error);
+    }
   };
 
   const handleSelectPendingReward = (reward) => {
     setIsPendingRewardSelected(reward);
+    console.log("From ValidationPage: ", reward);
+  };
+
+  const refetchUserRewards = async () => {
+    setRewardsLoading(true);
+    setTimeout(async () => {
+      await getRewards();
+      setRewardsLoading(false);
+    }, 5000);
   };
 
   return (
@@ -173,6 +296,7 @@ export default function LandingPage() {
           setModal={setIsOpenOpen}
           status={modalStatus}
           className="validation-modal"
+          reset={reset}
         />
         <div className="page-header">
           <img
@@ -388,10 +512,9 @@ export default function LandingPage() {
                         name="name"
                         style={{ fontSize: 20, height: 64 }}
                         onChange={(e) => {
-                          setUserNameField((prev) => {
+                          setUserCodeField((prev) => {
                             return { ...prev, value: e.target.value };
                           });
-                          saveUsername(e.target.value);
 
                           // console.log(e.target.value);
                         }}
@@ -429,12 +552,75 @@ export default function LandingPage() {
         )}
         <section>
           <Container>
-            {userData.pendingRewards.length > 0 && (
+            {rewardsLoading ? (
+              <div style={{ paddingTop: 64, paddingBottom: 64 }}>
+                <h3>Fetching the Updated Rewards...</h3>
+                <ThreeCircles
+                  height="150"
+                  width="150"
+                  color="#4fa94d"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                  visible={true}
+                  ariaLabel="three-circles-rotating"
+                  outerCircleColor="white"
+                  innerCircleColor="white"
+                  middleCircleColor="white"
+                />
+              </div>
+            ) : customerRewards.length > 0 ? (
               <PendingCardsSection
-                items={userData.pendingRewards}
+                items={customerRewards}
                 handleSelectPendingReward={handleSelectPendingReward}
               />
+            ) : (
+              <h3>
+                Insert the User's Name in the field above to get his/her
+                Rewards.
+              </h3>
             )}
+            {/* {rewardsLoading ? (
+              <div>
+                <ThreeCircles
+                  height="150"
+                  width="150"
+                  color="#4fa94d"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                  visible={true}
+                  ariaLabel="three-circles-rotating"
+                  outerCircleColor="white"
+                  innerCircleColor="white"
+                  middleCircleColor="white"
+                />
+              </div>
+            ) : (
+              customerRewards.length > 0 && (
+                <PendingCardsSection
+                  items={customerRewards}
+                  handleSelectPendingReward={handleSelectPendingReward}
+                />
+              )
+            )} */}
+            {/* {customerRewards.length > 0 && !rewardsLoading ? (
+              <PendingCardsSection
+                items={customerRewards}
+                handleSelectPendingReward={handleSelectPendingReward}
+              />
+            ) : (
+              <ThreeCircles
+                height="150"
+                width="150"
+                color="#4fa94d"
+                wrapperStyle={{}}
+                wrapperClass=""
+                visible={true}
+                ariaLabel="three-circles-rotating"
+                outerCircleColor="white"
+                innerCircleColor="white"
+                middleCircleColor="white"
+              />
+            )} */}
           </Container>
         </section>
         <Footer />

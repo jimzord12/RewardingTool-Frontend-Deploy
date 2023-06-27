@@ -96,7 +96,7 @@ export const MetaMaskContextProvider = ({ children }) => {
         mm.on("accountsChanged", updateWallet);
         mm.on("chainChanged", updateWalletAndAccounts);
         console.log("2.4 ✅ Wallet Event Listeners added Successfully!");
-        console.log("------------------------------------------");
+        console.log("--------------------------------------------------");
       }
       setHasMetaMaskRun(true);
     };

@@ -34,7 +34,6 @@
 }
 
 .modal-footer {
-  padding-top: 24px !important;
   justify-content: center !important;
 }
 
@@ -58,8 +57,10 @@
 }
 
 .modal-body a {
-  color: aquamarine;
+  color: #e955e2 !important;
   font-weight: bold;
+  text-shadow: 1px 1px 2px black;
+
   /* Add transition property here */
   transition: color 0.3s ease, font-weight 0.3s ease, letter-spacing 0.3s ease;
 }
@@ -68,4 +69,5 @@
   color: purple;
   font-weight: normal;
   letter-spacing: 2px;
+  cursor: pointer;
 }

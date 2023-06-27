@@ -7,7 +7,7 @@ function PendingCardsSection({ items, handleSelectPendingReward }) {
   return (
     <div id="available-rewards-section" className="section">
       <Container>
-        <h3 className="title mb-5">User's Claimable Rewards</h3>
+        <h3 className="title mb-5">User's Claimable Rewards (Select One)</h3>
         <PendingCardGrid
           items={items}
           handleSelectPendingReward={handleSelectPendingReward}

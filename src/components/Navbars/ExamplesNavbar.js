@@ -26,6 +26,7 @@ import LoadingButtonInfo from "components/custom/LoadingButton/LoadingButtonInfo
 import { useNavigation } from "hooks/useNavigation.js";
 import { useMetaMask } from "../../contexts/web3/MetaMaskContextProvider.js";
 import { useGlobalContext } from "contexts/GlobalContextProvider.js";
+import { useWeb3Login } from "hooks/useWeb3Login.js";
 
 import { useLogin } from "hooks/useLogin.js";
 // reactstrap components
@@ -76,6 +77,7 @@ export default function ExamplesNavbar() {
     tokenEventFired,
     setTokenEventFired,
   } = useGlobalContext();
+  const { isAuthenticated, signMessage } = useWeb3Login();
 
   // console.log("location: ", location);
   React.useEffect(() => {
@@ -92,13 +94,33 @@ export default function ExamplesNavbar() {
       });
     }
 
-    if (userData.name !== undefined && wallet.chainId === 20231) getTokens();
+    // if (userData.name !== undefined && wallet.chainId === 20231) getTokens();
+    if (userData.name !== undefined && wallet.chainId === 31337) getTokens();
+
 
     return function cleanup() {
       window.removeEventListener("scroll", changeColor); //123456678asdhu
     };
   }, [userData.name]);
 
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      console.log("is user authenticated: ", isAuthenticated);
+      console.log("User's Data: ", userData);
+      // setUserData((prev) => {
+      //   return {
+      //     ...prev,
+      //     isLoggedIn: true,
+      //   };
+      // });
+      // console.log("Updated User's Data: ", userData);
+      // setUserData((prev) => {
+      //   return { ...prev, isLoggedIn: true };
+      // });
+    }
+  }, [isAuthenticated, userData.tokens]);
+
+  // This is for the Vibration Animation
   React.useEffect(() => {
     if (tokenEventFired) {
       setTokenEventAnimate(true);
@@ -111,6 +133,7 @@ export default function ExamplesNavbar() {
     }
   }, [tokenEventFired]); // This effect runs whenever `eventFired` changes
 
+  // This is for the Vibration Animation
   React.useEffect(() => {
     if (tokenEventAnimate === false) {
       setTokenEventFired(false);
@@ -233,7 +256,7 @@ export default function ExamplesNavbar() {
               </NavLink>
             </NavItem>
 
-            {/* If User is on the <Logic Page>, Do not show the <Login> Button AND is NOT Logged In */}
+            {/* If User is on the <Logic Page>, Do not show the <Login> Button AND is NOT Logged In
             {!location.pathname.includes("login") && !userData.isLoggedIn && (
               <NavItem>
                 <Button
@@ -241,6 +264,18 @@ export default function ExamplesNavbar() {
                   color="success"
                   target="_blank"
                   onClick={() => navigate("/login-page")}
+                >
+                  <i className="tim-icons icon-key-25" /> Log In
+                </Button>
+              </NavItem>
+            )} */}
+            {!isAuthenticated && (
+              <NavItem>
+                <Button
+                  className="nav-link d-none d-lg-block genera-login-singup-btn"
+                  color="success"
+                  target="_blank"
+                  onClick={() => signMessage()}
                 >
                   <i className="tim-icons icon-key-25" /> Log In
                 </Button>
@@ -267,8 +302,8 @@ export default function ExamplesNavbar() {
             {/* ************************************************************************ */}
 
             {/* If User is on the <Rewards Page> AND IS Logged In => Show User's Name + MGS Balance */}
-            {true && (
-              // {location.pathname.includes("rewards") && userData.isLoggedIn && (
+            {/* {true && ( */}
+            {location.pathname.includes("rewards") && userData.isLoggedIn && (
               <>
                 <NavItem>
                   <LoadingButtonInfo isLoading={isLoading}>
@@ -288,8 +323,8 @@ export default function ExamplesNavbar() {
                   </LoadingButtonInfo>
                 </NavItem>
 
-                {true && (
-                  // {userData.accessLevel === "manager" && (
+                {/* {true && ( */}
+                {userData.accessLevel && (
                   <NavItem>
                     <LoadingButtonInfo
                       isLoading={isLoading}

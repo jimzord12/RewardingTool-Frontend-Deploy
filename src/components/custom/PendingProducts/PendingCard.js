@@ -1,10 +1,16 @@
 import React from "react";
 import { Card, CardBody, CardTitle, CardText, CardImg } from "reactstrap";
 
-function PendingCard({ item }) {
+function PendingCard({ item, selectedCard }) {
   // console.log(item.img);
   return (
-    <Card className="product-card">
+    <Card
+      className={`product-card ${
+        selectedCard !== null &&
+        selectedCard?.id === item?.id &&
+        "product-card-selected"
+      }`}
+    >
       <CardImg
         top
         className="card-img-top"

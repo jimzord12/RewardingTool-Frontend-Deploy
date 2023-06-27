@@ -617,6 +617,10 @@ html {
   cursor: pointer;
 }
 
+.product-card-selected {
+  box-shadow: 0 0 20px 4px #aa3ed8;
+}
+
 .user-details {
   display: flex;
   gap: 2rem;

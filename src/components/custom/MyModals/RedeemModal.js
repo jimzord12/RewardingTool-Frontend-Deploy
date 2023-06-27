@@ -1,40 +1,53 @@
 import React, { useState, useRef } from "react";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import { toast } from "react-toastify";
 
 import "./RedeemModal.styles.css"; // Assuming styles.css is in the same folder
+import { ThreeCircles } from "react-loader-spinner";
 
-// function scrollElementDown(element, amount) {
-//   const parentNode = element.parentNode;
-//   console.log("1. Scroll: ", parentNode.scrollTop);
-//   //   element.scrollTop += amount;
-//   parentNode.scrollTop += amount;
-//   console.log("2. Scroll: ", parentNode.scrollTop);
-// }
-
-// const scrollElementDown2 = (element) => {
-//   if (element) {
-//     element.scrollIntoView({ behavior: "smooth", block: "start" });
-//   }
-// };
-function isScrollable(element) {
-  return element.scrollHeight > element.clientHeight;
-}
+const CustomErrorToast = ({ text, closeToast, toastProps }) => (
+  <div style={{ background: "#yourColor", color: "#otherColor" }}>
+    {text}
+    {/* <button onClick={closeToast}>Close</button> */}
+  </div>
+);
 
 const SubWindow = (props) => {
-  const { setIsRedeemClicked, onRedeem, didTxFinish } = props;
+  const { setIsRedeemClicked, cb, txStatus, toggleModal } = props;
 
   return (
-    <div>
-      <p>
-        You will have to confirm 2 transactions using your crypto wallet.
-        <br />
-        <br />
-        &nbsp;&nbsp;&nbsp;&nbsp;1. To allow the MGS Token transfer
-        <br />
-        &nbsp;&nbsp;&nbsp;&nbsp;2. To obtain the Reward
-      </p>
+    <div style={{ width: "100%" }}>
+      {txStatus.status === "completed" ? (
+        <>
+          <p
+            style={{
+              textAlign: "center",
+              fontSize: 20,
+              fontWeight: "500",
+              color: txStatus.success ? "#24e00c" : "#e63d5b",
+              textShadow: "1px 1px 2px black",
+            }}
+          >
+            {txStatus.success
+              ? "The transactions were confirmed!"
+              : "The transactions were rejected 😓"}
+          </p>
+          <p style={{ marginBottom: 36 }}>
+            By pressing the "OK button again, you will reinitialze the process.
+          </p>
+        </>
+      ) : (
+        <p>
+          You will have to confirm 2 transactions using your crypto wallet.
+          <br />
+          <br />
+          &nbsp;&nbsp;&nbsp;&nbsp;1. To allow the MGS Token transfer
+          <br />
+          &nbsp;&nbsp;&nbsp;&nbsp;2. To obtain the Reward
+        </p>
+      )}
 
-      {didTxFinish && (
+      {txStatus.status !== "waiting confirmation" && (
         <div
           style={{
             display: "flex",
@@ -43,12 +56,43 @@ const SubWindow = (props) => {
             marginTop: "24px",
           }}
         >
-          <Button color="primary" onClick={onRedeem}>
+          <Button
+            color="primary"
+            onClick={() => {
+              console.log('The "OK" Btn was clicked!');
+              cb();
+            }}
+            disabled={txStatus === "waiting confirmation"}
+          >
             OK
           </Button>
-          <Button color="secondary" onClick={() => setIsRedeemClicked(false)}>
+          <Button
+            color="secondary"
+            onClick={() => {
+              setIsRedeemClicked(false);
+              toggleModal();
+            }}
+          >
             No
           </Button>
+        </div>
+      )}
+
+      {txStatus.status === "waiting confirmation" && (
+        <div style={{ marginTop: 32 }}>
+          <h4>Check your Crypto Wallet for incoming Transactions...</h4>
+          <ThreeCircles
+            height="100"
+            width="100"
+            color="#4fa94d"
+            wrapperStyle={{}}
+            wrapperClass=""
+            visible={true}
+            ariaLabel="three-circles-rotating"
+            outerCircleColor="yellow"
+            innerCircleColor="orange"
+            middleCircleColor="red"
+          />
         </div>
       )}
     </div>
@@ -69,8 +113,10 @@ const RedeemModal = (props) => {
     description,
     isDescriptionVisible,
     onRedeem,
-    didTxFinish,
+    txStatus,
     gmapsLink,
+    resetRedeem,
+    userData,
   } = props;
   // console.log("FROM MODAL: ", isOpen);
 
@@ -81,7 +127,67 @@ const RedeemModal = (props) => {
 
   // Define a function to handle when the "Redeem" button is clicked
   const handleRedeemClick = () => {
+    // TODO: Remove this after TESTING!
+    const userData = {
+      name: "Giannis",
+      tokens: 13.5,
+      wallet: "0x3a227614427df0da881CCCf3912795735f95Fb50",
+      accessLevel: "manager",
+      isLoggedIn: true,
+      pendingRewards: [],
+    };
+
+    if (
+      userData.wallet === undefined ||
+      userData.wallet?.length < 20 ||
+      userData.isLoggedIn === false
+    ) {
+      toast.error(
+        <CustomErrorToast
+          text={"You must Connect your Wallet, to continue."}
+        />,
+        {
+          position: "top-center",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        }
+      );
+      return console.log("⛔ Error: You must Connect your Wallet.");
+    }
+
+    if (userData.tokens < price) {
+      toast.error(
+        <CustomErrorToast text={"You need more MGS Tokens for this Reward."} />,
+        {
+          position: "top-center",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        }
+      );
+      return console.log("⛔ Error: You need more MGS Tokens for this Reward.");
+    }
+
     setIsRedeemClicked(true);
+    const modal = document.querySelector(".modal.fade.show");
+    modal.style.overflow = "auto";
+
+    setTimeout(() => {
+      modal.scrollTo({
+        top: 500,
+        behavior: "smooth",
+      });
+    }, 500);
+    return;
   };
 
   const toggle = () => setModal(!isOpen);
@@ -93,9 +199,11 @@ const RedeemModal = (props) => {
         toggle={toggle}
         className={className}
         backdropClassName="backdrop"
-        onClosed={() => setIsRedeemClicked(false)}
+        onClosed={() => {
+          resetRedeem();
+          setIsRedeemClicked(false);
+        }}
         ref={modalRef}
-        // modalTransition={{ timeout: 700 }} // customize the transition duration here
       >
         <ModalHeader
           toggle={toggle}
@@ -107,8 +215,6 @@ const RedeemModal = (props) => {
         <ModalBody style={{ border: "none" }}>
           {/* <img src={imageSrc} alt={title} width="100%" /> */}
           <div style={{ borderRadius: "10px" }}>
-            {/* {console.log("The Modals Image: ", imageSrc)} */}
-            {/* {console.log("The Modals Image: ", imageSrc === undefined)} */}
             <img
               src={
                 imageSrc !== undefined
@@ -145,51 +251,17 @@ const RedeemModal = (props) => {
               </h5>
             </div>
           </div>
-          {/* {isDescriptionVisible && <p>{description}</p>} */}
+
           {isDescriptionVisible && (
             <p style={{ wordWrap: "break-word" }}>{description}</p>
           )}
         </ModalBody>
-        <ModalFooter style={{ border: "none" }}>
+        <ModalFooter style={{ border: "none", paddingTop: 0 }}>
           {!isRedeemClicked ? (
             <Button
               color="warning"
               style={{ fontSize: "16px" }}
-              onClick={() => {
-                const modal = document.querySelector(".modal.fade.show");
-                handleRedeemClick();
-                modal.style.overflow = "auto";
-                if (typeof modal.scrollTo === "function") {
-                  console.log("Modal has the scrollTo method");
-                  console.log(String(modal.scrollTo));
-                } else {
-                  console.log("Modal does not have the scrollTo method");
-                }
-                // scrollElementDown(modal, 2000);
-                // console.log("1. Modal Ref: ", modalRef);
-                // console.log("2. Modal Element Ref: ", modalRef.current);
-                // console.log(
-                //   "3. Modal Element Ref: ",
-                //   modalRef.current._element
-                // );
-                // console.log("4. Modal Raw Ref: ", modal);
-                // console.log("=====================================");
-                // console.log();
-                // console.log("1) => ", isScrollable(modalRef));
-                // console.log("2) => ", isScrollable(modalRef.current));
-                // console.log("3) => ", isScrollable(modalRef.current._element));
-                // console.log("4) => ", isScrollable(modal));
-                // modalRef.current._element.scrollTo(0, 50000);
-                // modalRef.current.scrollTo(0, 500);
-                // modal.scrollTo(0, 50000);
-                setTimeout(() => {
-                  modal.scrollTo({
-                    top: 500,
-                    behavior: "smooth",
-                  });
-                }, 500);
-                return;
-              }}
+              onClick={handleRedeemClick}
             >
               Redeem
             </Button>
@@ -198,7 +270,8 @@ const RedeemModal = (props) => {
               isRedeemClicked={isRedeemClicked}
               setIsRedeemClicked={setIsRedeemClicked}
               cb={onRedeem}
-              didTxFinish={didTxFinish}
+              txStatus={txStatus}
+              toggleModal={toggle}
             />
           )}
         </ModalFooter>

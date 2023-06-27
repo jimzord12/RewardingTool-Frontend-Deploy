@@ -16,6 +16,7 @@
 
 */
 import React, { useState } from "react";
+import { Container } from "reactstrap";
 
 // core components
 import Navbar from "components/Navbars/ExamplesNavbar.js";
@@ -25,6 +26,9 @@ import CardsSection from "components/custom/ProductSection/CardsSection.js";
 import Footer from "components/Footer/Footer.js";
 // import BaseModal from "components/custom/MyModals/BaseModal.js";
 import RedeemModal from "components/custom/MyModals/RedeemModal.js";
+import { ThreeCircles } from "react-loader-spinner";
+
+import { useGlobalContext } from "contexts/GlobalContextProvider.js";
 
 import {
   acropolis,
@@ -53,7 +57,7 @@ const testing_items = [
     title: "Crete's Famous Cheese",
     description: "This is the description for Book 1.",
     image: greek_feta,
-    price: 13.5 + " MGS",
+    price: 13.5,
     amount: 23,
     location: "Crete",
   },
@@ -62,7 +66,7 @@ const testing_items = [
     title: " Mykono's Traditional Sausage",
     description: "This is a wondeful description for this prodect.",
     image: loukaniko,
-    price: 25.0 + " MGS",
+    price: 25.0,
     amount: 11,
     location: "Mykonos",
   },
@@ -71,7 +75,7 @@ const testing_items = [
     title: "Acropolis Tickets",
     description: "This is a wondeful description for this prodect.",
     image: acropolis,
-    price: 28.6 + " MGS",
+    price: 28.6,
     amount: 5,
     location: "N/A",
   },
@@ -80,7 +84,7 @@ const testing_items = [
     title: "Guided Tour",
     description: "This is a wondeful description for this prodect.",
     image: guided_tour,
-    price: 33.2 + " MGS",
+    price: 33.2,
     amount: 36,
     location: "Tinos",
   },
@@ -89,7 +93,7 @@ const testing_items = [
     title: "In-Game Gold",
     description: "This is a wondeful description for this prodect.",
     image: convert,
-    price: 10.0 + " MGS",
+    price: 10.0,
     amount: "Infinite",
     location: "N/A",
   },
@@ -98,7 +102,7 @@ const testing_items = [
     title: "Hotel Accommodation",
     description: "This is a wondeful description for this prodect.",
     image: hotel,
-    price: 127.5 + " MGS",
+    price: 127.5,
     amount: 3,
     location: "Sikelia",
   },
@@ -107,11 +111,70 @@ const testing_items = [
 export default function RewardsPage() {
   const [modalState, setModal] = useState(false);
   const [selectedReward, setSelectedReward] = useState(null);
-  const [didTxFinish, setDidTxFinish] = useState("not started");
+  const [txStatus, setTxStatus] = useState({
+    hash: null,
+    status: "not started",
+    success: null,
+  });
 
-  const handleRedeemReward = () => {
-    setDidTxFinish("waiting confimation");
+  const { userData, callContractFn, getRewards, rewards, setRewards } =
+    useGlobalContext();
+
+  const resetRedeem = () => {
+    setTxStatus({
+      hash: null,
+      status: "not started",
+      success: null,
+    });
+  };
+
+  const handleRedeemReward = async () => {
+    console.log("The Select Reward is: ", selectedReward);
+    console.log("The Select Reward's ID is: ", selectedReward.id);
+    if (selectedReward === null)
+      return console.error("💎 You must select a reward first!");
     // 1. Call the "productClaimer" => contract.productClaimer()
+    try {
+      // const tx = await callContractFn("productClaimer", selectedReward.id);
+      setTxStatus((prev) => {
+        return {
+          ...prev,
+          status: "waiting confirmation",
+        };
+      });
+      const tx = await callContractFn(
+        "addPoints",
+        "forum",
+        "CommentSubmission"
+      );
+      setTxStatus((prev) => {
+        return {
+          ...prev,
+          hash: tx.hash,
+        };
+      });
+      console.log("The Tx Hash: ", tx.hash);
+      console.log("Wating to be confirmed... ");
+      await tx.wait();
+      console.log("✅ Tx got Confirmed! ");
+      setTxStatus((prev) => {
+        return {
+          ...prev,
+          status: "completed",
+          success: true,
+        };
+      });
+    } catch (error) {
+      console.log("⛔ Tx got Rejected 😓! ");
+      console.log("⛔ Tx Error: ", error);
+      setTxStatus((prev) => {
+        return {
+          ...prev,
+          status: "completed",
+          success: false,
+        };
+      });
+    }
   };
 
   React.useEffect(() => {
@@ -121,6 +184,20 @@ export default function RewardsPage() {
       document.body.classList.toggle("index-page");
     };
   }, []);
+
+  React.useEffect(() => {
+    if (rewards.length === 0) getRewards();
+
+    // For Testing:
+    const testTimerID = setTimeout(() => {
+      setRewards(testing_items);
+    }, 5000);
+
+    return () => {
+      clearTimeout(testTimerID);
+    };
+  }, [getRewards, rewards.length, setRewards]);
+
   return (
     <>
       {/* {console.log("Modal's State: ", modalState)} */}
@@ -159,16 +236,41 @@ export default function RewardsPage() {
             shopName="My Shop"
             description={selectedReward?.description}
             isDescriptionVisible={true}
-            didTxFinish={didTxFinish}
-            onRedeem={() => console.log("Redeem clicked")}
+            txStatus={txStatus}
+            onRedeem={handleRedeemReward}
+            resetRedeem={resetRedeem}
+            userData={userData}
           />
           <CarouselSection />
           {/* <JavaScript /> */}
-          <CardsSection
-            items={testing_items}
-            setModal={setModal}
-            setSelectedReward={setSelectedReward}
-          />
+          {rewards.length > 0 ? (
+            <CardsSection
+              items={testing_items}
+              setModal={setModal}
+              setSelectedReward={setSelectedReward}
+            />
+          ) : (
+            <Container>
+              <h4>Retrieving Available Rewards...</h4>
+              <h4>
+                If the loading takes too much time, try refreshing the page
+              </h4>
+              <div style={{ marginBottom: 80, marginTop: 64 }}>
+                <ThreeCircles
+                  height="150"
+                  width="150"
+                  color="#4fa94d"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                  visible={true}
+                  ariaLabel="three-circles-rotating"
+                  outerCircleColor="yellow"
+                  innerCircleColor="orange"
+                  middleCircleColor="red"
+                />
+              </div>
+            </Container>
+          )}
           {/* <NucleoIcons /> */}
           {/* <Signup /> */}
           {/* <Examples /> */}

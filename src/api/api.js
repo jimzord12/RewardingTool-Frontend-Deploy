@@ -1,4 +1,4 @@
-import axios from "./config.js";
+import axios, { axiosOracle } from "./config.js";
 
 export async function handleAccountCreation(data) {
   console.log("handleAccountCreation: ", data);
@@ -22,3 +22,14 @@ export async function userAuth(data) {
     throw error;
   }
 }
+
+// export async function getNonce() {
+//   try {
+//     const response = await axiosOracle.get("/big-random-number");
+//     const nonce = response.data.randomBigNumber;
+//     return nonce;
+//   } catch (error) {
+//     console.error("⛔ (Express Oracle)Failed to fetch nonce:", error);
+//     return null;
+//   }
+// }
