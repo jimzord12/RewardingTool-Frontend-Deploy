@@ -120,6 +120,8 @@ export default function ExamplesNavbar() {
     window.addEventListener("scroll", changeColor);
 
     async function getTokens() {
+      console.log("***********************************************");
+      console.log("Calling Contract (ViewTOkens) from [Navbar]");
       const _userTokens = await callContractFn("viewYourPoints");
       const userTokens_ = _userTokens.toString().slice(0, -15);
       const _userTokens_ = (parseInt(userTokens_) / 1000).toFixed(2);
@@ -129,7 +131,7 @@ export default function ExamplesNavbar() {
         toast.error(
           <CustomToast
             text={`You must add the MGS Tokens into your Wallet, manually.`}
-            link={"https://www.youtube.com/watch?v=LBBkBsr5A88"}
+            link={"This is a link to a 1min Video!"}
           />,
           {
             position: "top-center",
@@ -144,7 +146,7 @@ export default function ExamplesNavbar() {
         );
       }
 
-      console.log("User's Tokens: ", (parseInt(userTokens) / 1000).toFixed(2));
+      console.log("(NavBar - useEffect) User's Tokens: ", _userTokens_);
       setUserData((prev) => {
         return { ...prev, tokens: userTokens };
         // return { ...prev, tokens: ethers.bigNumber.toNumber(userTokens) };
@@ -229,7 +231,7 @@ export default function ExamplesNavbar() {
 
   return (
     <Navbar className={"fixed-top " + color} color-on-scroll="100" expand="lg">
-      <Container>
+      <Container style={{}}>
         {/* <ConnectModal /> */}
         <div className="navbar-translate">
           <NavbarBrand to="/" id="navbar-brand" tag={Link}>
@@ -250,7 +252,7 @@ export default function ExamplesNavbar() {
           </button>
         </div>
         <Collapse
-          className={"justify-content-end " + collapseOut}
+          className={"justify-content-around " + collapseOut}
           navbar
           isOpen={collapseOpen}
           onExiting={onCollapseExiting}
@@ -260,7 +262,7 @@ export default function ExamplesNavbar() {
             <Row>
               <Col className="collapse-brand" xs="6">
                 <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                  BLK•React
+                  GENERA•Rewarding Tool
                 </a>
               </Col>
               <Col className="collapse-close text-right" xs="6">
@@ -275,42 +277,42 @@ export default function ExamplesNavbar() {
             </Row>
           </div>
           <Nav navbar>
-            <NavItem className="p-0">
-              <NavLink
-                data-placement="bottom"
-                href="https://twitter.com/CreativeTim"
-                rel="noopener noreferrer"
-                target="_blank"
-                title="Follow us on Twitter"
-              >
-                <i className="fab fa-twitter" />
-                <p className="d-lg-none d-xl-none">Twitter</p>
-              </NavLink>
-            </NavItem>
-            <NavItem className="p-0">
-              <NavLink
-                data-placement="bottom"
-                href="https://www.facebook.com/CreativeTim"
-                rel="noopener noreferrer"
-                target="_blank"
-                title="Like us on Facebook"
-              >
-                <i className="fab fa-facebook-square" />
-                <p className="d-lg-none d-xl-none">Facebook</p>
-              </NavLink>
-            </NavItem>
-            <NavItem className="p-0">
-              <NavLink
-                data-placement="bottom"
-                href="https://www.instagram.com/CreativeTimOfficial"
-                rel="noopener noreferrer"
-                target="_blank"
-                title="Follow us on Instagram"
-              >
-                <i className="fab fa-instagram" />
-                <p className="d-lg-none d-xl-none">Instagram</p>
-              </NavLink>
-            </NavItem>
+            {/* <NavItem className="p-0">
+                <NavLink
+                  data-placement="bottom"
+                  href="https://twitter.com/CreativeTim"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  title="Follow us on Twitter"
+                >
+                  <i className="fab fa-twitter" />
+                  <p className="d-lg-none d-xl-none">Twitter</p>
+                </NavLink>
+              </NavItem>
+              <NavItem className="p-0">
+                <NavLink
+                  data-placement="bottom"
+                  href="https://www.facebook.com/CreativeTim"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  title="Like us on Facebook"
+                >
+                  <i className="fab fa-facebook-square" />
+                  <p className="d-lg-none d-xl-none">Facebook</p>
+                </NavLink>
+              </NavItem>
+              <NavItem className="p-0">
+                <NavLink
+                  data-placement="bottom"
+                  href="https://www.instagram.com/CreativeTimOfficial"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  title="Follow us on Instagram"
+                >
+                  <i className="fab fa-instagram" />
+                  <p className="d-lg-none d-xl-none">Instagram</p>
+                </NavLink>
+              </NavItem> */}
 
             {/* If User is on the <Logic Page>, Do not show the <Login> Button AND is NOT Logged In
             {!location.pathname.includes("login") && !userData.isLoggedIn && (
@@ -325,22 +327,22 @@ export default function ExamplesNavbar() {
                 </Button>
               </NavItem>
             )} */}
-
-            {/* {!isAuthenticated && ( */}
-            <NavItem className="p-0">
-              <Button
-                className="genera-login-singup-btn"
-                color="success"
-                target="_blank"
-                onClick={() => signMessage()}
-              >
-                <i className="tim-icons icon-key-25" /> Log In
-              </Button>
-            </NavItem>
-            {/* )} */}
+            {/* <div style={{ display: "flex" }}> */}
+            {!isAuthenticated && (
+              <NavItem className="">
+                <Button
+                  className="genera-login-singup-btn"
+                  color="success"
+                  target="_blank"
+                  onClick={() => signMessage()}
+                >
+                  <i className="tim-icons icon-key-25" /> Log In
+                </Button>
+              </NavItem>
+            )}
 
             {/* If User is on the <Register Page?, Do not show the <Register> Button AND is NOT Logged In */}
-            {!location.pathname.includes("register") && (
+            {!location.pathname.includes("register") && !isAuthenticated && (
               // {true && (
               <NavItem>
                 <Button
@@ -372,11 +374,23 @@ export default function ExamplesNavbar() {
                         console.log("The Current User's Data: ", userData)
                       }
                     >
-                      <div>
-                        <i className="fa fa-user" /> {userData.name}
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          gap: 6,
+                        }}
+                      >
+                        <i className="fa fa-user hide-icons" /> {userData.name}
                       </div>
-                      <div>
-                        <i className="icon tim-icons icon-coins" />{" "}
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          gap: 6,
+                        }}
+                      >
+                        <i className="icon tim-icons icon-coins hide-icons" />{" "}
                         {userData.tokens}
                       </div>
                     </div>
@@ -391,9 +405,7 @@ export default function ExamplesNavbar() {
                       onClick={handleValidation}
                     >
                       <div className={"validate-reward"}>
-                        <div>
-                          <i className="icon tim-icons icon-check-2" /> Validate
-                        </div>
+                        <div>Validate</div>
                       </div>
                     </LoadingButtonInfo>
                   </NavItem>
@@ -402,10 +414,9 @@ export default function ExamplesNavbar() {
             )}
 
             {/* ************************************************************************ */}
-
             <NavItem>
               <Button
-                className={`genera-login-singup-btn ${
+                className={`genera-login-singup-btn nav-bar-connect-btn ${
                   hasProvider ? "" : "wobble-hor-bottom"
                 }`}
                 color="warning"
@@ -434,18 +445,26 @@ export default function ExamplesNavbar() {
                   }
                 }}
               >
-                <i className="tim-icons icon-wallet-43" />{" "}
-                {/* 
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                  }}
+                >
+                  <i className="tim-icons icon-wallet-43 hide-icons" />{" "}
+                  {/* 
                   1. Checkes if User is connected by checking if the wallet has an chainId property with any value
                   2. If this fails, checks if the user possess a wallet in general 
                 */}
-                {wallet.chainId !== ""
-                  ? "Connected ✔"
-                  : hasProvider
-                  ? "Connect"
-                  : "No Wallet 😑"}
+                  {wallet.chainId !== ""
+                    ? "Connected ✔"
+                    : hasProvider
+                    ? "Connect"
+                    : "No Wallet 😑"}
+                </div>
               </Button>
             </NavItem>
+            {/* </div> */}
           </Nav>
         </Collapse>
       </Container>

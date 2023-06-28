@@ -261,7 +261,7 @@ export const GlobalContextProvider = ({ children }) => {
         contract.removeAllListeners("ProductClaimed");
       }
     };
-  }, [hasMetaMaskRun, wallet.chainId, userData.tokens, contract]);
+  }, [hasMetaMaskRun, wallet.chainId, contract]);
 
   async function fetchServerData(action, ...args) {
     try {

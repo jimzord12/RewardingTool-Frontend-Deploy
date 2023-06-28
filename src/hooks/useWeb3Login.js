@@ -38,14 +38,16 @@ export function useWeb3Login() {
   useEffect(() => {
     async function fetchUserData() {
       try {
-        const _username = await callContractFn("users", userData.wallet);
-        console.log(_username);
-        const _tokens = await callContractFn("viewYourPoints");
-        const userTokens_ = _tokens.toString().slice(0, -15);
-        const _userTokens_ = (parseInt(userTokens_) / 1000).toFixed(2);
-        const userTokens = isNaN(_userTokens_)
-          ? "Can't find MGS"
-          : _userTokens_;
+        const _userObj = await callContractFn("users", userData.wallet);
+        console.log(_userObj);
+        // console.log("***********************************************");
+        // console.log("Calling Contract (ViewTOkens) from [Web3Login]");
+        // const _tokens = await callContractFn("viewYourPoints");
+        // const userTokens_ = _tokens.toString().slice(0, -15);
+        // const _userTokens_ = (parseInt(userTokens_) / 1000).toFixed(2);
+        // const userTokens = isNaN(_userTokens_)
+        // ? "Can't find MGS"
+        // : _userTokens_;
 
         const _isManager = await callContractFn(
           "checkManagerRole",
@@ -64,8 +66,8 @@ export function useWeb3Login() {
         setUserData((prev) => {
           return {
             ...prev,
-            name: _username[2],
-            tokens: (parseInt(userTokens) / 1000).toFixed(2),
+            name: _userObj[2],
+            // tokens: (parseInt(userTokens) / 1000).toFixed(2),
             // pendingRewards: _pendingRewards,
             accessLevel: _isManager ? "manager" : _isOwner ? "owner" : "",
           };
