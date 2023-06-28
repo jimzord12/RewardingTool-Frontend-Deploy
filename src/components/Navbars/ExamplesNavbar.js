@@ -18,7 +18,8 @@
 */
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ethers } from "ethers";
+// import { ethers } from "ethers";
+import { toast } from "react-toastify";
 
 import LoadingButtonInfo from "components/custom/LoadingButton/LoadingButtonInfo.js";
 
@@ -45,6 +46,41 @@ import {
 } from "reactstrap";
 
 // import ConnectModal from "../custom/ConnectModal/ConnectModal.js";
+const CustomToast = ({ text, link }) => (
+  <div
+    style={{
+      background: "#yourColor",
+      color: "#otherColor",
+    }}
+  >
+    {text}
+    {link && (
+      <>
+        <br />
+        <br />
+
+        <div
+          style={{
+            textAlign: "center",
+            border: "1.5px solid black",
+            borderRadius: 6,
+            backgroundColor: "yellow",
+            padding: 6,
+          }}
+        >
+          <a
+            href={link}
+            style={{ color: "blue" }}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Watch this 1min Video!
+          </a>
+        </div>
+      </>
+    )}
+  </div>
+);
 
 export default function ExamplesNavbar() {
   const [collapseOpen, setCollapseOpen] = React.useState(false);
@@ -84,19 +120,39 @@ export default function ExamplesNavbar() {
     window.addEventListener("scroll", changeColor);
 
     async function getTokens() {
-      const userTokens = await callContractFn("viewYourPoints");
-      console.log("User's Tokens: ", userTokens.toNumber());
-      console.log("User's Tokens: ", userTokens);
-      // console.log("User's Tokens: ", ethers.bigNumber.toNumber(userTokens));
+      const _userTokens = await callContractFn("viewYourPoints");
+      const userTokens_ = _userTokens.toString().slice(0, -15);
+      const _userTokens_ = (parseInt(userTokens_) / 1000).toFixed(2);
+      const userTokens = isNaN(_userTokens_) ? "Can't find MGS" : _userTokens_;
+
+      if (isNaN(_userTokens_)) {
+        toast.error(
+          <CustomToast
+            text={`You must add the MGS Tokens into your Wallet, manually.`}
+            link={"https://www.youtube.com/watch?v=LBBkBsr5A88"}
+          />,
+          {
+            position: "top-center",
+            autoClose: false,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          }
+        );
+      }
+
+      console.log("User's Tokens: ", (parseInt(userTokens) / 1000).toFixed(2));
       setUserData((prev) => {
-        return { ...prev, tokens: userTokens.toNumber() };
+        return { ...prev, tokens: userTokens };
         // return { ...prev, tokens: ethers.bigNumber.toNumber(userTokens) };
       });
     }
 
     // if (userData.name !== undefined && wallet.chainId === 20231) getTokens();
     if (userData.name !== undefined && wallet.chainId === 31337) getTokens();
-
 
     return function cleanup() {
       window.removeEventListener("scroll", changeColor); //123456678asdhu
@@ -269,35 +325,36 @@ export default function ExamplesNavbar() {
                 </Button>
               </NavItem>
             )} */}
-            {!isAuthenticated && (
+
+            {/* {!isAuthenticated && ( */}
+            <NavItem className="p-0">
+              <Button
+                className="genera-login-singup-btn"
+                color="success"
+                target="_blank"
+                onClick={() => signMessage()}
+              >
+                <i className="tim-icons icon-key-25" /> Log In
+              </Button>
+            </NavItem>
+            {/* )} */}
+
+            {/* If User is on the <Register Page?, Do not show the <Register> Button AND is NOT Logged In */}
+            {!location.pathname.includes("register") && (
+              // {true && (
               <NavItem>
                 <Button
-                  className="nav-link d-none d-lg-block genera-login-singup-btn"
-                  color="success"
+                  className="genera-login-singup-btn"
+                  color="primary"
                   target="_blank"
-                  onClick={() => signMessage()}
+                  onClick={() => {
+                    navigate("/register-page");
+                  }}
                 >
-                  <i className="tim-icons icon-key-25" /> Log In
+                  <i className="tim-icons icon-spaceship" /> Sign Up!
                 </Button>
               </NavItem>
             )}
-
-            {/* If User is on the <Register Page?, Do not show the <Register> Button AND is NOT Logged In */}
-            {!location.pathname.includes("register") &&
-              !userData.isLoggedIn && (
-                <NavItem>
-                  <Button
-                    className="nav-link d-none d-lg-block genera-login-singup-btn"
-                    color="primary"
-                    target="_blank"
-                    onClick={() => {
-                      navigate("/register-page");
-                    }}
-                  >
-                    <i className="tim-icons icon-spaceship" /> Sign Up!
-                  </Button>
-                </NavItem>
-              )}
 
             {/* ************************************************************************ */}
 
@@ -311,6 +368,9 @@ export default function ExamplesNavbar() {
                       className={`user-details ${
                         tokenEventAnimate ? "vibrate-3" : ""
                       }`}
+                      onClick={() =>
+                        console.log("The Current User's Data: ", userData)
+                      }
                     >
                       <div>
                         <i className="fa fa-user" /> {userData.name}
@@ -345,12 +405,34 @@ export default function ExamplesNavbar() {
 
             <NavItem>
               <Button
-                className={`nav-link d-none d-lg-block genera-login-singup-btn ${
+                className={`genera-login-singup-btn ${
                   hasProvider ? "" : "wobble-hor-bottom"
                 }`}
                 color="warning"
                 target="_blank"
-                onClick={connectMetaMask}
+                onClick={() => {
+                  if (isAuthenticated) {
+                    toast(
+                      <CustomToast
+                        text={
+                          "If you want to Disconnect, you can do it from your Wallet"
+                        }
+                      />,
+                      {
+                        position: "top-center",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                      }
+                    );
+                  } else {
+                    connectMetaMask();
+                  }
+                }}
               >
                 <i className="tim-icons icon-wallet-43" />{" "}
                 {/* 

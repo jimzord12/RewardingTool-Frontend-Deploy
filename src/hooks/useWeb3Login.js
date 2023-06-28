@@ -41,12 +41,21 @@ export function useWeb3Login() {
         const _username = await callContractFn("users", userData.wallet);
         console.log(_username);
         const _tokens = await callContractFn("viewYourPoints");
-        const slicedTokens = _tokens.toString().slice(0, -15);
+        const userTokens_ = _tokens.toString().slice(0, -15);
+        const _userTokens_ = (parseInt(userTokens_) / 1000).toFixed(2);
+        const userTokens = isNaN(_userTokens_)
+          ? "Can't find MGS"
+          : _userTokens_;
 
-        // const _isManager = await callContractFn(
-        //   "checkManagerRole",
-        //   userData.wallet
-        // );
+        const _isManager = await callContractFn(
+          "checkManagerRole",
+          userData.wallet
+        );
+
+        const _isOwner = await callContractFn(
+          "checkOwnerRole",
+          userData.wallet
+        );
         // const _pendingRewards = await callContractFn(
         //   "getUserProducts",
         //   userData.wallet
@@ -56,9 +65,9 @@ export function useWeb3Login() {
           return {
             ...prev,
             name: _username[2],
-            tokens: (parseInt(slicedTokens) / 1000).toFixed(2),
+            tokens: (parseInt(userTokens) / 1000).toFixed(2),
             // pendingRewards: _pendingRewards,
-            // accessLevel: _isManager,
+            accessLevel: _isManager ? "manager" : _isOwner ? "owner" : "",
           };
         });
       } catch (error) {
@@ -94,7 +103,7 @@ export function useWeb3Login() {
     } // Is on Genera Network
 
     const nonce = await getNonce();
-    const message = "This is a random number: " + nonce;
+    const message = `This is your generated random verification number: ${nonce}.\n \nNo action is required from your side concerning the random number. It is required for the authentication operation.\n \nThis message is required to prove that you are the true owner of this wallet.\n \nPlease click "Sign" to proceed.`;
 
     console.log(provider);
     if (nonce && hasProvider) {

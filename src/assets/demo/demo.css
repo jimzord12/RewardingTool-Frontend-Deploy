@@ -844,11 +844,26 @@ input:-webkit-autofill:active {
   .info-data {
     text-align: left;
   }
+
+  .navbar-nav {
+    align-items: center;
+  }
+
+  .navbar-nav > li > button {
+    margin-top: 0;
+  }
 }
 
 @media only screen and (max-width: 991px) {
   .carousel-container {
     height: 900px;
+  }
+
+  /* .navbar-nav {
+  } */
+
+  .navbar-nav > .nav-item > button {
+    margin-top: 16px;
   }
 }
 
