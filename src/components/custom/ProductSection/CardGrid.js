@@ -3,13 +3,13 @@ import { Row, Col } from "reactstrap";
 
 import MyCard from "./Card.js";
 
-function MyGrid({ items, setModal, setSelectedReward }) {
+function CardGrid({ items, setModal, setSelectedReward }) {
   return (
     <Row className="my-grid">
       {items.map((item, index) => (
         <Col
           sm="4"
-          key={index}
+          key={item.id}
           onClick={() => {
             setSelectedReward(item);
             setModal((prev) => !prev);
@@ -22,4 +22,4 @@ function MyGrid({ items, setModal, setSelectedReward }) {
   );
 }
 
-export default MyGrid;
+export default CardGrid;

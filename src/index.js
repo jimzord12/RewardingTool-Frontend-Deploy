@@ -31,6 +31,7 @@ import { GlobalContextProvider } from "./contexts/GlobalContextProvider.js";
 import Index from "views/Index.js";
 import LandingPage from "views/examples/LandingPage.js";
 import RegisterPage from "views/examples/RegisterPage.js";
+import Web3RegisterPage from "views/examples/Web3RegisterPage.js";
 import ProfilePage from "views/examples/ProfilePage.js";
 import RewardsPage from "views/examples/RewardsPage.js";
 import LoginPage from "views/examples/LoginPage.js";
@@ -69,7 +70,8 @@ ReactDOM.render(
             />
             <Route
               path="/register-page"
-              render={(props) => <RegisterPage {...props} />}
+              render={(props) => <Web3RegisterPage {...props} />}
+              // render={(props) => <RegisterPage {...props} />}
             />
             <Route
               path="/login-page"

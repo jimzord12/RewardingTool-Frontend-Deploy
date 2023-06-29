@@ -571,9 +571,9 @@ html {
   scroll-behavior: smooth;
 }
 
-.card {
+/* .card {
   margin-bottom: 20px;
-}
+} */
 
 .card-img-top {
   width: 100%;
@@ -615,6 +615,13 @@ html {
 .product-card:hover {
   box-shadow: 0 0 20px 4px #aa3ed8;
   cursor: pointer;
+}
+
+.disabled-card {
+  filter: grayscale(100%); /* Apply a grayscale filter */
+  pointer-events: none; /* Disable user interactions */
+  opacity: 0.7; /* Optionally, make the element semi-transparent */
+  cursor: not-allowed; /* Optionally, change the cursor to show the element is not interactive */
 }
 
 .product-card-selected {
@@ -872,7 +879,6 @@ input:-webkit-autofill:active {
   .navbar-nav {
     align-items: end;
   }
-
 
   .navbar-nav > .nav-item > button {
     margin-top: 16px;

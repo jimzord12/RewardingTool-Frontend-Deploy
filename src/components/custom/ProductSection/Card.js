@@ -4,7 +4,7 @@ import { Card, CardBody, CardTitle, CardText, CardImg } from "reactstrap";
 function MyCard({ item }) {
   // console.log(item.img);
   return (
-    <Card className="product-card">
+    <Card className={`product-card ${item.isDisabled ? "disabled-card" : ""}`}>
       <CardImg
         top
         className="card-img-top"
@@ -12,7 +12,7 @@ function MyCard({ item }) {
         alt="Card image cap"
       />
       <CardBody>
-        <CardTitle tag="h5">{item.title}</CardTitle>
+        <CardTitle tag="h5">{item.name}</CardTitle>
         <CardText>{item.description}</CardText>
         <div className="info-row">
           <div className="info-title">Price:</div>
@@ -29,7 +29,7 @@ function MyCard({ item }) {
         <div className="info-row">
           <div className="info-title">Amount:</div>
           <div className="info-data text-success">
-            <b>{item.amount}</b>
+            <b>{item.isInfinite ? "inf." : item.amount}</b>
           </div>
         </div>
       </CardBody>

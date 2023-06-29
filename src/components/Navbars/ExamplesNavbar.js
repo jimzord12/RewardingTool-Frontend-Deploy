@@ -28,6 +28,8 @@ import { useNavigation } from "hooks/useNavigation.js";
 import { useMetaMask } from "../../contexts/web3/MetaMaskContextProvider.js";
 import { useGlobalContext } from "contexts/GlobalContextProvider.js";
 import { useWeb3Login } from "hooks/useWeb3Login.js";
+import { copyToClipboard } from "utils/copy2clipboard.js";
+import { loginProcessHandler } from "utils/LoginProcessHandler.js";
 
 import { useLogin } from "hooks/useLogin.js";
 // reactstrap components
@@ -46,7 +48,7 @@ import {
 } from "reactstrap";
 
 // import ConnectModal from "../custom/ConnectModal/ConnectModal.js";
-const CustomToast = ({ text, link }) => (
+const CustomToast = ({ text, text2, text3, link }) => (
   <div
     style={{
       background: "#yourColor",
@@ -77,6 +79,22 @@ const CustomToast = ({ text, link }) => (
             Watch this 1min Video!
           </a>
         </div>
+      </>
+    )}
+
+    {text2 && (
+      <>
+        <br />
+        <br />
+        {text2}
+      </>
+    )}
+
+    {text3 && (
+      <>
+        <br />
+        <br />
+        {text3}
       </>
     )}
   </div>
@@ -119,34 +137,55 @@ export default function ExamplesNavbar() {
   React.useEffect(() => {
     window.addEventListener("scroll", changeColor);
 
-    async function getTokens() {
+    async function _getTokens() {
       console.log("***********************************************");
       console.log("Calling Contract (ViewTOkens) from [Navbar]");
       const _userTokens = await callContractFn("viewYourPoints");
-      const userTokens_ = _userTokens.toString().slice(0, -15);
-      const _userTokens_ = (parseInt(userTokens_) / 1000).toFixed(2);
-      const userTokens = isNaN(_userTokens_) ? "Can't find MGS" : _userTokens_;
+      console.log("1. (RAW) The Manager's MGS Tokens: ", _userTokens);
+      const convertToString = _userTokens.toString();
+      console.log("2. (toString) The Manager's MGS Tokens: ", convertToString);
 
-      if (isNaN(_userTokens_)) {
+      const userTokens_ =
+        convertToString === "0" ? 0 : convertToString.slice(0, -15);
+      console.log("3. (Step #3) The Manager's MGS Tokens: ", userTokens_);
+
+      const _userTokens_ =
+        _userTokens === 0 ? 0 : (parseInt(userTokens_) / 1000).toFixed(2);
+      console.log("4. (Step #4) The Manager's MGS Tokens: ", _userTokens_);
+
+      const userTokens =
+        Number(_userTokens_) === 0 ? "Can't find MGS" : Number(_userTokens_);
+
+      if (
+        Number(_userTokens_) === 0 &&
+        !location.pathname.includes("register")
+      ) {
         toast.error(
           <CustomToast
-            text={`You must add the MGS Tokens into your Wallet, manually.`}
+            text={"You must add the MGS Tokens into your Wallet, manually."}
+            text2={
+              "Important! If you add the MGS Tokens into MetaMask but you don't have an Account, you will still see: (Can't find Tokens)"
+            }
             link={"This is a link to a 1min Video!"}
           />,
           {
             position: "top-center",
             autoClose: false,
             hideProgressBar: false,
-            closeOnClick: true,
+            closeOnClick: false,
             pauseOnHover: true,
             draggable: true,
             progress: undefined,
             theme: "colored",
           }
         );
+
+        await copyToClipboard(
+          "0x5FbDB2315678afecb367f032d93F642f64180aa3 (HardHat)"
+        );
       }
 
-      console.log("(NavBar - useEffect) User's Tokens: ", _userTokens_);
+      console.log("(NavBar - useEffect) User's Tokens: ", userTokens);
       setUserData((prev) => {
         return { ...prev, tokens: userTokens };
         // return { ...prev, tokens: ethers.bigNumber.toNumber(userTokens) };
@@ -154,7 +193,7 @@ export default function ExamplesNavbar() {
     }
 
     // if (userData.name !== undefined && wallet.chainId === 20231) getTokens();
-    if (userData.name !== undefined && wallet.chainId === 31337) getTokens();
+    if (userData.name !== undefined && wallet.chainId === 31337) _getTokens();
 
     return function cleanup() {
       window.removeEventListener("scroll", changeColor); //123456678asdhu
@@ -165,16 +204,6 @@ export default function ExamplesNavbar() {
     if (isAuthenticated) {
       console.log("is user authenticated: ", isAuthenticated);
       console.log("User's Data: ", userData);
-      // setUserData((prev) => {
-      //   return {
-      //     ...prev,
-      //     isLoggedIn: true,
-      //   };
-      // });
-      // console.log("Updated User's Data: ", userData);
-      // setUserData((prev) => {
-      //   return { ...prev, isLoggedIn: true };
-      // });
     }
   }, [isAuthenticated, userData.tokens]);
 
@@ -328,13 +357,19 @@ export default function ExamplesNavbar() {
               </NavItem>
             )} */}
             {/* <div style={{ display: "flex" }}> */}
-            {!isAuthenticated && (
+            {!isAuthenticated && !userData.isLoggedIn && (
               <NavItem className="">
                 <Button
                   className="genera-login-singup-btn"
                   color="success"
                   target="_blank"
-                  onClick={() => signMessage()}
+                  onClick={() => {
+                    if (location.pathname.includes("register")) {
+                      navigate("/rewards-page");
+                    } else {
+                      signMessage();
+                    }
+                  }}
                 >
                   <i className="tim-icons icon-key-25" /> Log In
                 </Button>
@@ -342,21 +377,23 @@ export default function ExamplesNavbar() {
             )}
 
             {/* If User is on the <Register Page?, Do not show the <Register> Button AND is NOT Logged In */}
-            {!location.pathname.includes("register") && !isAuthenticated && (
-              // {true && (
-              <NavItem>
-                <Button
-                  className="genera-login-singup-btn"
-                  color="primary"
-                  target="_blank"
-                  onClick={() => {
-                    navigate("/register-page");
-                  }}
-                >
-                  <i className="tim-icons icon-spaceship" /> Sign Up!
-                </Button>
-              </NavItem>
-            )}
+            {!location.pathname.includes("register") &&
+              (userData.name === undefined ||
+                userData.name === "No Account") && (
+                // {true && (
+                <NavItem>
+                  <Button
+                    className="genera-login-singup-btn"
+                    color="primary"
+                    target="_blank"
+                    onClick={() => {
+                      navigate("/register-page");
+                    }}
+                  >
+                    <i className="tim-icons icon-spaceship" /> Sign Up!
+                  </Button>
+                </NavItem>
+              )}
 
             {/* ************************************************************************ */}
 
@@ -441,7 +478,34 @@ export default function ExamplesNavbar() {
                       }
                     );
                   } else {
-                    connectMetaMask();
+                    const isWeb3Ready = loginProcessHandler(
+                      "connect",
+                      hasProvider,
+                      wallet
+                    );
+                    if (isWeb3Ready) connectMetaMask();
+                    if (
+                      (wallet.chainId !== "") &
+                      (wallet.chainId !== undefined)
+                    ) {
+                      toast(
+                        <CustomToast
+                          text={
+                            "If you want to Disconnect, you can do it from your Wallet"
+                          }
+                        />,
+                        {
+                          position: "top-center",
+                          autoClose: 5000,
+                          hideProgressBar: false,
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          draggable: true,
+                          progress: undefined,
+                          theme: "light",
+                        }
+                      );
+                    }
                   }
                 }}
               >

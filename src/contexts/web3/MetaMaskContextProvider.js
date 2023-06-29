@@ -33,13 +33,31 @@ export const MetaMaskContextProvider = ({ children }) => {
       providedAccounts || (await mm.request({ method: "eth_accounts" }));
 
     if (accounts.length === 0) {
+      console.log("MEtamask context: Not Accounnts 😥");
+
       // If there are no accounts, then the user is disconnected
       setWallet(disconnectedState);
       return null;
     }
 
-    // Retrieving User Balance
+    // Retrieving User Balance in native crypto (ETH)
     const balance = formatBalance(
+      await mm.request({
+        method: "eth_getBalance",
+        params: [accounts[0], "latest"],
+      })
+    );
+
+    // Retrieving User Balance in (MGS)
+    const MGS_balance = formatBalance(
+      await mm.request({
+        method: "eth_getBalance",
+        params: [accounts[0], "latest"],
+      })
+    );
+
+    // Retrieving User Balance in (MGS)
+    const userName = formatBalance(
       await mm.request({
         method: "eth_getBalance",
         params: [accounts[0], "latest"],
@@ -51,6 +69,9 @@ export const MetaMaskContextProvider = ({ children }) => {
         method: "eth_chainId",
       })
     );
+    console.log("MEtamask context: Accounts: ", accounts);
+    console.log("MEtamask context: balance: ", balance);
+    console.log("MEtamask context: chainId: ", chainId);
 
     setWallet({ accounts, balance, chainId });
     return { accounts, balance, chainId };

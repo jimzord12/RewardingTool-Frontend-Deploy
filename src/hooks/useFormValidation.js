@@ -96,7 +96,8 @@ export function useFormValidation() {
       errors.push(error);
     }
     // Check if on correct network
-    if (wallet.chainId !== 20231) {
+    // if (wallet.chainId !== 20231) {
+    if (wallet.chainId !== 31337) {
       const error = { name: "Wallet Network" };
       error.message = "Metamask must be on the GENERA Network";
       errors.push(error);

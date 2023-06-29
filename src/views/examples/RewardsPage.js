@@ -30,6 +30,8 @@ import { ThreeCircles } from "react-loader-spinner";
 
 import { useGlobalContext } from "contexts/GlobalContextProvider.js";
 
+import { hardHatAddress } from "../../web3/constants/index.js";
+
 import {
   acropolis,
   convert,
@@ -117,8 +119,17 @@ export default function RewardsPage() {
     success: null,
   });
 
-  const { userData, callContractFn, getRewards, rewards, setRewards } =
-    useGlobalContext();
+  const {
+    userData,
+    callContractFn,
+    callMGSContractFn,
+    getRewards,
+    rewards,
+    // setRewards,
+    // isProductsLoading,
+    contractInitCompleted,
+    MGSContractInitCompleted,
+  } = useGlobalContext();
 
   const resetRedeem = () => {
     setTxStatus({
@@ -142,11 +153,26 @@ export default function RewardsPage() {
           status: "waiting confirmation",
         };
       });
-      const tx = await callContractFn(
-        "addPoints",
-        "forum",
-        "CommentSubmission"
-      );
+      console.log("Sas9unhda9sda: ", selectedReward.price);
+
+      // Getting Approval from ERC-20 MGS Contract...
+      if (MGSContractInitCompleted) {
+        console.log("Trying TO Approve...");
+        const getApproval_Tx = await callMGSContractFn(
+          "approve",
+          hardHatAddress,
+          selectedReward.price * 100,
+          { nonce: 12 }
+        );
+        console.log("Wating to be approved... ");
+        getApproval_Tx.wait();
+        console.log("✅ Approval was granted!");
+      } else {
+        console.log("⛔ MGS Contract is Intialized yet! Fix that!!!");
+      }
+
+      console.log("Trying TO Claim Reward...");
+      const tx = await callContractFn("productClaimer", selectedReward.id);
       setTxStatus((prev) => {
         return {
           ...prev,
@@ -186,17 +212,18 @@ export default function RewardsPage() {
   }, []);
 
   React.useEffect(() => {
+    if (!contractInitCompleted) return;
     if (rewards.length === 0) getRewards();
 
     // For Testing:
-    const testTimerID = setTimeout(() => {
-      setRewards(testing_items);
-    }, 5000);
+    // const testTimerID = setTimeout(() => {
+    //   setRewards(testing_items);
+    // }, 5000);
 
-    return () => {
-      clearTimeout(testTimerID);
-    };
-  }, [getRewards, rewards.length, setRewards]);
+    // return () => {
+    //   clearTimeout(testTimerID);
+    // };
+  }, [rewards.length, contractInitCompleted]);
 
   return (
     <>
@@ -228,7 +255,7 @@ export default function RewardsPage() {
           <RedeemModal
             isOpen={modalState}
             setModal={setModal}
-            title={selectedReward?.title}
+            title={selectedReward?.name}
             imageSrc={selectedReward?.image}
             price={selectedReward?.price}
             status="Available"
@@ -245,7 +272,7 @@ export default function RewardsPage() {
           {/* <JavaScript /> */}
           {rewards.length > 0 ? (
             <CardsSection
-              items={testing_items}
+              items={rewards}
               setModal={setModal}
               setSelectedReward={setSelectedReward}
             />

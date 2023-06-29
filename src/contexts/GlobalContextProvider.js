@@ -6,9 +6,19 @@ import { Triangle } from "react-loader-spinner";
 import { useMetaMask } from "./web3/MetaMaskContextProvider";
 import useContract from "hooks/useContract";
 // import { contractAddress, abi } from "../web3/constants/index";
-import { hardHatAddress, hardHatAbi } from "../web3/constants/index";
+import {
+  hardHatAddress,
+  hardHatAbi,
+  MGSAddress,
+  MGS_ABI,
+} from "../web3/constants/index";
 
 import { ReactComponent as MetamaskIcon } from "../assets/img/genera/metamask.svg";
+
+import { productDetails } from "data/productDetails";
+// import { LogDescription } from "ethers/lib/utils";
+
+import { copyToClipboard } from "utils/copy2clipboard";
 
 const GlobalContext = createContext();
 
@@ -16,8 +26,11 @@ export const GlobalContextProvider = ({ children }) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [contract, setContract] = useState(null);
+  const [MGScontract, setMGSContract] = useState(null);
   const [tokenEventFired, setTokenEventFired] = useState(false);
   const [contractInitCompleted, setContractInitCompleted] = useState(false);
+  const [MGSContractInitCompleted, setMGSContractInitCompleted] =
+    useState(false);
   const [isProductsLoading, setIsProductsLoading] = useState(true);
 
   const [userData, setUserData] = useState({
@@ -65,6 +78,17 @@ export const GlobalContextProvider = ({ children }) => {
     hardHatAbi.abi
   );
 
+  // console.log("1. MGS Contract - Address", MGSAddress);
+  // console.log("2. MGS Contract - ABI", MGS_ABI.abi);
+
+  const { initialize: initializeMGS /* isLoading  */ } = useContract(
+    provider,
+    // contractAddress,
+    // abi
+    MGSAddress,
+    MGS_ABI.abi
+  );
+
   async function updateUserTokens() {
     const userTokens = await contract.viewYourPoints();
     console.log("The new MGS balance: ", userTokens.toNumber());
@@ -74,12 +98,68 @@ export const GlobalContextProvider = ({ children }) => {
     });
   }
 
+  function rewardsConverter(rawRewards) {
+    return rawRewards.map((item) => {
+      return {
+        id: item[0].toNumber(), // Convert BigNumber to JavaScript Number
+        price: item[1].toNumber() / 100, // Convert BigNumber to JavaScript Number
+        amount: item[2],
+        isEmpty: item[3],
+        isInfinite: item[4],
+        isDisabled: item[5],
+        name: item[6],
+        location: item[7],
+        image: productDetails[item[0].toNumber()].image,
+        description: productDetails[item[0].toNumber()].description,
+      };
+    });
+  }
+
   async function getRewards() {
     try {
+      console.log("GlobalCOntext: Trying to  Fetch Rewards...");
+
+      setIsProductsLoading(true);
+
       const rewards = await contract.getAllProducts(); // Returns all an Array containing all products
       setIsProductsLoading(false);
-      setRewards(rewards);
-    } catch (error) {}
+      console.log("GlobalCOntext: <RAW> Rewards Fetched!");
+      console.log(rewards);
+
+      const convertedRewards = rewardsConverter(rewards);
+      setRewards(convertedRewards);
+      console.log("GlobalCOntext: Rewards Fetched!");
+      console.log(convertedRewards);
+    } catch (error) {
+      console.error(
+        "⛔ GlobalContext: Error when getting Rewards getting",
+        error
+      );
+    }
+  }
+
+  async function getTokens() {
+    console.log("***********************************************");
+    console.log("Calling Contract (ViewTOkens) from [Navbar]");
+    const _userTokens = await callContractFn("viewYourPoints");
+    console.log("1. (RAW) The Manager's MGS Tokens: ", _userTokens);
+    const convertToString = _userTokens.toString();
+    console.log("2. (toString) The Manager's MGS Tokens: ", convertToString);
+
+    const userTokens_ =
+      convertToString === "0" ? 0 : convertToString.slice(0, -15);
+    console.log("3. (Step #3) The Manager's MGS Tokens: ", userTokens_);
+
+    const _userTokens_ =
+      userTokens_ === 0 ? 0 : (parseInt(userTokens_) / 1000).toFixed(2);
+    console.log("4. (Step #4) The Manager's MGS Tokens: ", _userTokens_);
+    const userTokens = Number(_userTokens_);
+
+    console.log("(Global - getTokens) User's Tokens: ", userTokens);
+    setUserData((prev) => {
+      return { ...prev, tokens: userTokens };
+      // return { ...prev, tokens: ethers.bigNumber.toNumber(userTokens) };
+    });
   }
 
   async function attachEventListeners() {
@@ -210,6 +290,11 @@ export const GlobalContextProvider = ({ children }) => {
   }
 
   useEffect(() => {
+    console.log("1. From GlobalContext: ", hasMetaMaskRun);
+    console.log("2. From GlobalContext: ", hasProvider);
+    console.log("3. From GlobalContext: ", wallet);
+    console.log("4. From GlobalContext: ", contract);
+
     if (
       hasMetaMaskRun &&
       hasProvider &&
@@ -226,9 +311,19 @@ export const GlobalContextProvider = ({ children }) => {
           setContract(_contract);
           setContractInitCompleted(true);
           console.log(_contract);
-          console.log("4.2 ✅ Contract Instance Completed!");
+          console.log("4.2 ✅ Rewarding Contract Instance Completed!");
           console.log("------------------------------------------");
           console.log("5.1 Adding Event Listeners...");
+
+          console.log("------------------------------------------");
+          console.log("******************************************");
+          console.log("------------------------------------------");
+
+          const _MGScontract = await initializeMGS();
+          setMGSContract(_MGScontract);
+          setMGSContractInitCompleted(true);
+          console.log("4.3 ✅ MGS Contract Instance Completed!");
+          console.log("MGS Contract: ", _MGScontract);
         } catch (error) {
           console.error("💎 From: (GlobalContextProvider), useEffect: ", error);
           console.log(
@@ -307,12 +402,50 @@ export const GlobalContextProvider = ({ children }) => {
     }
   }
 
+  async function callMGSContractFn(fnName, ...args) {
+    console.log("gggggggggsss: ", MGScontract);
+
+    if (typeof fnName !== "string")
+      throw new Error(
+        `💎 MGS - callContractFn: Invalid Arg Type. (${fnName}) must be of type string, however the received argument's type is: (${typeof fnName})`
+      );
+    try {
+      console.log("===============================================");
+
+      console.log("1. Calling: (", fnName, ")");
+      console.log("2. Args: (", ...args, ")");
+      if (MGScontract === null) {
+        console.log("MGS - callContractFn: Contract was NOT initialized");
+        console.log("MGS - callContractFn: Initialzing Contract...");
+        const _MGScontract = await initializeMGS();
+        setMGSContract(_MGScontract);
+        console.log("MGS - callContractFn: ✅ Contract Initialized! ");
+        console.log("MGS - callContractFn: The contract: ", _MGScontract);
+        return args.length === 0
+          ? _MGScontract[fnName]()
+          : _MGScontract[fnName](...args);
+      } else {
+        // console.log("MGS - callContractFn: The contract: ", contract);
+        console.log("===============================================");
+        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
+        return args.length === 0
+          ? MGScontract[fnName]()
+          : MGScontract[fnName](...args);
+      }
+    } catch (err) {
+      setError(err);
+      console.error("💎 Contract Error: ", err);
+    }
+  }
+
   return (
     <GlobalContext.Provider
       value={{
         data,
         error,
         callContractFn,
+        callMGSContractFn,
         fetchServerData,
         userData,
         setUserData,
@@ -320,10 +453,13 @@ export const GlobalContextProvider = ({ children }) => {
         setTokenEventFired,
         contract,
         contractInitCompleted,
+        MGSContractInitCompleted,
         rewards,
         getRewards,
         setRewards,
         updateUserTokens,
+        isProductsLoading,
+        getTokens,
       }}
     >
       {hasMetaMaskRun ? (

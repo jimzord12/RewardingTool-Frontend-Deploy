@@ -4,11 +4,28 @@ import { toast } from "react-toastify";
 
 import "./RedeemModal.styles.css"; // Assuming styles.css is in the same folder
 import { ThreeCircles } from "react-loader-spinner";
+import { useMetaMask } from "contexts/web3/MetaMaskContextProvider";
+import { useGlobalContext } from "contexts/GlobalContextProvider";
 
-const CustomErrorToast = ({ text, closeToast, toastProps }) => (
-  <div style={{ background: "#yourColor", color: "#otherColor" }}>
-    {text}
-    {/* <button onClick={closeToast}>Close</button> */}
+import { loginProcessHandler } from "utils/LoginProcessHandler";
+
+const CustomErrorToast = ({ text1, text2, text3 }) => (
+  <div>
+    {text1}
+    {text2 && (
+      <>
+        <br />
+        <br />
+        {text2}
+      </>
+    )}
+    {text3 && (
+      <>
+        <br />
+        <br />
+        {text3}
+      </>
+    )}
   </div>
 );
 
@@ -123,32 +140,32 @@ const RedeemModal = (props) => {
   //   const [modal, setModal] = useState(isOpen);
   const [isRedeemClicked, setIsRedeemClicked] = useState(false);
 
+  const { hasProvider, wallet } = useMetaMask();
+  const { getRewards, getTokens } = useGlobalContext();
+
   const modalRef = useRef(null);
 
   // Define a function to handle when the "Redeem" button is clicked
   const handleRedeemClick = () => {
     // TODO: Remove this after TESTING!
-    const userData = {
-      name: "Giannis",
-      tokens: 13.5,
-      wallet: "0x3a227614427df0da881CCCf3912795735f95Fb50",
-      accessLevel: "manager",
-      isLoggedIn: true,
-      pendingRewards: [],
-    };
+    // const userData = {
+    //   name: "Giannis",
+    //   tokens: 13.5,
+    //   wallet: "0x3a227614427df0da881CCCf3912795735f95Fb50",
+    //   accessLevel: "manager",
+    //   isLoggedIn: true,
+    //   pendingRewards: [],
+    // };
 
-    if (
-      userData.wallet === undefined ||
-      userData.wallet?.length < 20 ||
-      userData.isLoggedIn === false
-    ) {
+    const isReady = loginProcessHandler("redeem", hasProvider, wallet);
+    if (!isReady) return;
+
+    if (!userData.isLoggedIn) {
       toast.error(
-        <CustomErrorToast
-          text={"You must Connect your Wallet, to continue."}
-        />,
+        <CustomErrorToast text1={`Please login before you proceed`} />,
         {
           position: "top-center",
-          autoClose: 4000,
+          autoClose: 5000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -157,15 +174,48 @@ const RedeemModal = (props) => {
           theme: "dark",
         }
       );
-      return console.log("⛔ Error: You must Connect your Wallet.");
+      console.log("useWeb3Login: ⛔ Please login before you proceed");
+      return;
+    }
+
+    console.log("User's TOkens: ", userData.tokens);
+    console.log("Reward's Price: ", price);
+
+    if (
+      userData.name === "No Account" ||
+      userData.tokens === "Can't find MGS"
+    ) {
+      toast.error(
+        <CustomErrorToast
+          text1={`You either have not created an account yet or...`}
+          text2={"you have not imported the MGS Tokens into your Wallet"}
+        />,
+        {
+          position: "top-center",
+          autoClose: 8000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        }
+      );
+      console.log(
+        "useWeb3Login: ⛔ A Crypto Wallet is required,in order to interact with the site. If just installed or activated one, please refresh the page."
+      );
+
+      return;
     }
 
     if (userData.tokens < price) {
       toast.error(
-        <CustomErrorToast text={"You need more MGS Tokens for this Reward."} />,
+        <CustomErrorToast
+          text1={`You don't possess enough MGS Tokens for his rewards.`}
+        />,
         {
-          position: "top-center",
-          autoClose: 4000,
+          position: "bottom-center",
+          autoClose: 6000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -174,7 +224,10 @@ const RedeemModal = (props) => {
           theme: "dark",
         }
       );
-      return console.log("⛔ Error: You need more MGS Tokens for this Reward.");
+      console.log(
+        "useWeb3Login: ⛔ You don't possess enough MGS Tokens for his rewards."
+      );
+      return;
     }
 
     setIsRedeemClicked(true);
@@ -202,6 +255,10 @@ const RedeemModal = (props) => {
         onClosed={() => {
           resetRedeem();
           setIsRedeemClicked(false);
+          // TODO: Update Rewards
+          getRewards();
+          // TODO: Update User Balance
+          getTokens();
         }}
         ref={modalRef}
       >
