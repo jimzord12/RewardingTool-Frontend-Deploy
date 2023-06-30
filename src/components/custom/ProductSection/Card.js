@@ -4,7 +4,7 @@ import { Card, CardBody, CardTitle, CardText, CardImg } from "reactstrap";
 function MyCard({ item }) {
   // console.log(item.img);
   return (
-    <Card className={`product-card ${item.isDisabled ? "disabled-card" : ""}`}>
+    <Card className={`product-card`}>
       <CardImg
         top
         className="card-img-top"

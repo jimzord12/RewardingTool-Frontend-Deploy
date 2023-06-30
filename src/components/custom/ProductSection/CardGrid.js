@@ -8,6 +8,7 @@ function CardGrid({ items, setModal, setSelectedReward }) {
     <Row className="my-grid">
       {items.map((item, index) => (
         <Col
+          className={`${item.isDisabled ? "disabled-card" : ""}`}
           sm="4"
           key={item.id}
           onClick={() => {

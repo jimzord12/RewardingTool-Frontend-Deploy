@@ -17,6 +17,7 @@
 */
 import React, { useState } from "react";
 import { Container } from "reactstrap";
+import { ethers } from "ethers";
 
 // core components
 import Navbar from "components/Navbars/ExamplesNavbar.js";
@@ -156,20 +157,15 @@ export default function RewardsPage() {
       console.log("Sas9unhda9sda: ", selectedReward.price);
 
       // Getting Approval from ERC-20 MGS Contract...
-      if (MGSContractInitCompleted) {
-        console.log("Trying TO Approve...");
-        const getApproval_Tx = await callMGSContractFn(
-          "approve",
-          hardHatAddress,
-          selectedReward.price * 100,
-          { nonce: 12 }
-        );
-        console.log("Wating to be approved... ");
-        getApproval_Tx.wait();
-        console.log("✅ Approval was granted!");
-      } else {
-        console.log("⛔ MGS Contract is Intialized yet! Fix that!!!");
-      }
+      console.log("Trying TO Approve...");
+      const getApproval_Tx = await callMGSContractFn(
+        "approve",
+        hardHatAddress,
+        ethers.utils.parseEther(selectedReward.price.toString())
+      );
+      console.log("Wating to be approved... ");
+      getApproval_Tx.wait();
+      console.log("✅ Approval was granted!");
 
       console.log("Trying TO Claim Reward...");
       const tx = await callContractFn("productClaimer", selectedReward.id);
