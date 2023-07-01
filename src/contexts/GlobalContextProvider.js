@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import { ethers } from "ethers";
 import { Triangle } from "react-loader-spinner";
 
 import { useMetaMask } from "./web3/MetaMaskContextProvider";
@@ -27,8 +28,11 @@ export const GlobalContextProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [contract, setContract] = useState(null);
   const [MGScontract, setMGSContract] = useState(null);
+  const [contractReadOnly, setContractReadOnly] = useState(null);
   const [tokenEventFired, setTokenEventFired] = useState(false);
   const [contractInitCompleted, setContractInitCompleted] = useState(false);
+  const [contractReadOnlyInitCompleted, setContractReadOnlyInitCompleted] =
+    useState(false);
   const [MGSContractInitCompleted, setMGSContractInitCompleted] =
     useState(false);
   const [isProductsLoading, setIsProductsLoading] = useState(true);
@@ -138,6 +142,29 @@ export const GlobalContextProvider = ({ children }) => {
     }
   }
 
+  async function getRewardsGuestMode() {
+    try {
+      console.log("Global Context: [GUEST MODE]: Trying to  Fetch Rewards...");
+
+      setIsProductsLoading(true);
+
+      const rewards = await contractReadOnly.getAllProducts(); // Returns all an Array containing all products
+      setIsProductsLoading(false);
+      console.log("Global Context: [GUEST MODE]: <RAW> Rewards Fetched!");
+      console.log(rewards);
+
+      const convertedRewards = rewardsConverter(rewards);
+      setRewards(convertedRewards);
+      console.log("Global Context: [GUEST MODE]: Rewards Fetched!");
+      console.log(convertedRewards);
+    } catch (error) {
+      console.error(
+        "⛔ Global Context: [GUEST MODE]: Error when getting Rewards getting",
+        error
+      );
+    }
+  }
+
   async function getTokens() {
     console.log("***********************************************");
     console.log("Calling Contract (ViewTOkens) from [Navbar]");
@@ -240,6 +267,9 @@ export const GlobalContextProvider = ({ children }) => {
           console.log("Product ID: ", _id);
           console.log("User's Name: ", _name);
           console.log(event.blockNumber);
+
+          if (userData.name === _name) {
+          }
         });
         console.log("(6/8) ✅ ProductAquired - Event Attached");
 
@@ -295,6 +325,19 @@ export const GlobalContextProvider = ({ children }) => {
     console.log("3. From GlobalContext: ", wallet);
     console.log("4. From GlobalContext: ", contract);
 
+    if (hasMetaMaskRun && contract === null && wallet.chainId === "") {
+      // The arg is name is: isReadOnly
+      (async () => {
+        const _readOnlyContract = await initialize(true);
+        setContractReadOnly(_readOnlyContract);
+        console.log("4.2.1 ✅ Read-Only Contract Instance Completed!");
+        console.log("------------------------------------------");
+        console.log(_readOnlyContract);
+        console.log("------------------------------------------");
+        setContractReadOnlyInitCompleted(true);
+      })();
+    }
+
     if (
       hasMetaMaskRun &&
       hasProvider &&
@@ -312,6 +355,7 @@ export const GlobalContextProvider = ({ children }) => {
           setContractInitCompleted(true);
           console.log(_contract);
           console.log("4.2 ✅ Rewarding Contract Instance Completed!");
+
           console.log("------------------------------------------");
           console.log("5.1 Adding Event Listeners...");
 
@@ -398,7 +442,7 @@ export const GlobalContextProvider = ({ children }) => {
       }
     } catch (err) {
       setError(err);
-      console.error("💎 Contract Error: ", err);
+      console.error("💎 (Global): Contract Error: ", err);
     }
   }
 
@@ -454,7 +498,9 @@ export const GlobalContextProvider = ({ children }) => {
         contract,
         contractInitCompleted,
         MGSContractInitCompleted,
+        contractReadOnlyInitCompleted,
         rewards,
+        getRewardsGuestMode,
         getRewards,
         setRewards,
         updateUserTokens,

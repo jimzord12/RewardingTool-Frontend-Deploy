@@ -6,14 +6,15 @@ import MyCard from "./Card.js";
 function CardGrid({ items, setModal, setSelectedReward }) {
   return (
     <Row className="my-grid">
+      {console.log("(CardGrid): Items: ", items)}
       {items.map((item, index) => (
         <Col
           className={`${item.isDisabled ? "disabled-card" : ""}`}
           sm="4"
           key={item.id}
           onClick={() => {
-            setSelectedReward(item);
-            setModal((prev) => !prev);
+            if (setModal !== undefined) setModal((prev) => !prev);
+            if (setSelectedReward !== undefined) setSelectedReward(item);
           }}
         >
           <MyCard item={item} />

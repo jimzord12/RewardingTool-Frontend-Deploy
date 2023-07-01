@@ -8,6 +8,7 @@ function PendingCardGridGrid({ items, handleSelectPendingReward }) {
 
   return (
     <Row className="my-grid">
+      {console.log("SKAARAA: ", items)}
       {items.map((item, index) => (
         <Col
           sm="4"

@@ -31,6 +31,7 @@ const CustomErrorToast = ({ text1, text2, text3 }) => (
 
 const SubWindow = (props) => {
   const { setIsRedeemClicked, cb, txStatus, toggleModal } = props;
+  const [secretCode, setSecretCode] = useState(null);
 
   return (
     <div style={{ width: "100%" }}>
@@ -45,9 +46,51 @@ const SubWindow = (props) => {
               textShadow: "1px 1px 2px black",
             }}
           >
-            {txStatus.success
-              ? "The transactions were confirmed!"
-              : "The transactions were rejected 😓"}
+            {txStatus.success ? (
+              <>
+                {"The transactions were confirmed!"}
+                <br />
+                {/* 254084 */}
+                {`Here is your code: `}
+                <br />
+                <span style={{ color: "#E955E2" }}>{secretCode}</span>
+                <br />
+
+                <div
+                  style={{
+                    backgroundColor: "red",
+                    borderRadius: 15,
+                    padding: 12,
+                    marginTop: 8,
+                  }}
+                >
+                  <span
+                    style={{
+                      color: "#fff",
+                      fontSize: 24,
+                      textDecoration: "underline",
+                    }}
+                  >
+                    {"Your must store this code somewhere secure!"}
+                  </span>
+                  <br />
+                  <br />
+
+                  <span
+                    style={{
+                      color: "#fff",
+                      fontSize: 24,
+                      textDecoration: "underline",
+                    }}
+                  >
+                    {"It can not be recovered!"}
+                  </span>
+                </div>
+                <br />
+              </>
+            ) : (
+              "The transactions were rejected 😓"
+            )}
           </p>
           <p style={{ marginBottom: 36 }}>
             By pressing the "OK button again, you will reinitialze the process.
@@ -75,9 +118,14 @@ const SubWindow = (props) => {
         >
           <Button
             color="primary"
-            onClick={() => {
+            onClick={async () => {
               console.log('The "OK" Btn was clicked!');
-              cb();
+              const code = await cb();
+              console.log("********************************************");
+              console.log("(SubWindow): The Secret Code: ", code);
+              console.log("********************************************");
+
+              setSecretCode(code);
             }}
             disabled={txStatus === "waiting confirmation"}
           >
@@ -302,7 +350,7 @@ const RedeemModal = (props) => {
               </h5>
               <h5>
                 Shop:{" "}
-                <a href={gmapsLink}>
+                <a href={gmapsLink} target="_blank" rel="noreferrer">
                   <b>{shopName}</b>
                 </a>
               </h5>

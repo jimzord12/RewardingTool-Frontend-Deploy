@@ -596,31 +596,12 @@
     {
       "inputs": [
         {
-          "internalType": "bytes32",
-          "name": "role",
-          "type": "bytes32"
+          "internalType": "address",
+          "name": "_userAddress",
+          "type": "address"
         }
       ],
-      "name": "getRoleAdmin",
-      "outputs": [
-        {
-          "internalType": "bytes32",
-          "name": "",
-          "type": "bytes32"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_userName",
-          "type": "string"
-        }
-      ],
-      "name": "getUserProducts",
+      "name": "getPendingProducts",
       "outputs": [
         {
           "components": [
@@ -646,7 +627,7 @@
             }
           ],
           "internalType": "struct RewardingTool.PendingProduct[]",
-          "name": "userPendingProducts",
+          "name": "",
           "type": "tuple[]"
         }
       ],
@@ -656,9 +637,28 @@
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "_userAddr",
-          "type": "address"
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getRoleAdmin",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_userName",
+          "type": "string"
         }
       ],
       "name": "getUserProducts",

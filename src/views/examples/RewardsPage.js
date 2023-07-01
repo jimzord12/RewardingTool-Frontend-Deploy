@@ -53,6 +53,7 @@ import NucleoIcons from "views/IndexSections/NucleoIcons.js";
 import Signup from "views/IndexSections/Signup.js";
 import Examples from "views/IndexSections/Examples.js";
 import Download from "views/IndexSections/Download.js";
+import axios from "axios";
 
 const testing_items = [
   {
@@ -119,17 +120,20 @@ export default function RewardsPage() {
     status: "not started",
     success: null,
   });
+  // const [secretCode, setSecretCode] = useState("");
 
   const {
     userData,
     callContractFn,
     callMGSContractFn,
+    getRewardsGuestMode,
     getRewards,
     rewards,
     // setRewards,
     // isProductsLoading,
     contractInitCompleted,
     MGSContractInitCompleted,
+    contractReadOnlyInitCompleted,
   } = useGlobalContext();
 
   const resetRedeem = () => {
@@ -154,7 +158,6 @@ export default function RewardsPage() {
           status: "waiting confirmation",
         };
       });
-      console.log("Sas9unhda9sda: ", selectedReward.price);
 
       // Getting Approval from ERC-20 MGS Contract...
       console.log("Trying TO Approve...");
@@ -167,7 +170,23 @@ export default function RewardsPage() {
       getApproval_Tx.wait();
       console.log("✅ Approval was granted!");
 
-      console.log("Trying TO Claim Reward...");
+      // =====================================================
+
+      console.log("===========================================");
+      console.log("Waiting for Web Server to do its magic...");
+      console.log("===========================================");
+
+      const secretCode = await axios.get("http://localhost:3038/random-number");
+
+      console.log("The Server returned this response: ", secretCode);
+      console.log("===========================================");
+      console.log("This is the 6-Digit Code: ", secretCode.data.randomNumber);
+      console.log("===========================================");
+
+      // =====================================================
+
+      console.log("Trying To Claim Reward...");
+      // setSecretCode(secretCode);
       const tx = await callContractFn("productClaimer", selectedReward.id);
       setTxStatus((prev) => {
         return {
@@ -186,6 +205,10 @@ export default function RewardsPage() {
           success: true,
         };
       });
+
+      return secretCode.data.randomNumber;
+
+      // spacer...
     } catch (error) {
       console.log("⛔ Tx got Rejected 😓! ");
       console.log("⛔ Tx Error: ", error);
@@ -208,6 +231,11 @@ export default function RewardsPage() {
   }, []);
 
   React.useEffect(() => {
+    console.log("From (RewardsPage: User Data: ", userData);
+    if (userData.name === undefined && contractReadOnlyInitCompleted) {
+      console.log("GETTING Rewards from Read-Only Contract...");
+      getRewardsGuestMode();
+    }
     if (!contractInitCompleted) return;
     if (rewards.length === 0) getRewards();
 
@@ -219,7 +247,8 @@ export default function RewardsPage() {
     // return () => {
     //   clearTimeout(testTimerID);
     // };
-  }, [rewards.length, contractInitCompleted]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rewards.length, contractInitCompleted, contractReadOnlyInitCompleted]);
 
   return (
     <>
@@ -263,6 +292,9 @@ export default function RewardsPage() {
             onRedeem={handleRedeemReward}
             resetRedeem={resetRedeem}
             userData={userData}
+            gmapsLink={
+              "https://www.google.com/maps/place/Palazzo+Doglio/@39.2231215,9.1203936,15.85z/data=!4m17!1m7!3m6!1s0x12ddc48d448d3591:0x339674b6e4ab6631!2sSardinia!8m2!3d40.1208752!4d9.0128926!16zL20vMDc4bGs!3m8!1s0x12e7340ae7363ed1:0xe7882a7e8d11b539!5m2!4m1!1i2!8m2!3d39.2135929!4d9.1218507!16s%2Fg%2F11f2r_pq0y?entry=ttu"
+            }
           />
           <CarouselSection />
           {/* <JavaScript /> */}

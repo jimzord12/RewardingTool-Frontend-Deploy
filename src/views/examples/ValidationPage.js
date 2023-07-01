@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 // react plugin used to create charts
 // import { Line } from "react-chartjs-2";
 import classnames from "classnames";
@@ -55,47 +55,46 @@ import Footer from "components/Footer/Footer.js";
 import { useLS } from "../../hooks/useLS.js";
 import LoadingButtonInfo from "components/custom/LoadingButton/LoadingButtonInfo";
 import PendingCardsSection from "components/custom/PendingProducts/PendingCardsSection.js";
-import {
-  acropolis,
-  convert,
-  greek_feta,
-  loukaniko,
-  hotel,
-  guided_tour,
-} from "../../assets/img/genera/index.js";
+import { productDetails as rewardDetails } from "../../data/productDetails.js";
+
+// import {
+//   acropolis,
+//   convert,
+//   greek_feta,
+//   loukaniko,
+//   hotel,
+//   guided_tour,
+// } from "../../assets/img/genera/index.js";
 
 import ValidationModal from "components/custom/MyModals/ValidationModal";
 // import bigChartData from "variables/charts.js";
 
 // import { scrollToSection } from "genera/myJS";
 
-const testing_items = [
-  {
-    id: 1,
-    title: " Mykono's Traditional Sausage",
-    description: "This is a wondeful description for this prodect.",
-    image: loukaniko,
-    price: 25.0 + " MGS",
-    amount: 11,
-    location: "Mykonos",
-  },
+// const testing_items = [
+//   {
+//     id: 1,
+//     title: " Mykono's Traditional Sausage",
+//     description: "This is a wondeful description for this prodect.",
+//     image: loukaniko,
+//     price: 25.0 + " MGS",
+//     amount: 11,
+//     location: "Mykonos",
+//   },
 
-  {
-    id: 4,
-    title: "In-Game Gold",
-    description: "This is a wondeful description for this prodect.",
-    image: convert,
-    price: 10.0 + " MGS",
-    amount: "Infinite",
-    location: "N/A",
-  },
-];
+//   {
+//     id: 4,
+//     title: "In-Game Gold",
+//     description: "This is a wondeful description for this prodect.",
+//     image: convert,
+//     price: 10.0 + " MGS",
+//     amount: "Infinite",
+//     location: "N/A",
+//   },
+// ];
 
 const CustomErrorToast = ({ text, closeToast, toastProps }) => (
-  <div style={{ background: "#yourColor", color: "#otherColor" }}>
-    {text}
-    {/* <button onClick={closeToast}>Close</button> */}
-  </div>
+  <div style={{ background: "#yourColor", color: "#otherColor" }}>{text}</div>
 );
 
 export default function LandingPage() {
@@ -107,7 +106,16 @@ export default function LandingPage() {
     };
   }, []);
 
-  const { userData, setUserData, rewards, getRewards } = useGlobalContext();
+  const {
+    userData,
+    setUserData,
+    rewards,
+    getRewards,
+    callContractFn,
+    contractInitCompleted,
+    contract,
+  } = useGlobalContext();
+
   const [customerRewards, setCustomerRewards] = React.useState([]);
 
   const [userNameFocus, setUserNameFocus] = React.useState(false);
@@ -127,7 +135,7 @@ export default function LandingPage() {
     state: "not started",
     success: undefined,
   });
-  const [isPendingRewardSelected, setIsPendingRewardSelected] = useState(null);
+  const [pendingRewardSelected, setPendingRewardSelected] = useState(null);
   const [rewardsLoading, setRewardsLoading] = React.useState(false);
 
   const [saveUsername, getUsername, removeUsername] = useLS("username", "");
@@ -139,7 +147,7 @@ export default function LandingPage() {
     });
   };
 
-  const handleFetchUserDetails = () => {
+  const handleFetchUserRewards = async () => {
     if (userNameField.value === "") {
       toast.error(<CustomErrorToast text={"You must provide a username"} />, {
         position: "top-center",
@@ -157,41 +165,53 @@ export default function LandingPage() {
     setIsLoading(true);
     try {
       console.log("The Username Field is: ", userNameField.value);
-      console.log(
-        "(Faking): Calling Contract's:  getUserProducts(userNameField)..."
-      );
       // 1. Use the "userNameField" to call: contract.getUserProducts(userNameField.value)
       // 2. When is done...
       // 3. Update userData (Import Global Context)
-      setTimeout(() => {
-        console.log("(Faking): Waiting for the Tx to finish...");
+      console.log("🎁 (ValidationPage): Waiting for the Tx to finish...");
+      const _customerRewardsRAW = await callContractFn(
+        "getUserProducts",
+        String(userNameField.value)
+      );
 
-        setTimeout(() => {
-          console.log("(Faking): ✅ Tx Comfirmed!");
-          setCustomerRewards(testing_items);
-          setIsLoading(false);
-        }, 2000);
+      const convertedRawData = _customerRewardsRAW.map((pendingReward) => {
+        return {
+          pendindRewardID: Number(pendingReward[0]),
+          RewardID: Number(pendingReward[1]),
+          collectionHash: pendingReward[2],
+          isRedeemed: pendingReward[3],
+        };
+      });
 
-        // setUserData((prev) => {
-        //   return { ...prev, pendingRewards: testing_items };
-        // });
-      }, 2000);
+      const finalRewards = convertedRawData.map((convertedReward, index) => {
+        return {
+          id: convertedReward.pendindRewardID,
+          rewardID: convertedReward.RewardID,
+          image: rewardDetails[convertedReward.RewardID].image,
+          description: rewardDetails[convertedReward.RewardID].description,
+          title: rewards[convertedReward.RewardID].name,
+          price: rewards[convertedReward.RewardID].price,
+          amount: convertedReward.amount,
+          location: rewards[convertedReward.RewardID].location,
+          isInfinite: false,
+          collectionHash: convertedReward.collectionHash,
+        };
+      });
+
+      setCustomerRewards(finalRewards);
     } catch (error) {
       console.log("⛔ Contract Error: ", error);
+    } finally {
+      setIsLoading(false);
     }
     // setIsLoading(false);
   };
 
-  const handleRewardValidation = () => {
+  const handleRewardValidation = async () => {
     console.log("================================================");
     console.log("*****  Reward Validation  *****");
     console.log("================================================");
 
-    // TODO: Add an Alert component!
-    console.log("1 >>> : ", userCodeField.value.length);
-    console.log("1.1 >>> : ", !(userCodeField.value.length === 6));
-    console.log("2 >>> : ", userCodeField.value);
-    console.log("2. >>> : ", userCodeField.value === "");
     if (userCodeField.value === "" || !(userCodeField.value.length === 6)) {
       toast.error(
         <CustomErrorToast text={"You must provide a 6-digit Redeem Code"} />,
@@ -206,10 +226,11 @@ export default function LandingPage() {
           theme: "dark",
         }
       );
-      return console.log("⛔ Error: You must provide a 6-digit Redeem Code");
+      return console.log(
+        "⛔ (ValidationPage) Error: You must provide a 6-digit Redeem Code"
+      );
     }
 
-    // TODO: Add an Alert component!
     console.log("3 >>> : ", isNaN(Number(userCodeField.value)));
     if (isNaN(Number(userCodeField.value))) {
       toast.error(
@@ -225,16 +246,15 @@ export default function LandingPage() {
           theme: "dark",
         }
       );
-      return console.log("⛔ Error: You must only use characters from 0-9");
+      return console.log(
+        "⛔ (ValidationPage) Error: You must only use characters from 0-9"
+      );
     }
 
     setIsLoading(true);
 
     try {
       console.log("The Redeem Code Field is: ", userCodeField.value);
-      console.log(
-        "(Faking): Calling Contract's:  redeemerValidator(userNameField)..."
-      );
       setIsOpenOpen(true);
 
       // 1. Use the "userNameField" to call: contract.getUserProducts(userCodeField.value)
@@ -248,44 +268,80 @@ export default function LandingPage() {
         };
       });
 
-      setTimeout(() => {
-        console.log("(Faking): Waiting for the Tx to finish...");
+      console.log("🎁 0.1 (ValidationPage): Username: ", userNameField.value);
+      console.log(
+        "🎁 0.2 (ValidationPage): Selected Reward: ",
+        pendingRewardSelected
+      );
+      console.log("🎁 0.3 (ValidationPage): Code: ", userCodeField.value);
 
-        setTimeout(() => {
-          console.log("(Faking): ✅ Tx Comfirmed!");
-          setModalStatus((prev) => {
-            return {
-              ...prev,
-              state: "completed",
-              success: false,
-              // success: true,
-            };
-          });
-          refetchUserRewards();
-        }, 3000);
+      console.log(
+        "🎁 0.4 (ValidationPage): Selected Reward : ",
+        pendingRewardSelected
+      );
 
-        setIsLoading(false);
-        // setUserData((prev) => {
-        //   return { ...prev, pendingRewards: testing_items };
-        // });
-      }, 3000);
+      const shopHash = await callContractFn(
+        "hashValues",
+        userNameField.value,
+        pendingRewardSelected.rewardID,
+        userCodeField.value
+      );
+
+      console.log("🎁 1. (ValidationPage): Shop Hash: ", shopHash);
+      console.log(
+        "🎁 2. (ValidationPage): Reward Hash: ",
+        pendingRewardSelected.collectionHash
+      );
+
+      console.log(
+        "🎁 2. (ValidationPage): Did hashed match? ",
+        shopHash === pendingRewardSelected.collectionHash
+      );
+
+      const doHashesMatch = shopHash === pendingRewardSelected.collectionHash;
+      // const doHashesMatch = await callContractFn(
+      //   "redeemerValidator",
+      //   userNameField.value,
+      //   userCodeField.value,
+      //   pendingRewardSelected.rewardID
+      // );
+
+      await doHashesMatch.wait();
+
+      setModalStatus((prev) => {
+        return {
+          ...prev,
+          state: "completed",
+          success: doHashesMatch,
+        };
+      });
+
+      if (doHashesMatch) {
+      }
     } catch (error) {
-      console.log("⛔ Contract Error: ", error);
+      console.log("⛔ (ValidationPage) Contract Error: ", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleSelectPendingReward = (reward) => {
-    setIsPendingRewardSelected(reward);
+    setPendingRewardSelected(reward);
     console.log("From ValidationPage: ", reward);
   };
 
   const refetchUserRewards = async () => {
     setRewardsLoading(true);
-    setTimeout(async () => {
-      await getRewards();
-      setRewardsLoading(false);
-    }, 5000);
+    await handleFetchUserRewards();
+    setRewardsLoading(false);
   };
+
+  useEffect(() => {
+    if (contractInitCompleted && userData.name !== undefined) {
+      if (rewards.length === 0) getRewards();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userData.name, contractInitCompleted, rewards.length]);
 
   return (
     <>
@@ -403,80 +459,95 @@ export default function LandingPage() {
           </div>
         </div>
         <div className="content-center">
-          <Container style={{ height: "25vh" }}>
-            <Row className="row-grid justify-content-between align-items-center text-left my-4">
-              <Col
-                className="px-2 py-2"
-                lg="6"
-                sm="6"
+          {userData.name === undefined ? (
+            <Container>
+              <h3
                 style={{
-                  display: "flex",
-                  height: 60,
-                  justifyContent: "center",
+                  color: "#00f2c3",
+                  textAlign: "center",
+                  fontSize: 32,
+                  marginBottom: 64,
                 }}
               >
-                <div style={{ width: "500px" }}>
-                  <InputGroup
-                    className={
-                      // "username-field" +
+                You must first login to proceed
+              </h3>
+            </Container>
+          ) : (
+            <Container style={{ height: "25vh" }}>
+              <Row className="row-grid justify-content-between align-items-center text-left my-4">
+                <Col
+                  className="px-2 py-2"
+                  lg="6"
+                  sm="6"
+                  style={{
+                    display: "flex",
+                    height: 60,
+                    justifyContent: "center",
+                  }}
+                >
+                  <div style={{ width: "500px" }}>
+                    <InputGroup
+                      className={
+                        // "username-field" +
 
-                      classnames({
-                        "input-group-focus": userNameFocus,
-                      })
-                    }
-                    style={{ minWidth: "250px" }}
-                  >
-                    <InputGroupAddon addonType="prepend">
-                      <InputGroupText>
-                        <i className="tim-icons icon-single-02" />
-                      </InputGroupText>
-                    </InputGroupAddon>
-                    <Input
-                      // {...register("nameSKATA")}
-                      placeholder="Username*"
-                      type="text"
-                      name="name"
-                      style={{ fontSize: 20, height: 64 }}
-                      onChange={(e) => {
-                        setUserNameField((prev) => {
-                          return { ...prev, value: e.target.value };
-                        });
-                        saveUsername(e.target.value);
+                        classnames({
+                          "input-group-focus": userNameFocus,
+                        })
+                      }
+                      style={{ minWidth: "250px" }}
+                    >
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="tim-icons icon-single-02" />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        // {...register("nameSKATA")}
+                        placeholder="Username*"
+                        type="text"
+                        name="name"
+                        style={{ fontSize: 20, height: 64 }}
+                        onChange={(e) => {
+                          setUserNameField((prev) => {
+                            return { ...prev, value: e.target.value };
+                          });
+                          saveUsername(e.target.value);
 
-                        // console.log(e.target.value);
-                      }}
-                      // ref={register}
-                      onFocus={(e) => setUserNameFocus(true)}
-                      onBlur={(e) => setUserNameFocus(false)}
-                    />
-                  </InputGroup>
-                </div>
-              </Col>
+                          // console.log(e.target.value);
+                        }}
+                        // ref={register}
+                        onFocus={(e) => setUserNameFocus(true)}
+                        onBlur={(e) => setUserNameFocus(false)}
+                      />
+                    </InputGroup>
+                  </div>
+                </Col>
 
-              <Col
-                className="px-2 py-2 validation-btn"
-                lg="6"
-                sm="6"
-                style={{
-                  display: "flex",
-                  height: 60,
-                  justifyContent: "center",
-                }}
-              >
-                <div style={{ display: "flex" }}>
-                  <LoadingButtonInfo
-                    isLoading={isLoading}
-                    onClick={handleFetchUserDetails}
-                    styles={{ width: 250, height: 60, fontSize: 24 }}
-                  >
-                    Get Rewards
-                  </LoadingButtonInfo>
-                </div>
-              </Col>
-            </Row>
-          </Container>
+                <Col
+                  className="px-2 py-2 validation-btn"
+                  lg="6"
+                  sm="6"
+                  style={{
+                    display: "flex",
+                    height: 60,
+                    justifyContent: "center",
+                  }}
+                >
+                  <div style={{ display: "flex" }}>
+                    <LoadingButtonInfo
+                      isLoading={isLoading}
+                      onClick={handleFetchUserRewards}
+                      styles={{ width: 250, height: 60, fontSize: 24 }}
+                    >
+                      Get Rewards
+                    </LoadingButtonInfo>
+                  </div>
+                </Col>
+              </Row>
+            </Container>
+          )}
         </div>
-        {isPendingRewardSelected && (
+        {pendingRewardSelected !== null && (
           <div>
             <Container>
               <Row className="row-grid justify-content-between align-items-center text-left my-4">
@@ -575,8 +646,8 @@ export default function LandingPage() {
               />
             ) : (
               <h3>
-                Insert the User's Name in the field above to get his/her
-                Rewards.
+                {userData.name !== undefined &&
+                  "Insert the User's Name in the field above to get his/her Rewards."}
               </h3>
             )}
             {/* {rewardsLoading ? (

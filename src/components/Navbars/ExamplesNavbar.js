@@ -402,14 +402,14 @@ export default function ExamplesNavbar() {
             {location.pathname.includes("rewards") && userData.isLoggedIn && (
               <>
                 <NavItem>
-                  <LoadingButtonInfo isLoading={isLoading}>
+                  <LoadingButtonInfo
+                    isLoading={isLoading}
+                    onClick={() => navigate("/user-rewards-page")}
+                  >
                     <div
                       className={`user-details ${
                         tokenEventAnimate ? "vibrate-3" : ""
                       }`}
-                      onClick={() =>
-                        console.log("The Current User's Data: ", userData)
-                      }
                     >
                       <div
                         style={{
