@@ -36,7 +36,7 @@ function useContract(provider, addr, abi) {
 
         // *********************************************************
         const providerReadOnly = new ethers.providers.JsonRpcProvider(
-          "http://127.0.0.1:8545"
+          "http://83.212.81.174:8545"
         );
 
         const itExists = await checkContractExists(providerReadOnly, addr);

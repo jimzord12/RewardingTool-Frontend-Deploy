@@ -358,15 +358,15 @@ export default function LoginPage() {
                               <div>
                                 <Input
                                   type="checkbox"
-                                  // checked={wallet.chainId === 20231}
-                                  checked={wallet.chainId === 31337}
+                                  checked={wallet.chainId === 20231}
+                                  // checked={wallet.chainId === 31337}
                                   readOnly
                                 />
                                 <span className="form-check-sign" /> On Correct
                                 Network?*
                               </div>
-                              {!(wallet.chainId === 31337) && (
-                                // {!(wallet.chainId === 20231) && (
+                              {/* {!(wallet.chainId === 31337) && ( */}
+                              {!(wallet.chainId === 20231) && (
                                 <a href="#" onClick={switchNetwork}>
                                   {" "}
                                   Switch!{" "}

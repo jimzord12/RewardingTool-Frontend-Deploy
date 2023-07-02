@@ -76,7 +76,8 @@ export function loginProcessHandler(operation, hasProvider, wallet) {
       "useWeb3Login: ⛔ To procceed please connect your wallet to the site. There is an orange 'Connect' button for this purpose."
     );
     return false;
-  } else if (hasProvider && wallet.chainId !== 31337) {
+  } else if (hasProvider && wallet.chainId !== 20231) {
+  // } else if (hasProvider && wallet.chainId !== 31337) {
     // 4. User has wallet, and has connected it, but is on the wrong network
     toast.error(
       <CustomErrorToast

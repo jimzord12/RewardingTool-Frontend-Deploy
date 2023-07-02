@@ -1,25 +1,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-import { ethers } from "ethers";
+// import { ethers } from "ethers";
 import { Triangle } from "react-loader-spinner";
 
 import { useMetaMask } from "./web3/MetaMaskContextProvider";
 import useContract from "hooks/useContract";
 // import { contractAddress, abi } from "../web3/constants/index";
 import {
-  hardHatAddress,
-  hardHatAbi,
-  MGSAddress,
+  deployedContractAddresses,
+  Rewarding_ABI,
   MGS_ABI,
 } from "../web3/constants/index";
 
 import { ReactComponent as MetamaskIcon } from "../assets/img/genera/metamask.svg";
 
 import { productDetails } from "data/productDetails";
+import { processBigNumber } from "utils/processBigNumber";
 // import { LogDescription } from "ethers/lib/utils";
 
-import { copyToClipboard } from "utils/copy2clipboard";
+// import { copyToClipboard } from "utils/copy2clipboard";
 
 const GlobalContext = createContext();
 
@@ -78,8 +78,8 @@ export const GlobalContextProvider = ({ children }) => {
     provider,
     // contractAddress,
     // abi
-    hardHatAddress,
-    hardHatAbi.abi
+    deployedContractAddresses.RewardingToolAddress,
+    Rewarding_ABI.abi
   );
 
   // console.log("1. MGS Contract - Address", MGSAddress);
@@ -89,18 +89,24 @@ export const GlobalContextProvider = ({ children }) => {
     provider,
     // contractAddress,
     // abi
-    MGSAddress,
+    deployedContractAddresses.ERC20ContractAddress,
     MGS_ABI.abi
   );
 
   async function updateUserTokens() {
     const userTokens = await contract.viewYourPoints();
-    console.log("The new MGS balance: ", userTokens.toNumber());
+    const userTokensConverted = processBigNumber(userTokens);
+    console.log("The new MGS balance: ", processBigNumber(userTokensConverted));
     // console.log(userTokens.toNumber());
     setUserData((prev) => {
-      return { ...prev, tokens: userTokens.toNumber() };
+      return { ...prev, tokens: userTokensConverted };
     });
   }
+
+  // function getUserWallet() {
+  //   console.log("🍰🔐 (getUserWallet): The User's Address: ", userData.wallet);
+  //   return userData.wallet;
+  // }
 
   function rewardsConverter(rawRewards) {
     return rawRewards.map((item) => {
@@ -192,8 +198,8 @@ export const GlobalContextProvider = ({ children }) => {
 
   async function attachEventListeners() {
     // Adding Contract Event Listeners
-    // if (contract !== null && wallet.chainId === 20231) {
-    if (contract !== null && wallet.chainId === 31337) {
+    if (contract !== null && wallet.chainId === 20231) {
+      // if (contract !== null && wallet.chainId === 31337) {
       try {
         // Event #1 - User Creation
         contract.on("UserCreation", (id, account, name, event) => {
@@ -230,9 +236,19 @@ export const GlobalContextProvider = ({ children }) => {
 
         // Event #4 - A User was awared MGS Tokens
         contract.on("PointsGained", (account, amount, event) => {
-          if (account !== userData.wallet) return;
+          const userAddress = userData.wallet;
 
-          console.log("Event Captured: Points Gained");
+          console.log("🧪✨ Event Captured (PointsGained) 🧪✨");
+          console.log("🧪✨ Account (from Event): ", account);
+          console.log("🧪✨ Amount (from Event): ", amount);
+          console.log("🧪✨ Event (from Event): ", event);
+          console.log("*********************************************");
+          console.log("🧪✨ The User's Address: ", userAddress);
+          console.log("*********************************************");
+
+          if (account !== userAddress) return;
+
+          console.log("✅ Event Captured: Points Gained ✅");
           console.log(account, amount.toNumber());
           console.log(event.blockNumber);
 
@@ -342,8 +358,8 @@ export const GlobalContextProvider = ({ children }) => {
     if (
       hasMetaMaskRun &&
       hasProvider &&
-      // wallet.chainId === 20231 &&
-      wallet.chainId === 31337 &&
+      wallet.chainId === 20231 &&
+      // wallet.chainId === 31337 &&
       contract === null
     ) {
       console.log("3.1 Wallet from MetaMask Context: ", wallet);
@@ -384,24 +400,48 @@ export const GlobalContextProvider = ({ children }) => {
       })();
     }
 
-    if (contract !== null)
+    // if (contract !== null)
+    //   (async () => {
+    //     await attachEventListeners();
+    //   })();
+
+    // return function cleanUp() {
+    //   if (contract) {
+    //     contract.removeAllListeners("UserCreation");
+    //     // contract.removeAllListeners("ServiceCreation");
+    //     // contract.removeAllListeners("EventCreation");
+    //     contract.removeAllListeners("PointsGained");
+    //     contract.removeAllListeners("PointsRedeemed");
+    //     contract.removeAllListeners("ProductCreation");
+    //     contract.removeAllListeners("ProductAquired");
+    //     contract.removeAllListeners("ProductClaimed");
+    //   }
+    // };
+  }, [hasMetaMaskRun, wallet.chainId, contract]);
+
+  useEffect(() => {
+    console.log("🎉🎉🎉 User Wallet has been updated! 🎉🎉🎉");
+    console.log("New Address: ", userData.wallet);
+
+    if (userData.wallet !== undefined) {
       (async () => {
         await attachEventListeners();
       })();
 
-    return function cleanUp() {
-      if (contract) {
-        contract.removeAllListeners("UserCreation");
-        // contract.removeAllListeners("ServiceCreation");
-        // contract.removeAllListeners("EventCreation");
-        contract.removeAllListeners("PointsGained");
-        contract.removeAllListeners("PointsRedeemed");
-        contract.removeAllListeners("ProductCreation");
-        contract.removeAllListeners("ProductAquired");
-        contract.removeAllListeners("ProductClaimed");
-      }
-    };
-  }, [hasMetaMaskRun, wallet.chainId, contract]);
+      return function cleanUp() {
+        if (contract) {
+          contract.removeAllListeners("UserCreation");
+          // contract.removeAllListeners("ServiceCreation");
+          // contract.removeAllListeners("EventCreation");
+          contract.removeAllListeners("PointsGained");
+          contract.removeAllListeners("PointsRedeemed");
+          contract.removeAllListeners("ProductCreation");
+          contract.removeAllListeners("ProductAquired");
+          contract.removeAllListeners("ProductClaimed");
+        }
+      };
+    }
+  }, [userData.wallet]);
 
   async function fetchServerData(action, ...args) {
     try {

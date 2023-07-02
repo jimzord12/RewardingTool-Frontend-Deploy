@@ -722,7 +722,7 @@ input:-webkit-autofill:active {
 }
 
 .vibrate-3 {
-  animation: vibrate-3 2.5s linear infinite both;
+  animation: vibrate-3 2s linear 0s 8 both;
 }
 
 /* ----------------------------------------------

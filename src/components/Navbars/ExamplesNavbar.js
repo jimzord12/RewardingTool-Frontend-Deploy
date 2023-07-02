@@ -16,7 +16,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 // import { ethers } from "ethers";
 import { toast } from "react-toastify";
@@ -30,6 +30,8 @@ import { useGlobalContext } from "contexts/GlobalContextProvider.js";
 import { useWeb3Login } from "hooks/useWeb3Login.js";
 import { copyToClipboard } from "utils/copy2clipboard.js";
 import { loginProcessHandler } from "utils/LoginProcessHandler.js";
+
+import { deployedContractAddresses } from "web3/constants/deployedContracts.js";
 
 import { useLogin } from "hooks/useLogin.js";
 // reactstrap components
@@ -132,6 +134,7 @@ export default function ExamplesNavbar() {
     setTokenEventFired,
   } = useGlobalContext();
   const { isAuthenticated, signMessage } = useWeb3Login();
+  // const [isCopy2ClipboardDone, setCopy2ClipboardDone] = useState(false);
 
   // console.log("location: ", location);
   React.useEffect(() => {
@@ -180,25 +183,28 @@ export default function ExamplesNavbar() {
           }
         );
 
-        await copyToClipboard(
-          "0x5FbDB2315678afecb367f032d93F642f64180aa3 (HardHat)"
-        );
+        await copyToClipboard(deployedContractAddresses.ERC20ContractAddress);
+        console.log("(NavBar - useEffect) User's Tokens: ", userTokens);
+        setUserData((prev) => {
+          return { ...prev, tokens: userTokens };
+          // return { ...prev, tokens: ethers.bigNumber.toNumber(userTokens) };
+        });
+      } else {
+        console.log("(NavBar - useEffect) User's Tokens: ", userTokens);
+        setUserData((prev) => {
+          return { ...prev, tokens: userTokens };
+          // return { ...prev, tokens: ethers.bigNumber.toNumber(userTokens) };
+        });
       }
-
-      console.log("(NavBar - useEffect) User's Tokens: ", userTokens);
-      setUserData((prev) => {
-        return { ...prev, tokens: userTokens };
-        // return { ...prev, tokens: ethers.bigNumber.toNumber(userTokens) };
-      });
     }
 
-    // if (userData.name !== undefined && wallet.chainId === 20231) getTokens();
-    if (userData.name !== undefined && wallet.chainId === 31337) _getTokens();
+    if (userData.name !== undefined && wallet.chainId === 20231) _getTokens();
+    // if (userData.name !== undefined && wallet.chainId === 31337) _getTokens();
 
     return function cleanup() {
       window.removeEventListener("scroll", changeColor); //123456678asdhu
     };
-  }, [userData.name]);
+  }, [userData.name, userData.tokens]);
 
   React.useEffect(() => {
     if (isAuthenticated) {
