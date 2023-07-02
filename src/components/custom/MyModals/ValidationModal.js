@@ -34,11 +34,11 @@ const ValidationModal = (props) => {
         backdrop="static"
         backdropClassName="backdrop"
         style={{ transform: "translate(0, -50px)" }}
-        // onClose={() => {
-        //   reset();
-        //   console.log("The Modal is closed!!!");
-        // }}
-        // modalTransition={{ timeout: 700 }} // customize the transition duration here
+        onClose={() => {
+          reset();
+          console.log("The Modal is closed!!!");
+        }}
+        modalTransition={{ timeout: 700 }} // customize the transition duration here
       >
         <ModalBody style={{ border: "none", paddingBottom: 0 }}>
           {/* <img src={imageSrc} alt={title} width="100%" /> */}

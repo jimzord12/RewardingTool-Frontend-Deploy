@@ -17,7 +17,20 @@ export async function getNonce() {
     const nonce = response.data.randomBigNumber;
     return nonce;
   } catch (error) {
-    console.error("⛔ (Express Oracle)Failed to fetch nonce:", error);
+    console.error("⛔ (Express Oracle) Failed to fetch nonce:", error);
+    toast.error(
+      "We are experiencing issues with the Web Server, please try again later",
+      {
+        position: "top-center",
+        autoClose: 12000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      }
+    );
     return null;
   }
 }
@@ -99,16 +112,7 @@ export function useWeb3Login() {
       const _signer = wallet.getSigner();
       const _signerAddr = await _signer.getAddress();
       setSigner(_signer);
-      //   toast(<CustomErrorToast text={"👀 Check Your Crypto Wallet"} />, {
-      //     position: "top-center",
-      //     autoClose: 4000,
-      //     hideProgressBar: false,
-      //     closeOnClick: true,
-      //     pauseOnHover: true,
-      //     draggable: true,
-      //     progress: undefined,
-      //     theme: "light",
-      //   });
+
       const signedMessage = _signer.signMessage(message);
 
       try {

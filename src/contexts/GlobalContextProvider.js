@@ -145,6 +145,7 @@ export const GlobalContextProvider = ({ children }) => {
   async function getRewardsGuestMode() {
     try {
       console.log("Global Context: [GUEST MODE]: Trying to  Fetch Rewards...");
+      console.log(contractReadOnly);
 
       setIsProductsLoading(true);
 

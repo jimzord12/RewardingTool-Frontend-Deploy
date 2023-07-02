@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { ethers } from "ethers";
 
+async function checkContractExists(provider, contractAddress) {
+  const code = await provider.getCode(contractAddress);
+  return code !== "0x";
+}
+
 function useContract(provider, addr, abi) {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -19,6 +24,10 @@ function useContract(provider, addr, abi) {
             throw new Error("User is not connected to MetaMask");
           }
           const ethersProvider = new ethers.providers.Web3Provider(provider);
+
+          const itExists = await checkContractExists(ethersProvider, addr);
+          if (!itExists)
+            throw new Error(`Contract with address: ${addr}, does not exist!`);
           // const ethersProvider = new ethers.BrowserProvider(provider);
           const signer = await ethersProvider.getSigner();
           const contractInstance = new ethers.Contract(addr, abi, signer);
@@ -30,6 +39,12 @@ function useContract(provider, addr, abi) {
           "http://127.0.0.1:8545"
         );
 
+        const itExists = await checkContractExists(providerReadOnly, addr);
+        console.log("Does the contract exist? : ", itExists);
+        console.log("Does the contract exist? : ", addr);
+        if (!itExists)
+          throw new Error(`Contract with address: ${addr}, does not exist!`);
+
         // Create a new instance of the contract
         const contractReadOnly = new ethers.Contract(
           addr,
@@ -40,7 +55,7 @@ function useContract(provider, addr, abi) {
         return contractReadOnly;
       } catch (error) {
         console.error(
-          "💎 From:(useContract), Failed to load contract, Error: ",
+          "⛔ From:(useContract), Failed to load contract, Error: ",
           error
         );
       } finally {
@@ -49,21 +64,21 @@ function useContract(provider, addr, abi) {
     }
   };
 
-  async function readOnlyContract(providerUrl, contractAddress, contractAbi) {
-    // Set the provider. This can be your own Ethereum node or a service like Infura
-    const provider = new ethers.providers.JsonRpcProvider(providerUrl);
+  // async function readOnlyContract(providerUrl, contractAddress, contractAbi) {
+  //   // Set the provider. This can be your own Ethereum node or a service like Infura
+  //   const provider = new ethers.providers.JsonRpcProvider(providerUrl);
 
-    // Create a new instance of the contract
-    const contract = new ethers.Contract(
-      contractAddress,
-      contractAbi,
-      provider
-    );
+  //   // Create a new instance of the contract
+  //   const contract = new ethers.Contract(
+  //     contractAddress,
+  //     contractAbi,
+  //     provider
+  //   );
 
-    // Call the contract methods
-    const data = await contract.getAllProducts();
-    console.log(data);
-  }
+  //   // Call the contract methods
+  //   const data = await contract.getAllProducts();
+  //   console.log(data);
+  // }
   return { initialize, isLoading };
 }
 

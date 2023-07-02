@@ -8,19 +8,39 @@ function PendingCardGridGrid({ items, handleSelectPendingReward }) {
 
   return (
     <Row className="my-grid">
-      {console.log("SKAARAA: ", items)}
-      {items.map((item, index) => (
-        <Col
-          sm="4"
-          key={index}
-          onClick={() => {
-            setSelectedCard(item); // This stores the selected card LOCALLY
-            handleSelectPendingReward(item); // This stores the selected card at "ValidatePage.js"
+      {console.log("🧪 Items: ", items)}
+      {items.length > 0 ? (
+        items.map((item, index) => {
+          if (item.isRedeemed) {
+            return null; // or return whatever you want when isRedeemed is true
+          }
+          return (
+            <>
+              <Col
+                sm="4"
+                key={item?.id ? item.id : index}
+                onClick={() => {
+                  setSelectedCard(item); // This stores the selected card LOCALLY
+                  handleSelectPendingReward(item); // This stores the selected card at "ValidatePage.js"
+                }}
+              >
+                <PendingMyCard item={item} selectedCard={selectedCard} />
+              </Col>
+            </>
+          );
+        })
+      ) : (
+        <h3
+          style={{
+            marginTop: 36,
+            textAlign: "center",
+            fontSize: 28,
+            color: "red",
           }}
         >
-          <PendingMyCard item={item} selectedCard={selectedCard} />
-        </Col>
-      ))}
+          The User does not have any rewards to claim.
+        </h3>
+      )}
     </Row>
   );
 }

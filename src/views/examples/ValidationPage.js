@@ -118,6 +118,7 @@ export default function LandingPage() {
 
   const [customerRewards, setCustomerRewards] = React.useState([]);
 
+  const [wasGetRewardsClicked, setWasGetRewardsClicked] = React.useState(false);
   const [userNameFocus, setUserNameFocus] = React.useState(false);
   const [userCodeFocus, setUserCodeFocus] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -140,7 +141,14 @@ export default function LandingPage() {
 
   const [saveUsername, getUsername, removeUsername] = useLS("username", "");
 
-  const reset = () => {
+  const refetchUserRewards = async () => {
+    setRewardsLoading(true);
+    await handleFetchUserRewards();
+    setRewardsLoading(false);
+  };
+
+  const reset = async () => {
+    await refetchUserRewards();
     setModalStatus({
       state: "not started",
       success: undefined,
@@ -171,7 +179,12 @@ export default function LandingPage() {
       console.log("🎁 (ValidationPage): Waiting for the Tx to finish...");
       const _customerRewardsRAW = await callContractFn(
         "getUserProducts",
-        String(userNameField.value)
+        userNameField.value
+      );
+
+      console.log(
+        "💎 User's Pending Rewards from Contract: ",
+        _customerRewardsRAW
       );
 
       const convertedRawData = _customerRewardsRAW.map((pendingReward) => {
@@ -195,12 +208,34 @@ export default function LandingPage() {
           location: rewards[convertedReward.RewardID].location,
           isInfinite: false,
           collectionHash: convertedReward.collectionHash,
+          isRedeemed: convertedReward.isRedeemed,
         };
       });
 
+      console.log(
+        "✨ User's Pending Rewards Final Form: ",
+        _customerRewardsRAW
+      );
       setCustomerRewards(finalRewards);
+      setWasGetRewardsClicked(true);
     } catch (error) {
-      console.log("⛔ Contract Error: ", error);
+      console.log(
+        "⛔ (ValidationPage -> handleFetchUserRewards) Contract Error: ",
+        error
+      );
+
+      if (error.message.includes("getUserProducts: User does not exist")) {
+        toast.error(<CustomErrorToast text={"User does not exist"} />, {
+          position: "bottom-center",
+          autoClose: 6000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -306,17 +341,47 @@ export default function LandingPage() {
       //   pendingRewardSelected.rewardID
       // );
 
-      await doHashesMatch.wait();
-
-      setModalStatus((prev) => {
-        return {
-          ...prev,
-          state: "completed",
-          success: doHashesMatch,
-        };
-      });
+      // await doHashesMatch.wait();
 
       if (doHashesMatch) {
+        try {
+          const contractValidation = await callContractFn(
+            "redeemerValidator",
+            userNameField.value,
+            userCodeField.value,
+            pendingRewardSelected.id
+          );
+
+          const tx_validation = await contractValidation.wait();
+          console.log("💎🧪 Redeem Validation: ", tx_validation);
+
+          setModalStatus((prev) => {
+            return {
+              ...prev,
+              state: "completed",
+              success: doHashesMatch,
+            };
+          });
+        } catch (error) {
+          toast.error(
+            <CustomErrorToast
+              text={
+                "User's Code is Wrong, or there is an problem with the Blockchain Network"
+              }
+            />,
+            {
+              position: "bottom-center",
+              autoClose: 6000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "dark",
+            }
+          );
+          console.log("⛔ (ValidationPage) Contract Validation Error: ", error);
+        }
       }
     } catch (error) {
       console.log("⛔ (ValidationPage) Contract Error: ", error);
@@ -330,11 +395,7 @@ export default function LandingPage() {
     console.log("From ValidationPage: ", reward);
   };
 
-  const refetchUserRewards = async () => {
-    setRewardsLoading(true);
-    await handleFetchUserRewards();
-    setRewardsLoading(false);
-  };
+
 
   useEffect(() => {
     if (contractInitCompleted && userData.name !== undefined) {
@@ -353,6 +414,7 @@ export default function LandingPage() {
           status={modalStatus}
           className="validation-modal"
           reset={reset}
+          
         />
         <div className="page-header">
           <img
@@ -472,8 +534,15 @@ export default function LandingPage() {
                 You must first login to proceed
               </h3>
             </Container>
-          ) : (
+          ) : userData.accessLevel === "manager" ||
+            userData.accessLevel === "owner" ? (
             <Container style={{ height: "25vh" }}>
+              <h3>
+                {userData.name !== undefined &&
+                  (userData.accessLevel === "manager" ||
+                    userData.accessLevel === "owner") &&
+                  "Insert the User's Name in the field above to get his/her Rewards."}
+              </h3>
               <Row className="row-grid justify-content-between align-items-center text-left my-4">
                 <Col
                   className="px-2 py-2"
@@ -544,6 +613,19 @@ export default function LandingPage() {
                   </div>
                 </Col>
               </Row>
+            </Container>
+          ) : (
+            <Container>
+              <h3
+                style={{
+                  color: "#00f2c3",
+                  textAlign: "center",
+                  fontSize: 32,
+                  marginBottom: 64,
+                }}
+              >
+                ⛔ This page required Manager or Owner access level ⛔
+              </h3>
             </Container>
           )}
         </div>
@@ -639,59 +721,18 @@ export default function LandingPage() {
                   middleCircleColor="white"
                 />
               </div>
-            ) : customerRewards.length > 0 ? (
-              <PendingCardsSection
-                items={customerRewards}
-                handleSelectPendingReward={handleSelectPendingReward}
-              />
             ) : (
-              <h3>
-                {userData.name !== undefined &&
-                  "Insert the User's Name in the field above to get his/her Rewards."}
-              </h3>
-            )}
-            {/* {rewardsLoading ? (
-              <div>
-                <ThreeCircles
-                  height="150"
-                  width="150"
-                  color="#4fa94d"
-                  wrapperStyle={{}}
-                  wrapperClass=""
-                  visible={true}
-                  ariaLabel="three-circles-rotating"
-                  outerCircleColor="white"
-                  innerCircleColor="white"
-                  middleCircleColor="white"
-                />
-              </div>
-            ) : (
-              customerRewards.length > 0 && (
+              userData.name !== undefined &&
+              (userData.accessLevel === "manager" ||
+                userData.accessLevel === "owner") &&
+              userNameField.value !== "" &&
+              wasGetRewardsClicked && (
                 <PendingCardsSection
                   items={customerRewards}
                   handleSelectPendingReward={handleSelectPendingReward}
                 />
               )
-            )} */}
-            {/* {customerRewards.length > 0 && !rewardsLoading ? (
-              <PendingCardsSection
-                items={customerRewards}
-                handleSelectPendingReward={handleSelectPendingReward}
-              />
-            ) : (
-              <ThreeCircles
-                height="150"
-                width="150"
-                color="#4fa94d"
-                wrapperStyle={{}}
-                wrapperClass=""
-                visible={true}
-                ariaLabel="three-circles-rotating"
-                outerCircleColor="white"
-                innerCircleColor="white"
-                middleCircleColor="white"
-              />
-            )} */}
+            )}
           </Container>
         </section>
         <Footer />
