@@ -66,6 +66,7 @@ export default function RewardsPage() {
   };
 
   const handleRedeemReward = async () => {
+    resetRedeem();
     console.log("The Select Reward is: ", selectedReward);
     console.log("The Select Reward's ID is: ", selectedReward.id);
     if (selectedReward === null)
