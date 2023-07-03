@@ -26,7 +26,7 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
+  // CardFooter,
   CardImg,
   CardTitle,
   Label,
@@ -52,7 +52,7 @@ import { useFormValidation } from "../../hooks/useFormValidation.js";
 import { useLS } from "../../hooks/useLS.js";
 import { noAccountWarning } from "utils/LoginProcessHandler.js";
 
-import { handleAccountCreation } from "../../api/api.js";
+// import { handleAccountCreation } from "../../api/api.js";
 
 import { ReactComponent as MetamaskIcon } from "../../assets/img/genera/metamask.svg";
 
@@ -118,7 +118,7 @@ export default function LoginPage() {
   });
 
   // Hooks
-  const { register, handleSubmit } = useForm();
+  // const { register, handleSubmit } = useForm();
   const {
     contract,
     contractInitCompleted,
@@ -126,8 +126,7 @@ export default function LoginPage() {
     setUserData,
     callContractFn,
   } = useGlobalContext();
-  const { hasProvider, connectMetaMask, wallet, addNetwork, switchNetwork } =
-    useMetaMask();
+  const { hasProvider, connectMetaMask, wallet, switchNetwork } = useMetaMask();
 
   const {
     validateForm,
@@ -137,8 +136,11 @@ export default function LoginPage() {
     handleServerErrors,
   } = useFormValidation();
 
-  const [saveUsername, getUsername, removeUsername] = useLS("username", "");
-  const [saveEmail, getEmail, removeEmail] = useLS("email", "");
+  const [saveUsername, getUsername /*, removeUsername */] = useLS(
+    "username",
+    ""
+  );
+  // const [saveEmail, getEmail, removeEmail] = useLS("email", "");
 
   React.useEffect(() => {
     document.body.classList.toggle("register-page");
@@ -227,7 +229,7 @@ export default function LoginPage() {
                       {hasErrors.length > 0 && (
                         <div className="form-validation-error">
                           <ul>
-                            {hasErrors.map((error, index, arr) => {
+                            {hasErrors.map((error) => {
                               return (
                                 <li
                                   key={error.name}
@@ -342,11 +344,6 @@ export default function LoginPage() {
                           </Label>
                         </FormGroup>
                         <FormGroup check className="text-left">
-                          {/* {console.log("1 - Suka: ", wallet.chainId === 20231)} */}
-                          {/* console.log(
-                            "2 - Suka: ",
-                            Boolean(wallet.chaidId === 20231)
-                          )} */}
                           <Label check>
                             <div
                               style={{
@@ -402,7 +399,6 @@ export default function LoginPage() {
                                 );
                                 const a = await user_Tx.wait();
                                 console.log("Web3Register: :user_Tx: AAA: ", a);
-                                // await user_Tx.wait();
                                 setSuccessMessage(
                                   "Account created successfully!"
                                 );

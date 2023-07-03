@@ -15,26 +15,13 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useEffect, useState } from "react";
-// react plugin used to create charts
-// import { Line } from "react-chartjs-2";
-import classnames from "classnames";
+import React, { useEffect } from "react";
 import { ThreeCircles } from "react-loader-spinner";
-import { toast } from "react-toastify";
 
 import "./ValidationPage.styles.css";
 
 // reactstrap components
-import {
-  Button,
-  Container,
-  Input,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroup,
-  Row,
-  Col,
-} from "reactstrap";
+import { Button, Container, Row, Col } from "reactstrap";
 
 // Context
 import { useGlobalContext } from "contexts/GlobalContextProvider";
@@ -42,23 +29,8 @@ import { useGlobalContext } from "contexts/GlobalContextProvider";
 // core components
 import ExamplesNavbar from "components/Navbars/ExamplesNavbar.js";
 import Footer from "components/Footer/Footer.js";
-// import { useLS } from "../../hooks/useLS.js";
-import LoadingButtonInfo from "components/custom/LoadingButton/LoadingButtonInfo";
-import PendingCardsSection from "components/custom/PendingProducts/PendingCardsSection.js";
-
-import ValidationModal from "components/custom/MyModals/ValidationModal";
 import { productDetails as rewardDetails } from "../../data/productDetails.js";
 import CardGrid from "components/custom/ProductSection/CardGrid.js";
-// import bigChartData from "variables/charts.js";
-
-// import { scrollToSection } from "genera/myJS";
-
-const CustomErrorToast = ({ text, closeToast, toastProps }) => (
-  <div style={{ background: "#yourColor", color: "#otherColor" }}>
-    {text}
-    {/* <button onClick={closeToast}>Close</button> */}
-  </div>
-);
 
 // Made by GPT-4
 function consolidateRewards(arrOfRewards) {
@@ -81,7 +53,7 @@ function consolidateRewards(arrOfRewards) {
   return consolidatedRewards;
 }
 
-export default function LandingPage() {
+export default function UserRewardsPage() {
   React.useEffect(() => {
     document.body.classList.toggle("landing-page");
     // Specify how to clean up after this effect:
@@ -92,7 +64,7 @@ export default function LandingPage() {
 
   const {
     userData,
-    setUserData,
+    // setUserData,
     rewards,
     getRewards,
     callContractFn,

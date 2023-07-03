@@ -7,7 +7,7 @@ import {
   CarouselItem,
   CarouselControl,
   CarouselIndicators,
-  CarouselCaption,
+  // CarouselCaption,
 } from "reactstrap";
 
 import CarouselText from "./CarouselText";

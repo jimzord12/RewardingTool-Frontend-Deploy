@@ -26,7 +26,7 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
+  // CardFooter,
   CardImg,
   CardTitle,
   Label,
@@ -47,7 +47,7 @@ import Footer from "components/Footer/Footer.js";
 
 import { useGlobalContext } from "contexts/GlobalContextProvider";
 import { useMetaMask } from "contexts/web3/MetaMaskContextProvider";
-import { useForm } from "react-hook-form";
+// import { useForm } from "react-hook-form";
 import { useFormValidation } from "../../hooks/useFormValidation.js";
 import { useLS } from "../../hooks/useLS.js";
 
@@ -117,10 +117,9 @@ export default function LoginPage() {
   });
 
   // Hooks
-  const { register, handleSubmit } = useForm();
+  // const { register, handleSubmit } = useForm();
   const { contract, contractInitCompleted } = useGlobalContext();
-  const { hasProvider, connectMetaMask, wallet, addNetwork, switchNetwork } =
-    useMetaMask();
+  const { hasProvider, connectMetaMask, wallet, switchNetwork } = useMetaMask();
 
   const {
     validateForm,
@@ -130,8 +129,11 @@ export default function LoginPage() {
     handleServerErrors,
   } = useFormValidation();
 
-  const [saveUsername, getUsername, removeUsername] = useLS("username", "");
-  const [saveEmail, getEmail, removeEmail] = useLS("email", "");
+  const [saveUsername, getUsername /*, removeUsername */] = useLS(
+    "username",
+    ""
+  );
+  const [saveEmail, getEmail /*, removeEmail*/] = useLS("email", "");
 
   React.useEffect(() => {
     document.body.classList.toggle("register-page");
@@ -190,71 +192,6 @@ export default function LoginPage() {
         "deg)"
     );
   };
-  // Function to validate form
-  // const validateForm = () => {
-  //   let errors = [];
-  //   const userNamePattern = /^[a-zA-Z0-9_-]{1,20}$/;
-  //   const walletPattern = /^0x[a-fA-F0-9]{40}$/;
-  //   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  //   // Validate username
-  //   if (!userNameField || !userNamePattern.test(userNameField)) {
-  //     console.log("SKATAAAA");
-  //     const error = { name: "Username" };
-  //     if (userNameField.length === 0) error.message = "Username is required";
-  //     if (userNameField.length > 20) error.message = "Username too long";
-  //     if (userNameField.length !== 0 && userNameField.length <= 20)
-  //       error.message = "The only allowed symbols are: `_` and `-`";
-  //     errors.push(error);
-  //   }
-  //   // Validate wallet address
-  //   if (!walletField || !walletPattern.test(walletField)) {
-  //     const error = { name: "Wallet Address" };
-  //     if (walletField.length === "")
-  //       error.message = "Wallet Address is required";
-  //     error.message =
-  //       "Must be a 40 characters long and a valid Ethereum address";
-  //     errors.push(error);
-  //   }
-  //   // Validate email
-  //   if (!emailField || !emailPattern.test(emailField)) {
-  //     const error = { name: "Email" };
-  //     if (emailField === "") error.message = "Email Address is required";
-  //     if (emailField !== "")
-  //       error.message = "Must be a valid email. (example@example.com)";
-  //     errors.push(error);
-  //   }
-  //   // Validate password
-  //   if (!passwordField || passwordField.length < 8) {
-  //     const error = { name: "Password" };
-  //     if (passwordField.length === 0) error.message = "Password is required";
-  //     if (passwordField.length < 8)
-  //       error.message = "Must be at least 8 characters";
-  //     errors.push(error);
-  //   }
-  //   // Check if wallet installed
-  //   if (!hasProvider) {
-  //     const error = { name: "Wallet" };
-  //     error.message = "Metamask must be installed";
-  //     errors.push(error);
-  //   }
-  //   // Check if connected with site
-  //   if (!wallet.chainId) {
-  //     const error = { name: "Wallet Connection" };
-  //     error.message = "Metamask must be connected with the Site";
-  //     errors.push(error);
-  //   }
-  //   // Check if on correct network
-  //   if (wallet.chainId !== 20231) {
-  //     const error = { name: "Wallet Network" };
-  //     error.message = "Metamask must be on the GENERA Network";
-  //     errors.push(error);
-  //   }
-  //   // If no errors, return true, else return array of errors
-  //   if (errors.length > 0) {
-  //     setHasError(errors);
-  //   }
-  //   return errors.length > 0 ? errors : true;
-  // };
 
   return (
     <>
@@ -294,9 +231,7 @@ export default function LoginPage() {
                       {hasErrors.length > 0 && (
                         <div className="form-validation-error">
                           <ul>
-                            {hasErrors.map((error, index, arr) => {
-                              // console.log("The index: " + index);
-                              // console.log("The arr: ", arr);
+                            {hasErrors.map((error) => {
                               return (
                                 <li
                                   key={error.name}
@@ -367,13 +302,6 @@ export default function LoginPage() {
                             name="wallet"
                             readOnly
                             value={walletField.value}
-                            // onChange={(e) => {
-                            //   setWalletField((prev) => {
-                            //     return { ...prev, value: e.target.value };
-                            //   });
-                            //   // console.log(e.target.value);
-                            // }}
-                            // ref={register}
                             onFocus={(e) => setWalletFocus(true)}
                             onBlur={(e) => setWalletFocus(false)}
                           />
@@ -481,11 +409,6 @@ export default function LoginPage() {
                           </Label>
                         </FormGroup>
                         <FormGroup check className="text-left">
-                          {/* {console.log("1 - Suka: ", wallet.chainId === 20231)} */}
-                          {/* console.log(
-                            "2 - Suka: ",
-                            Boolean(wallet.chaidId === 20231)
-                          )} */}
                           <Label check>
                             <div
                               style={{
@@ -575,7 +498,6 @@ export default function LoginPage() {
                         </Button>
                       </Form>
                     </CardBody>
-                    {/* <CardFooter></CardFooter> */}
                   </Card>
                 </Col>
               </Row>

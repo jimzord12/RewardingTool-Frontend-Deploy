@@ -34,84 +34,6 @@ import { useGlobalContext } from "contexts/GlobalContextProvider.js";
 import { deployedContractAddresses } from "../../web3/constants/index.js";
 
 import { axiosOracle } from "api/config.js";
-// import {
-//   acropolis,
-//   convert,
-//   greek_feta,
-//   loukaniko,
-//   hotel,
-//   guided_tour,
-// } from "../../assets/img/genera/index.js";
-
-// sections for this page/view
-// import Basics from "views/IndexSections/Basics.js";
-// import Navbars from "components/Navbars/ExamplesNavbar";
-// import Tabs from "views/IndexSections/Tabs.js";
-// import Pagination from "views/IndexSections/Pagination.js";
-// import Notifications from "views/IndexSections/Notifications.js";
-// import Typography from "views/IndexSections/Typography.js";
-// import JavaScript from "views/IndexSections/JavaScript.js";
-// import NucleoIcons from "views/IndexSections/NucleoIcons.js";
-// import Signup from "views/IndexSections/Signup.js";
-// import Examples from "views/IndexSections/Examples.js";
-// import Download from "views/IndexSections/Download.js";
-
-// const testing_items = [
-//   {
-//     id: 0,
-//     title: "Crete's Famous Cheese",
-//     description: "This is the description for Book 1.",
-//     image: greek_feta,
-//     price: 13.5,
-//     amount: 23,
-//     location: "Crete",
-//   },
-//   {
-//     id: 1,
-//     title: " Mykono's Traditional Sausage",
-//     description: "This is a wondeful description for this prodect.",
-//     image: loukaniko,
-//     price: 25.0,
-//     amount: 11,
-//     location: "Mykonos",
-//   },
-//   {
-//     id: 2,
-//     title: "Acropolis Tickets",
-//     description: "This is a wondeful description for this prodect.",
-//     image: acropolis,
-//     price: 28.6,
-//     amount: 5,
-//     location: "N/A",
-//   },
-//   {
-//     id: 3,
-//     title: "Guided Tour",
-//     description: "This is a wondeful description for this prodect.",
-//     image: guided_tour,
-//     price: 33.2,
-//     amount: 36,
-//     location: "Tinos",
-//   },
-//   {
-//     id: 4,
-//     title: "In-Game Gold",
-//     description: "This is a wondeful description for this prodect.",
-//     image: convert,
-//     price: 10.0,
-//     amount: "Infinite",
-//     location: "N/A",
-//   },
-//   {
-//     id: 5,
-//     title: "Hotel Accommodation",
-//     description: "This is a wondeful description for this prodect.",
-//     image: hotel,
-//     price: 127.5,
-//     amount: 3,
-//     location: "Sikelia",
-//   },
-// ];
 
 export default function RewardsPage() {
   const [modalState, setModal] = useState(false);
@@ -120,8 +42,8 @@ export default function RewardsPage() {
     hash: null,
     status: "not started",
     success: null,
+    isTx1_Done: false,
   });
-  // const [secretCode, setSecretCode] = useState("");
 
   const {
     userData,
@@ -130,10 +52,7 @@ export default function RewardsPage() {
     getRewardsGuestMode,
     getRewards,
     rewards,
-    // setRewards,
-    // isProductsLoading,
     contractInitCompleted,
-    // MGSContractInitCompleted,
     contractReadOnlyInitCompleted,
   } = useGlobalContext();
 
@@ -142,6 +61,7 @@ export default function RewardsPage() {
       hash: null,
       status: "not started",
       success: null,
+      isTx1_Done: false,
     });
   };
 
@@ -170,6 +90,12 @@ export default function RewardsPage() {
       console.log("Wating to be approved... ");
       await getApproval_Tx.wait();
       console.log("✅ Approval was granted!");
+      setTxStatus((prev) => {
+        return {
+          ...prev,
+          isTx1_Done: true,
+        };
+      });
 
       // =====================================================
 

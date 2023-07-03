@@ -48,21 +48,21 @@ export const MetaMaskContextProvider = ({ children }) => {
       })
     );
 
-    // Retrieving User Balance in (MGS)
-    const MGS_balance = formatBalance(
-      await mm.request({
-        method: "eth_getBalance",
-        params: [accounts[0], "latest"],
-      })
-    );
+    // // Retrieving User Balance in (MGS)
+    // const MGS_balance = formatBalance(
+    //   await mm.request({
+    //     method: "eth_getBalance",
+    //     params: [accounts[0], "latest"],
+    //   })
+    // );
 
-    // Retrieving User Balance in (MGS)
-    const userName = formatBalance(
-      await mm.request({
-        method: "eth_getBalance",
-        params: [accounts[0], "latest"],
-      })
-    );
+    // // Retrieving User Balance in (MGS)
+    // const userName = formatBalance(
+    //   await mm.request({
+    //     method: "eth_getBalance",
+    //     params: [accounts[0], "latest"],
+    //   })
+    // );
 
     const chainId = formatChainAsNum(
       await mm.request({

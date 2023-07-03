@@ -1,4 +1,4 @@
-import axios, { axiosOracle } from "./config.js";
+import axios from "./config.js";
 
 export async function handleAccountCreation(data) {
   console.log("handleAccountCreation: ", data);

@@ -27,17 +27,17 @@ import "./ValidationPage.styles.css";
 // reactstrap components
 import {
   Button,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  CardTitle,
-  ListGroupItem,
-  ListGroup,
+  // Card,
+  // CardHeader,
+  // CardBody,
+  // CardFooter,
+  // CardTitle,
+  // ListGroupItem,
+  // ListGroup,
   Container,
-  Label,
-  FormGroup,
-  Form,
+  // Label,
+  // FormGroup,
+  // Form,
   Input,
   InputGroupAddon,
   InputGroupText,
@@ -93,7 +93,7 @@ import ValidationModal from "components/custom/MyModals/ValidationModal";
 //   },
 // ];
 
-const CustomErrorToast = ({ text, closeToast, toastProps }) => (
+const CustomErrorToast = ({ text }) => (
   <div style={{ background: "#yourColor", color: "#otherColor" }}>{text}</div>
 );
 
@@ -108,12 +108,12 @@ export default function LandingPage() {
 
   const {
     userData,
-    setUserData,
+    // setUserData,
     rewards,
     getRewards,
     callContractFn,
     contractInitCompleted,
-    contract,
+    // contract,
   } = useGlobalContext();
 
   const [customerRewards, setCustomerRewards] = React.useState([]);
@@ -139,7 +139,10 @@ export default function LandingPage() {
   const [pendingRewardSelected, setPendingRewardSelected] = useState(null);
   const [rewardsLoading, setRewardsLoading] = React.useState(false);
 
-  const [saveUsername, getUsername, removeUsername] = useLS("username", "");
+  const [saveUsername /*, getUsername, removeUsername */] = useLS(
+    "username",
+    ""
+  );
 
   const refetchUserRewards = async () => {
     setRewardsLoading(true);
@@ -334,14 +337,6 @@ export default function LandingPage() {
       );
 
       const doHashesMatch = shopHash === pendingRewardSelected.collectionHash;
-      // const doHashesMatch = await callContractFn(
-      //   "redeemerValidator",
-      //   userNameField.value,
-      //   userCodeField.value,
-      //   pendingRewardSelected.rewardID
-      // );
-
-      // await doHashesMatch.wait();
 
       if (doHashesMatch) {
         try {
@@ -395,8 +390,6 @@ export default function LandingPage() {
     console.log("From ValidationPage: ", reward);
   };
 
-
-
   useEffect(() => {
     if (contractInitCompleted && userData.name !== undefined) {
       if (rewards.length === 0) getRewards();
@@ -414,7 +407,6 @@ export default function LandingPage() {
           status={modalStatus}
           className="validation-modal"
           reset={reset}
-          
         />
         <div className="page-header">
           <img

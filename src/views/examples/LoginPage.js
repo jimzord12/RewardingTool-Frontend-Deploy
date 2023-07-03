@@ -19,7 +19,7 @@
 */
 import React from "react";
 import classnames from "classnames";
-import axios from "axios";
+// import axios from "axios";
 // reactstrap components
 import {
   // Button,
@@ -54,7 +54,7 @@ import { ReactComponent as MetamaskIcon } from "../../assets/img/genera/metamask
 import { useMetaMask } from "contexts/web3/MetaMaskContextProvider";
 import { useGlobalContext } from "contexts/GlobalContextProvider";
 import { useLS } from "../../hooks/useLS.js";
-import { useFormValidation } from "../../hooks/useFormValidation.js";
+// import { useFormValidation } from "../../hooks/useFormValidation.js";
 
 export default function LoginPage() {
   const [squares1to6, setSquares1to6] = React.useState("");
@@ -67,7 +67,7 @@ export default function LoginPage() {
   const [passwordFocus, setPasswordFocus] = React.useState(false);
   const [walletFocus, setWalletFocus] = React.useState(false);
   const [hasError, setHasError] = React.useState([]);
-  const [saveEmail, getEmail, removeEmail] = useLS("email", "");
+  const [saveEmail, getEmail] = useLS("email", "");
 
   // const [fullNameFocus, setFullNameFocus] = React.useState(false);
   // const [loginFailed, setLoginFailed] = useState(false);
@@ -75,7 +75,7 @@ export default function LoginPage() {
   // const [forceRerender, setForceRerender] = useState(false);
   // const [loginSuccess, setLoginSuccess] = useState(false);
 
-  const { loginUser, loggedOut, isLoggedIn, isLoading } = useLogin();
+  const { loginUser, isLoggedIn, isLoading } = useLogin();
   const { navigate } = useNavigation();
 
   const {
@@ -83,8 +83,8 @@ export default function LoginPage() {
     wallet,
     connectMetaMask,
     switchNetwork,
-    addNetwork,
-    provider,
+    // addNetwork,
+    // provider,
   } = useMetaMask();
 
   // const {

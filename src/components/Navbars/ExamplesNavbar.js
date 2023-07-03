@@ -16,7 +16,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useState } from "react";
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
 // import { ethers } from "ethers";
 import { toast } from "react-toastify";
@@ -41,7 +41,7 @@ import {
   NavbarBrand,
   Navbar,
   NavItem,
-  NavLink,
+  // NavLink,
   Nav,
   Container,
   Row,
@@ -117,10 +117,10 @@ export default function ExamplesNavbar() {
     wallet,
     hasProvider,
     connectMetaMask,
-    error,
-    errorMessage,
-    isConnecting,
-    clearError,
+    // error,
+    // errorMessage,
+    // isConnecting,
+    // clearError,
   } = useMetaMask();
 
   const { navigate } = useNavigation();

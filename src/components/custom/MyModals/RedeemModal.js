@@ -100,10 +100,31 @@ const SubWindow = (props) => {
         <p>
           You will have to confirm 2 transactions using your crypto wallet.
           <br />
+          Each Transaction can take up to 45 seconds to get confirmed.
           <br />
-          &nbsp;&nbsp;&nbsp;&nbsp;1. To allow the MGS Token transfer
           <br />
-          &nbsp;&nbsp;&nbsp;&nbsp;2. To obtain the Reward
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <span
+            style={{
+              fontSize: 18,
+              textShadow: "1px 1px 2px black",
+              color: txStatus.isTx1_Done ? "#0ce016" : "",
+              textDecoration: txStatus.isTx1_Done ? "line-through" : "",
+            }}
+          >
+            1. To allow the MGS Token transfer
+          </span>
+          <br />
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <span
+            style={{
+              fontSize: 18,
+              textShadow: "1px 1px 2px black",
+              color: txStatus.isTx1_Done ? "#E8670D" : "",
+            }}
+          >
+            2. To obtain the Reward
+          </span>
         </p>
       )}
 
