@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import axios from "axios";
+import { axiosOracle } from "api/config";
 
 import { useMetaMask } from "contexts/web3/MetaMaskContextProvider";
 import { useGlobalContext } from "contexts/GlobalContextProvider";
 import { toast } from "react-toastify";
+// import { axiosOracle } from "api/config";
 
 import {
   loginProcessHandler,
@@ -13,7 +15,7 @@ import {
 
 export async function getNonce() {
   try {
-    const response = await axios.get("http://localhost:3038/big-random-number");
+    const response = await axiosOracle.get("/big-random-number");
     const nonce = response.data.randomBigNumber;
     return nonce;
   } catch (error) {
@@ -120,7 +122,7 @@ export function useWeb3Login() {
 
         const responsePromise = signedMessage
           .then((signedMessage) =>
-            axios.post("http://localhost:3038/verify-signature", {
+            axiosOracle.post("/verify-signature", {
               nonce: message,
               //   nonce: "AAAAAA", // FOr testing: to get an Error
               userAddress: _signerAddr,
