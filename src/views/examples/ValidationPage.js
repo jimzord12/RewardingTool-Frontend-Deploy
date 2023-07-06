@@ -376,7 +376,34 @@ export default function LandingPage() {
             }
           );
           console.log("⛔ (ValidationPage) Contract Validation Error: ", error);
+          throw new Error(error);
         }
+      } else {
+        toast.error(
+          <CustomErrorToast
+            text={
+              "User's Code is Wrong, or there is an problem with the Blockchain Network"
+            }
+          />,
+          {
+            position: "bottom-center",
+            autoClose: 6000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          }
+        );
+
+        setModalStatus((prev) => {
+          return {
+            ...prev,
+            state: "completed",
+            success: doHashesMatch,
+          };
+        });
       }
     } catch (error) {
       console.log("⛔ (ValidationPage) Contract Error: ", error);

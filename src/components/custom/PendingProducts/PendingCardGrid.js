@@ -15,18 +15,16 @@ function PendingCardGridGrid({ items, handleSelectPendingReward }) {
             return null; // or return whatever you want when isRedeemed is true
           }
           return (
-            <>
-              <Col
-                sm="4"
-                key={item?.id ? item.id : index}
-                onClick={() => {
-                  setSelectedCard(item); // This stores the selected card LOCALLY
-                  handleSelectPendingReward(item); // This stores the selected card at "ValidatePage.js"
-                }}
-              >
-                <PendingMyCard item={item} selectedCard={selectedCard} />
-              </Col>
-            </>
+            <Col
+              sm="4"
+              key={item?.id ? item.id : index}
+              onClick={() => {
+                setSelectedCard(item); // This stores the selected card LOCALLY
+                handleSelectPendingReward(item); // This stores the selected card at "ValidatePage.js"
+              }}
+            >
+              <PendingMyCard item={item} selectedCard={selectedCard} />
+            </Col>
           );
         })
       ) : (

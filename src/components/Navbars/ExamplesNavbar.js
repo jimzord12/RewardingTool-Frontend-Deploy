@@ -78,7 +78,7 @@ const CustomToast = ({ text, text2, text3, link }) => (
             target="_blank"
             rel="noreferrer"
           >
-            Watch this 1min Video!
+            Watch this quick Video!
           </a>
         </div>
       </>
@@ -107,6 +107,7 @@ export default function ExamplesNavbar() {
   const [collapseOut, setCollapseOut] = React.useState("");
   const [color, setColor] = React.useState("navbar-transparent");
   const [tokenEventAnimate, setTokenEventAnimate] = React.useState(false);
+  const [hasEffectRun, setHasEffectRun] = React.useState(false);
 
   // const [hasMetamaskState, sethasMetamaskState] = React.useState(false);
   // const [isConnectedState, setIsConnectedState] = React.useState(false);
@@ -169,7 +170,7 @@ export default function ExamplesNavbar() {
             text2={
               "Important! If you add the MGS Tokens into MetaMask but you don't have an Account, you will still see: (Can't find Tokens)"
             }
-            link={"This is a link to a 1min Video!"}
+            link={"https://youtu.be/aH6C2toTImk"}
           />,
           {
             position: "top-center",
@@ -198,7 +199,14 @@ export default function ExamplesNavbar() {
       }
     }
 
-    if (userData.name !== undefined && wallet.chainId === 20231) _getTokens();
+    if (
+      userData.name !== undefined &&
+      wallet.chainId === 20231 &&
+      !hasEffectRun
+    ) {
+      _getTokens();
+      setHasEffectRun(true);
+    }
     // if (userData.name !== undefined && wallet.chainId === 31337) _getTokens();
 
     return function cleanup() {

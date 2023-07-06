@@ -37,12 +37,22 @@ function consolidateRewards(arrOfRewards) {
   let consolidatedRewards = {};
 
   arrOfRewards.forEach((reward) => {
+    console.log("🧪🧪 AAAAAAA 🧪🧪: ", reward);
     if (consolidatedRewards[reward.RewardID]) {
       consolidatedRewards[reward.RewardID].amount += 1;
+      if (reward.isRedeemed === false) {
+        consolidatedRewards[reward.RewardID].isRedeemed = false;
+        consolidatedRewards[reward.RewardID].amountToRedeem += 1;
+      } else {
+        consolidatedRewards[reward.RewardID].amountOfRedeemed += 1;
+      }
     } else {
       consolidatedRewards[reward.RewardID] = {
         productID: reward.RewardID,
         amount: 1,
+        isRedeemed: reward.isRedeemed,
+        amountToRedeem: reward.isRedeemed ? 0 : 1,
+        amountOfRedeemed: reward.isRedeemed ? 1 : 0,
       };
     }
   });
@@ -115,6 +125,9 @@ export default function UserRewardsPage() {
           amount: compressedReward.amount,
           location: rewards[compressedReward.productID].location,
           isInfinite: false,
+          isRedeemed: compressedReward.isRedeemed,
+          amountToRedeem: compressedReward.amountToRedeem,
+          amountOfRedeemed: compressedReward.amountOfRedeemed,
         };
       });
 

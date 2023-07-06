@@ -21,7 +21,7 @@ const CustomToast = ({ text1, text2, text3 }) => (
 );
 
 export const copyToClipboard = async (textToCopy) => {
-  console.log("SSSSSSSSS: ", textToCopy);
+  console.log("Text To Copy to Clipboard: ", textToCopy);
   try {
     await navigator.clipboard.writeText(textToCopy);
     console.log("Copied to clipboard");
