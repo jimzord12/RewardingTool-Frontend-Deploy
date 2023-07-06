@@ -4,6 +4,7 @@ import hardHatAbi from "./old_ABIs/hardHat_ABI.json";
 import MGS_ABI from "./MGS_ABI.json";
 import { deployedContractAddresses } from "./deployedContracts";
 import Rewarding_ABI from "./Rewarding_ABI.json";
+import { rpcUrl } from "./nodeRpcUrl";
 
 export {
   abi,
@@ -14,4 +15,5 @@ export {
   MGSAddress,
   hardHatAddress,
   deployedContractAddresses,
+  rpcUrl,
 };

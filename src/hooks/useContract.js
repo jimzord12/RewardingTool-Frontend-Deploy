@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ethers } from "ethers";
+import { rpcUrl } from "web3/constants";
 
 async function checkContractExists(provider, contractAddress) {
   const code = await provider.getCode(contractAddress);
@@ -35,9 +36,7 @@ function useContract(provider, addr, abi) {
         }
 
         // *********************************************************
-        const providerReadOnly = new ethers.providers.JsonRpcProvider(
-          "http://83.212.81.174:8545"
-        );
+        const providerReadOnly = new ethers.providers.JsonRpcProvider(rpcUrl);
 
         const itExists = await checkContractExists(providerReadOnly, addr);
         console.log("Does the contract exist? : ", itExists);
