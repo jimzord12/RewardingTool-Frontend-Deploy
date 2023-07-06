@@ -845,6 +845,10 @@ input:-webkit-autofill:active {
   }
 }
 
+.validate-last-section-mobile {
+  margin-top: 64px;
+}
+
 /* MEDIA QUERIES */
 
 @media only screen and (max-width: 1200px) {
@@ -898,5 +902,17 @@ input:-webkit-autofill:active {
 @media only screen and (max-width: 440px) {
   .metamask-logo-spinner {
     transform: translate(-28px, 54px);
+  }
+
+  .page-header {
+    min-height: 800px;
+  }
+
+  .validation-container-mobile {
+    min-height: 300px;
+  }
+
+  .validate-last-section-mobile {
+    margin-top: 64px;
   }
 }

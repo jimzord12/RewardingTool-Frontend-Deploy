@@ -512,7 +512,7 @@ export default function LandingPage() {
             </Row>
           </div>
         </div>
-        <div className="content-center">
+        <div className="content-center validation-container-mobile">
           {userData.name === undefined ? (
             <Container>
               <h3
@@ -624,7 +624,7 @@ export default function LandingPage() {
         {pendingRewardSelected !== null && (
           <div>
             <Container>
-              <Row className="row-grid justify-content-between align-items-center text-left my-4">
+              <Row className="row-grid justify-content-between align-items-center text-left my-4 validate-btn-mobile">
                 <Col
                   className="px-2 py-2"
                   lg="6"
@@ -695,7 +695,7 @@ export default function LandingPage() {
             </Container>
           </div>
         )}
-        <section>
+        <section className="validate-last-section-mobile">
           <Container>
             {rewardsLoading ? (
               <div style={{ paddingTop: 64, paddingBottom: 64 }}>
