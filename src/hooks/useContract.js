@@ -14,7 +14,7 @@ function useContract(provider, addr, abi) {
    */
   const initialize = async (isReadOnly = false) => {
     if (addr && abi && provider) {
-      setIsLoading(true);
+      setIsLoading(true); //window.ethereum
       try {
         if (!isReadOnly) {
           const accounts = await provider.request({

@@ -446,7 +446,6 @@ export const GlobalContextProvider = ({ children }) => {
   async function fetchServerData(action, ...args) {
     try {
       const response = await axios.get(action);
-      setData(response.data);
       return response.data;
     } catch (err) {
       setError(err);
