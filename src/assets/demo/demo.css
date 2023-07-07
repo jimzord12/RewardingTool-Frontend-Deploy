@@ -699,6 +699,14 @@ input:-webkit-autofill:active {
   align-items: center;
 }
 
+.card-img-show-code {
+  filter: blur(10px);
+}
+
+.text-card-show-code {
+  
+}
+
 .metamask-logo-spinner {
   transform: translate(-28px, 42px);
 }
@@ -886,6 +894,7 @@ input:-webkit-autofill:active {
 
   .navbar-nav > .nav-item > button {
     margin-top: 16px;
+    display: inline !important;
   }
 }
 

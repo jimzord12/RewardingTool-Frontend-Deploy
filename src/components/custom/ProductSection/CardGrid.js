@@ -23,7 +23,7 @@ function CardGrid({ items, setModal, setSelectedReward }) {
             if (setSelectedReward !== undefined) setSelectedReward(item);
           }}
         >
-          <MyCard item={item} />
+          <MyCard item={item} setSelectedReward={setSelectedReward} />
         </Col>
       ))}
     </Row>

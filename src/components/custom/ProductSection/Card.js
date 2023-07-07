@@ -1,15 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardBody, CardTitle, CardText, CardImg } from "reactstrap";
+import { useLS } from "hooks/useLS";
 
 function MyCard({ item }) {
-  // console.log(item.img);
+  const [, getFromLS] = useLS(item.pendindRewardID, null);
+  const [showCode, setShowCode] = useState(null);
+
   return (
     <Card className={`product-card`}>
+      {showCode !== null && <h3 className="text-card-show-code">{showCode}</h3>}
       <CardImg
         top
-        className="card-img-top"
+        className={`card-img-top ${
+          showCode !== null ? "card-img-show-code" : ""
+        }`}
         src={item.image}
         alt="Card image cap"
+        onClick={() => {
+          const secretCode = getFromLS();
+          console.log(secretCode);
+          if (secretCode !== null) {
+            setShowCode(secretCode);
+          } else {
+          }
+        }}
       />
       <CardBody>
         <CardTitle tag="h5">{item.name}</CardTitle>

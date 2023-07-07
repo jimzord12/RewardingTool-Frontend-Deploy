@@ -524,10 +524,10 @@ export default function ExamplesNavbar() {
                 }}
               >
                 <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                  }}
+                // style={{
+                //   display: "flex",
+                //   flexDirection: "row",
+                // }}
                 >
                   <i className="tim-icons icon-wallet-43 hide-icons" />{" "}
                   {/* 

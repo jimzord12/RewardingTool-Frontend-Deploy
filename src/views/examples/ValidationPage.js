@@ -144,6 +144,8 @@ export default function LandingPage() {
     ""
   );
 
+  const [removeCode] = useLS();
+
   const refetchUserRewards = async () => {
     setRewardsLoading(true);
     await handleFetchUserRewards();
@@ -349,6 +351,8 @@ export default function LandingPage() {
 
           const tx_validation = await contractValidation.wait();
           console.log("💎🧪 Redeem Validation: ", tx_validation);
+
+          removeCode(pendingRewardSelected.id);
 
           setModalStatus((prev) => {
             return {

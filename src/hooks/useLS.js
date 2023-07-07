@@ -14,16 +14,25 @@ export function useLS(key, initialValue) {
 
   const [storedValue, setStoredValue] = useState(getFromLS);
 
-  const saveToLS = (value) => {
+  const saveToLS = (_key, value) => {
     try {
       const valueToStore =
         value instanceof Function ? value(storedValue) : value;
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      window.localStorage.setItem(_key, JSON.stringify(valueToStore));
       setStoredValue(valueToStore);
     } catch (error) {
       console.log(error);
     }
   };
 
-  return [saveToLS, getFromLS];
+  const removeFromLS = (_key) => {
+    try {
+      window.localStorage.removeItem(_key);
+      setStoredValue(null);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return [saveToLS, getFromLS, removeFromLS];
 }

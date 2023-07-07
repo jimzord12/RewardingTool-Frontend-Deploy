@@ -32,6 +32,8 @@ import Footer from "components/Footer/Footer.js";
 import { productDetails as rewardDetails } from "../../data/productDetails.js";
 import CardGrid from "components/custom/ProductSection/CardGrid.js";
 
+// Hooks
+
 // Made by GPT-4
 function consolidateRewards(arrOfRewards) {
   let consolidatedRewards = {};
@@ -49,6 +51,7 @@ function consolidateRewards(arrOfRewards) {
     } else {
       consolidatedRewards[reward.RewardID] = {
         productID: reward.RewardID,
+        pendindRewardID: reward.pendindRewardID,
         amount: 1,
         isRedeemed: reward.isRedeemed,
         amountToRedeem: reward.isRedeemed ? 0 : 1,
@@ -84,6 +87,7 @@ export default function UserRewardsPage() {
   const [rewardsLoading, setRewardsLoading] = React.useState(true);
   const [userRewards, setUserRewards] = React.useState([]);
 
+
   const handleFetchUserRewards = async () => {
     setRewardsLoading(true);
     try {
@@ -118,9 +122,10 @@ export default function UserRewardsPage() {
       const finalRewards = noDuplRewards.map((compressedReward, index) => {
         return {
           id: index,
+          pendindRewardID: compressedReward.pendindRewardID,
           image: rewardDetails[compressedReward.productID].image,
           description: rewardDetails[compressedReward.productID].description,
-          name: rewards.name,
+          name: rewards[compressedReward.productID].name,
           price: rewards[compressedReward.productID].price,
           amount: compressedReward.amount,
           location: rewards[compressedReward.productID].location,

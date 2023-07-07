@@ -30,6 +30,7 @@ import RedeemModal from "components/custom/MyModals/RedeemModal.js";
 import { ThreeCircles } from "react-loader-spinner";
 
 import { useGlobalContext } from "contexts/GlobalContextProvider.js";
+import { useLS } from "hooks/useLS.js";
 
 import { deployedContractAddresses } from "../../web3/constants/index.js";
 
@@ -64,6 +65,8 @@ export default function RewardsPage() {
       isTx1_Done: false,
     });
   };
+
+  const [saveToLS] = useLS();
 
   const handleRedeemReward = async () => {
     resetRedeem();
@@ -126,6 +129,7 @@ export default function RewardsPage() {
       console.log("Wating to be confirmed... ");
       await tx.wait();
       console.log("✅ Tx got Confirmed! ");
+
       setTxStatus((prev) => {
         return {
           ...prev,
@@ -133,6 +137,29 @@ export default function RewardsPage() {
           success: true,
         };
       });
+
+      // Saving Code to LS
+      const userRewardsRAW = await callContractFn(
+        "getPendingProducts",
+        userData.wallet
+      );
+      console.log("🎪 1. (RewardsPage): User's RAW Rewards: ", userRewardsRAW);
+      const convertedRawData = userRewardsRAW.map((pendingReward) => {
+        return {
+          pendindRewardID: Number(pendingReward[0]),
+          RewardID: Number(pendingReward[1]),
+          secretCode: secretCode.data.randomNumber,
+        };
+      });
+      console.log(
+        "🎪 2. (RewardsPage): User's Converted Rewards: ",
+        convertedRawData
+      );
+      const lastElement = convertedRawData[convertedRawData.length - 1];
+
+      console.log("🎪 3. (RewardsPage): User's Latest Reward: ", lastElement);
+
+      saveToLS(lastElement.pendindRewardID, lastElement.secretCode);
 
       return secretCode.data.randomNumber;
 
