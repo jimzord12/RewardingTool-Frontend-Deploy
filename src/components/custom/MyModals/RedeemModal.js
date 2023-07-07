@@ -321,6 +321,7 @@ const RedeemModal = (props) => {
         toggle={toggle}
         className={className}
         backdropClassName="backdrop"
+        backdrop="static"
         onClosed={() => {
           resetRedeem();
           setIsRedeemClicked(false);
