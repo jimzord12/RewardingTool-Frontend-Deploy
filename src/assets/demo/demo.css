@@ -704,7 +704,6 @@ input:-webkit-autofill:active {
 }
 
 .text-card-show-code {
-  
 }
 
 .metamask-logo-spinner {
@@ -923,5 +922,9 @@ input:-webkit-autofill:active {
 
   .validate-last-section-mobile {
     margin-top: 64px;
+  }
+
+  .mobile-font-custom > h3 {
+    font-size: small;
   }
 }

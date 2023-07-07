@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ThreeCircles } from "react-loader-spinner";
 
 import "./ValidationPage.styles.css";
@@ -31,6 +31,7 @@ import ExamplesNavbar from "components/Navbars/ExamplesNavbar.js";
 import Footer from "components/Footer/Footer.js";
 import { productDetails as rewardDetails } from "../../data/productDetails.js";
 import CardGrid from "components/custom/ProductSection/CardGrid.js";
+import UserRewardsCodesModal from "components/custom/MyModals/UserRewardsCodesModal";
 
 // Hooks
 
@@ -39,24 +40,57 @@ function consolidateRewards(arrOfRewards) {
   let consolidatedRewards = {};
 
   arrOfRewards.forEach((reward) => {
-    console.log("🧪🧪 AAAAAAA 🧪🧪: ", reward);
+    console.log(`🧪🧪 Reward (${reward.pendindRewardID})🧪🧪: `, reward);
     if (consolidatedRewards[reward.RewardID]) {
+      // console.log("This reward already exists...");
+      // console.log(
+      //   "🧪🧪 (1) Existing Reward: 🧪🧪: ",
+      //   consolidatedRewards[reward.RewardID]
+      // );
+      // console.log(
+      //   "🧪🧪 (2) Existing Pending Rewards 🧪🧪: ",
+      //   consolidatedRewards[reward.RewardID].pendingRewards
+      // );
+      // console.log("🧪🧪 (3) The Duplicates ID: 🧪🧪: ", reward.pendindRewardID);
+
       consolidatedRewards[reward.RewardID].amount += 1;
+      // consolidatedRewards[reward.RewardID].pendingRewards.push(
+      //   reward.pendingRewardID
+      // );
+      // console.log(
+      //   "🧪🧪 (4) Final: 🧪🧪: ",
+      //   consolidatedRewards[reward.RewardID]
+      // );
       if (reward.isRedeemed === false) {
         consolidatedRewards[reward.RewardID].isRedeemed = false;
         consolidatedRewards[reward.RewardID].amountToRedeem += 1;
+        consolidatedRewards[reward.RewardID].pendingRewards.push(
+          reward.pendindRewardID
+        );
       } else {
         consolidatedRewards[reward.RewardID].amountOfRedeemed += 1;
       }
     } else {
-      consolidatedRewards[reward.RewardID] = {
-        productID: reward.RewardID,
-        pendindRewardID: reward.pendindRewardID,
-        amount: 1,
-        isRedeemed: reward.isRedeemed,
-        amountToRedeem: reward.isRedeemed ? 0 : 1,
-        amountOfRedeemed: reward.isRedeemed ? 1 : 0,
-      };
+      if (reward.isRedeemed === false) {
+        consolidatedRewards[reward.RewardID] = {
+          productID: reward.RewardID,
+          pendingRewards: [reward.pendindRewardID],
+          amount: 1,
+          isRedeemed: reward.isRedeemed,
+          amountToRedeem: reward.isRedeemed ? 0 : 1,
+          amountOfRedeemed: reward.isRedeemed ? 1 : 0,
+        };
+      } else {
+        // console.log("This reward DOES NOT exists...");
+        consolidatedRewards[reward.RewardID] = {
+          productID: reward.RewardID,
+          pendingRewards: [],
+          amount: 1,
+          isRedeemed: reward.isRedeemed,
+          amountToRedeem: reward.isRedeemed ? 0 : 1,
+          amountOfRedeemed: reward.isRedeemed ? 1 : 0,
+        };
+      }
     }
   });
 
@@ -75,6 +109,8 @@ export default function UserRewardsPage() {
     };
   }, []);
 
+  const [modal, setModal] = useState(false);
+  const [selectedReward, setSelectedReward] = useState(undefined);
   const {
     userData,
     // setUserData,
@@ -86,7 +122,6 @@ export default function UserRewardsPage() {
 
   const [rewardsLoading, setRewardsLoading] = React.useState(true);
   const [userRewards, setUserRewards] = React.useState([]);
-
 
   const handleFetchUserRewards = async () => {
     setRewardsLoading(true);
@@ -122,7 +157,7 @@ export default function UserRewardsPage() {
       const finalRewards = noDuplRewards.map((compressedReward, index) => {
         return {
           id: index,
-          pendindRewardID: compressedReward.pendindRewardID,
+          pendindRewardID: compressedReward.pendingRewards,
           image: rewardDetails[compressedReward.productID].image,
           description: rewardDetails[compressedReward.productID].description,
           name: rewards[compressedReward.productID].name,
@@ -287,9 +322,20 @@ export default function UserRewardsPage() {
                 />
               </div>
             ) : (
-              userRewards.length > 0 && <CardGrid items={userRewards} />
+              userRewards.length > 0 && (
+                <CardGrid
+                  items={userRewards}
+                  setModal={setModal}
+                  setSelectedReward={setSelectedReward}
+                />
+              )
             )}
           </Container>
+          <UserRewardsCodesModal
+            isOpen={modal}
+            selectedReward={selectedReward}
+            setModal={setModal}
+          />
         </section>
         <Footer />
       </div>
