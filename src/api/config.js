@@ -22,6 +22,6 @@ export const axiosOracle = axios.create({
   // baseURL: HOST,
   baseURL: `https://express-oracle-rewarding-tool-02e3806b3ce0.herokuapp.com`, // ✨ Production URL
   // baseURL: `http://localhost:${PORT_2}`, // 🧪 Local Testing
-  // headers: { 'Content-Type': 'application/json' },
-  // withCredentials: true,
+  headers: { "Content-Type": "application/json" },
+  withCredentials: true,
 });
