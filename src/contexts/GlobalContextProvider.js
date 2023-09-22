@@ -342,8 +342,8 @@ export const GlobalContextProvider = ({ children }) => {
     console.log("3. From GlobalContext: ", wallet);
     console.log("4. From GlobalContext: ", contract);
 
+    // [GUEST-MODE] - Initialization
     if (hasMetaMaskRun && contract === null && wallet.chainId === "") {
-      // The arg is name is: isReadOnly
       (async () => {
         const _readOnlyContract = await initialize(true);
         setContractReadOnly(_readOnlyContract);

@@ -101,17 +101,23 @@ export function useWeb3Login() {
   }, [isAuthenticated, userData.wallet]);
 
   const signMessage = async () => {
-    // if (wallet.chainId !== 20231) {
+    
+    // Checks if wallet, provider, etc. exist
     const isWeb3Ready = loginProcessHandler("login", hasProvider, wallet);
+
     if (!isWeb3Ready) return;
 
+    // Again bad naming, this is the random number from the WS
     const nonce = await getNonce();
+
     const message = `This is your generated random verification number: ${nonce}.\n \nNo action is required from your side concerning the random number. We simply show it for transparency reasons.\n \nBy allowing your Wallet to sign this message, using your private key, it can be proven that you are the true owner of this wallet, without the need for a password.\n \nPlease click "Sign" to proceed.`;
 
     console.log(provider);
+    
     if (nonce && hasProvider) {
       const wallet = new ethers.providers.Web3Provider(provider);
       const _signer = wallet.getSigner();
+      
       const _signerAddr = await _signer.getAddress();
       setSigner(_signer);
 

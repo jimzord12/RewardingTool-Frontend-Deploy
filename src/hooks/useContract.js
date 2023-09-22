@@ -17,6 +17,7 @@ function useContract(provider, addr, abi) {
     if (addr && abi && provider) {
       setIsLoading(true); //window.ethereum
       try {
+        // Wallet is Connected here!
         if (!isReadOnly) {
           const accounts = await provider.request({
             method: "eth_requestAccounts",
@@ -32,10 +33,12 @@ function useContract(provider, addr, abi) {
           // const ethersProvider = new ethers.BrowserProvider(provider);
           const signer = await ethersProvider.getSigner();
           const contractInstance = new ethers.Contract(addr, abi, signer);
+
           return contractInstance;
         }
 
         // *********************************************************
+        // [GUEST-MODE]
         const providerReadOnly = new ethers.providers.JsonRpcProvider(rpcUrl);
 
         const itExists = await checkContractExists(providerReadOnly, addr);

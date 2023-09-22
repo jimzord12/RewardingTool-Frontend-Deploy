@@ -110,13 +110,13 @@ export const MetaMaskContextProvider = ({ children }) => {
           console.log("2.1 User is NOT Connected");
         } else {
           console.log("2.2 The User Details: ", _wallet);
+          console.log(
+            "2.3 Adding Wallet Event Listeners: (accountsChanged, chainChanged)..."
+          );
+          mm.on("accountsChanged", updateWallet);
+          mm.on("chainChanged", updateWalletAndAccounts);
+          console.log("2.4 ✅ Wallet Event Listeners added Successfully!");
         }
-        console.log(
-          "2.3 Adding Wallet Event Listeners: (accountsChanged, chainChanged)..."
-        );
-        mm.on("accountsChanged", updateWallet);
-        mm.on("chainChanged", updateWalletAndAccounts);
-        console.log("2.4 ✅ Wallet Event Listeners added Successfully!");
         console.log("--------------------------------------------------");
       }
       setHasMetaMaskRun(true);
