@@ -77,7 +77,6 @@ export function loginProcessHandler(operation, hasProvider, wallet) {
     );
     return false;
   } else if (hasProvider && wallet.chainId !== 20231) {
-  // } else if (hasProvider && wallet.chainId !== 31337) {
     // 4. User has wallet, and has connected it, but is on the wrong network
     toast.error(
       <CustomErrorToast
@@ -99,29 +98,6 @@ export function loginProcessHandler(operation, hasProvider, wallet) {
     );
     return false;
   }
-  //   else if (operations("redeem", 5)) {
-  //     // 5. User has wallet, and has connected it, is on the wrong network, BUT
-  //     // Does not have suffient MGS Token for the seleceted Reward
-  //     toast.error(
-  //       <CustomErrorToast
-  //         text1={"Please change your selected network to: (GENERA)"}
-  //       />,
-  //       {
-  //         position: "top-center",
-  //         autoClose: 4000,
-  //         hideProgressBar: false,
-  //         closeOnClick: true,
-  //         pauseOnHover: true,
-  //         draggable: true,
-  //         progress: undefined,
-  //         theme: "dark",
-  //       }
-  //     );
-  //     console.log(
-  //       "useWeb3Login: ⛔ Please change your selected network to: (GENERA)"
-  //     );
-  //     return false;
-  //   }
 
   return true;
 }
