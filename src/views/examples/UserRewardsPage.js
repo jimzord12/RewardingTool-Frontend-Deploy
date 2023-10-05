@@ -321,14 +321,14 @@ export default function UserRewardsPage() {
                   middleCircleColor="white"
                 />
               </div>
+            ) : userRewards.length > 0 ? (
+              <CardGrid
+                items={userRewards}
+                setModal={setModal}
+                setSelectedReward={setSelectedReward}
+              />
             ) : (
-              userRewards.length > 0 && (
-                <CardGrid
-                  items={userRewards}
-                  setModal={setModal}
-                  setSelectedReward={setSelectedReward}
-                />
-              )
+              <h3>Currently there no available Rewards</h3>
             )}
           </Container>
           <UserRewardsCodesModal
