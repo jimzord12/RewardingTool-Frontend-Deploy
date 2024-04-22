@@ -36,6 +36,8 @@ import { deployedContractAddresses } from "../../web3/constants/index.js";
 
 import { axiosOracle } from "api/config.js";
 
+import testImage from "assets/img/genera/v3/MGS_to_Rarity.webp";
+
 export default function RewardsPage() {
   const [modalState, setModal] = useState(false);
   const [selectedReward, setSelectedReward] = useState(null);
@@ -236,7 +238,7 @@ export default function RewardsPage() {
             isOpen={modalState}
             setModal={setModal}
             title={selectedReward?.name}
-            imageSrc={selectedReward?.image}
+            imageSrc={testImage}
             price={selectedReward?.price}
             status="Available"
             location={selectedReward?.location}

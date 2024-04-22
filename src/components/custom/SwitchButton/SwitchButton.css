@@ -1,0 +1,83 @@
+.switch-button {
+  width: 80px;
+  height: 38px;
+  background-color: rgb(96, 19, 155);
+  border-radius: 25px;
+  position: relative;
+  cursor: pointer;
+  outline: 2px white solid;
+  transition: background-color 0.3s;
+}
+
+.switch-circle {
+  width: 36px;
+  height: 36px;
+  background-color: aqua;
+  box-shadow: 1.5px 0px 5px rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  transition: transform 0.3s;
+}
+
+.switch-button .active {
+  transform: translateX(42px);
+}
+
+.switch-button:hover {
+  background-color: #a4a2a2;
+}
+
+.switch-inside-text-local {
+  color: white;
+  font-size: 22px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(175%, -50%);
+}
+
+.switch-inside-text-metamask {
+  color: white;
+  font-size: 22px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-155%, -50%);
+}
+
+@media only screen and (max-width: 991px) {
+  .switch-button {
+    margin-top: 16px;
+    width: 125px;
+    height: 40px;
+  }
+
+  .switch-circle {
+    width: 39px;
+    height: 38px;
+  }
+
+  .switch-button .active {
+    transform: translateX(84px);
+  }
+
+  .switch-inside-text-local {
+    color: white;
+    font-size: 26px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(325%, -50%);
+  }
+
+  .switch-inside-text-metamask {
+    color: white;
+    font-size: 26px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-230%, -50%);
+  }
+}

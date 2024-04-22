@@ -1,16 +1,16 @@
-import React, { useState } from "react";
 import { Card, CardBody, CardTitle, CardText, CardImg } from "reactstrap";
-import { useLS } from "hooks/useLS";
+import testImage from "assets/img/genera/v3/MGS_to_Rarity.webp";
+// import { useLS } from "hooks/useLS";
 
 function MyCard({ item }) {
-  const [, getFromLS] = useLS(item.pendindRewardID, null);
+  // const [, getFromLS] = useLS(item.pendindRewardID, null);
 
   return (
     <Card className={`product-card`}>
       <CardImg
         top
         className="card-img-top"
-        src={item.image}
+        src={testImage}
         alt="Card image cap"
         // onClick={() => {
         //   const secretCode = getFromLS();

@@ -19,7 +19,7 @@ const MetaMaskContext = createContext();
 
 export const MetaMaskContextProvider = ({ children }) => {
   const [provider, setProvider] = useState(null);
-  const [hasProvider, setHasProvider] = useState(null);
+  const [hasMetamask, setHasMetamaskProvider] = useState(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const clearError = () => setErrorMessage("");
@@ -47,22 +47,6 @@ export const MetaMaskContextProvider = ({ children }) => {
         params: [accounts[0], "latest"],
       })
     );
-
-    // // Retrieving User Balance in (MGS)
-    // const MGS_balance = formatBalance(
-    //   await mm.request({
-    //     method: "eth_getBalance",
-    //     params: [accounts[0], "latest"],
-    //   })
-    // );
-
-    // // Retrieving User Balance in (MGS)
-    // const userName = formatBalance(
-    //   await mm.request({
-    //     method: "eth_getBalance",
-    //     params: [accounts[0], "latest"],
-    //   })
-    // );
 
     const chainId = formatChainAsNum(
       await mm.request({
@@ -102,7 +86,7 @@ export const MetaMaskContextProvider = ({ children }) => {
         : console.log("1.2 ✅ The Provider (Active): ", _provider);
 
       setProvider(_provider);
-      setHasProvider(Boolean(_provider));
+      setHasMetamaskProvider(Boolean(_provider));
 
       if (_provider) {
         const _wallet = await updateWalletAndAccounts();
@@ -177,7 +161,7 @@ export const MetaMaskContextProvider = ({ children }) => {
     <MetaMaskContext.Provider
       value={{
         wallet,
-        hasProvider,
+        hasMetamask,
         provider,
         error: !!errorMessage,
         errorMessage,

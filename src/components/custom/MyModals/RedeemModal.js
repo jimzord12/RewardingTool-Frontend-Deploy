@@ -209,7 +209,7 @@ const RedeemModal = (props) => {
   //   const [modal, setModal] = useState(isOpen);
   const [isRedeemClicked, setIsRedeemClicked] = useState(false);
 
-  const { hasProvider, wallet } = useMetaMask();
+  const { hasMetamask, wallet } = useMetaMask();
   const { getRewards, getTokens } = useGlobalContext();
 
   const modalRef = useRef(null);
@@ -226,7 +226,7 @@ const RedeemModal = (props) => {
     //   pendingRewards: [],
     // };
 
-    const isReady = loginProcessHandler("redeem", hasProvider, wallet);
+    const isReady = loginProcessHandler("redeem", hasMetamask, wallet);
     if (!isReady) return;
 
     if (!userData.isLoggedIn) {

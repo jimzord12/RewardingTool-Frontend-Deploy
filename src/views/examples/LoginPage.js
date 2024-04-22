@@ -79,7 +79,7 @@ export default function LoginPage() {
   const { navigate } = useNavigation();
 
   const {
-    hasProvider,
+    hasMetamask,
     wallet,
     connectMetaMask,
     switchNetwork,
@@ -149,7 +149,7 @@ export default function LoginPage() {
   //   const nonce = await getNonce();
   //   // If nonce fetching failed, nonce will be null. Add error handling as necessary.
 
-  //   if (nonce && hasProvider) {
+  //   if (nonce && hasMetamask) {
   //     const signer = provider.getSigner();
   //     const signedMessage = await signer.signMessage(nonce.toString());
 
@@ -208,7 +208,7 @@ export default function LoginPage() {
       errors.push(error);
     }
     // Check if wallet installed
-    if (!hasProvider) {
+    if (!hasMetamask) {
       const error = { name: "Wallet" };
       error.message = "Metamask must be installed";
       errors.push(error);
@@ -441,13 +441,13 @@ export default function LoginPage() {
                           <div>
                             <Input
                               type="checkbox"
-                              checked={hasProvider}
+                              checked={hasMetamask}
                               readOnly
                             />
                             <span className="form-check-sign" /> Wallet
                             Installed?*
                           </div>
-                          {!hasProvider && (
+                          {!hasMetamask && (
                             <a
                               className="web3-helper-link-login"
                               href="https://metamask.io/"

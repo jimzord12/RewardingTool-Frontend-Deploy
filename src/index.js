@@ -30,7 +30,7 @@ import { GlobalContextProvider } from "./contexts/GlobalContextProvider.js";
 
 import Index from "views/Index.js";
 import LandingPage from "views/examples/LandingPage.js";
-import RegisterPage from "views/examples/RegisterPage.js";
+// import RegisterPage from "views/examples/RegisterPage.js";
 import Web3RegisterPage from "views/examples/Web3RegisterPage.js";
 import ProfilePage from "views/examples/ProfilePage.js";
 import RewardsPage from "views/examples/RewardsPage.js";

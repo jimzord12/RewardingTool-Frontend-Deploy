@@ -20,7 +20,7 @@ const CustomErrorToast = ({ text1, text2, text3 }) => (
   </div>
 );
 
-export function loginProcessHandler(operation, hasProvider, wallet) {
+export function loginProcessHandler(operation, hasMetamask, wallet) {
   const operations = (op, step) => {
     // User presses "Connect" button
     if (op === "connect") {
@@ -31,7 +31,7 @@ export function loginProcessHandler(operation, hasProvider, wallet) {
     }
   };
 
-  if (!hasProvider) {
+  if (!hasMetamask) {
     // 1. User doesnt have wallet
     toast.error(
       <CustomErrorToast
@@ -53,7 +53,7 @@ export function loginProcessHandler(operation, hasProvider, wallet) {
       "useWeb3Login: ⛔ A Crypto Wallet is required,in order to interact with the site. If just installed or activated one, please refresh the page."
     );
     return false;
-  } else if (hasProvider && wallet.chainId === "") {
+  } else if (hasMetamask && wallet.chainId === "") {
     if (operations(operation, 1)) return true;
     // 3. User has wallet, has logged into the Wallet, but has not connected to the site
     toast.error(
@@ -76,7 +76,7 @@ export function loginProcessHandler(operation, hasProvider, wallet) {
       "useWeb3Login: ⛔ To procceed please connect your wallet to the site. There is an orange 'Connect' button for this purpose."
     );
     return false;
-  } else if (hasProvider && wallet.chainId !== 20231) {
+  } else if (hasMetamask && wallet.chainId !== 20231) {
     // 4. User has wallet, and has connected it, but is on the wrong network
     toast.error(
       <CustomErrorToast

@@ -48,6 +48,7 @@ import {
   Col,
   UncontrolledTooltip,
 } from "reactstrap";
+import SwitchButton from "components/custom/SwitchButton/SwitchButton.jsx";
 
 // import ConnectModal from "../custom/ConnectModal/ConnectModal.js";
 const CustomToast = ({ text, text2, text3, link }) => (
@@ -116,7 +117,7 @@ export default function ExamplesNavbar() {
 
   const {
     wallet,
-    hasProvider,
+    hasMetamask,
     connectMetaMask,
     // error,
     // errorMessage,
@@ -133,6 +134,8 @@ export default function ExamplesNavbar() {
     callContractFn,
     tokenEventFired,
     setTokenEventFired,
+    setUsingLocalWallet,
+    usingLocalWallet,
   } = useGlobalContext();
   const { isAuthenticated, signMessage } = useWeb3Login();
   // const [isCopy2ClipboardDone, setCopy2ClipboardDone] = useState(false);
@@ -281,9 +284,9 @@ export default function ExamplesNavbar() {
             <span>GENERA• </span>
             Rewarding Tool
           </NavbarBrand>
-          <UncontrolledTooltip placement="bottom" target="navbar-brand">
+          {/* <UncontrolledTooltip placement="bottom" target="navbar-brand">
             Designed and Coded by Creative Tim
-          </UncontrolledTooltip>
+          </UncontrolledTooltip> */}
           <button
             aria-expanded={collapseOpen}
             className="navbar-toggler navbar-toggler"
@@ -320,57 +323,6 @@ export default function ExamplesNavbar() {
             </Row>
           </div>
           <Nav navbar>
-            {/* <NavItem className="p-0">
-                <NavLink
-                  data-placement="bottom"
-                  href="https://twitter.com/CreativeTim"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  title="Follow us on Twitter"
-                >
-                  <i className="fab fa-twitter" />
-                  <p className="d-lg-none d-xl-none">Twitter</p>
-                </NavLink>
-              </NavItem>
-              <NavItem className="p-0">
-                <NavLink
-                  data-placement="bottom"
-                  href="https://www.facebook.com/CreativeTim"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  title="Like us on Facebook"
-                >
-                  <i className="fab fa-facebook-square" />
-                  <p className="d-lg-none d-xl-none">Facebook</p>
-                </NavLink>
-              </NavItem>
-              <NavItem className="p-0">
-                <NavLink
-                  data-placement="bottom"
-                  href="https://www.instagram.com/CreativeTimOfficial"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  title="Follow us on Instagram"
-                >
-                  <i className="fab fa-instagram" />
-                  <p className="d-lg-none d-xl-none">Instagram</p>
-                </NavLink>
-              </NavItem> */}
-
-            {/* If User is on the <Logic Page>, Do not show the <Login> Button AND is NOT Logged In
-            {!location.pathname.includes("login") && !userData.isLoggedIn && (
-              <NavItem>
-                <Button
-                  className="nav-link d-none d-lg-block genera-login-singup-btn"
-                  color="success"
-                  target="_blank"
-                  onClick={() => navigate("/login-page")}
-                >
-                  <i className="tim-icons icon-key-25" /> Log In
-                </Button>
-              </NavItem>
-            )} */}
-            {/* <div style={{ display: "flex" }}> */}
             {!isAuthenticated && !userData.isLoggedIn && (
               <NavItem className="">
                 <Button
@@ -468,7 +420,7 @@ export default function ExamplesNavbar() {
             <NavItem>
               <Button
                 className={`genera-login-singup-btn nav-bar-connect-btn ${
-                  hasProvider ? "" : "wobble-hor-bottom"
+                  hasMetamask ? "" : "wobble-hor-bottom"
                 }`}
                 color="warning"
                 target="_blank"
@@ -494,7 +446,7 @@ export default function ExamplesNavbar() {
                   } else {
                     const isWeb3Ready = loginProcessHandler(
                       "connect",
-                      hasProvider,
+                      hasMetamask,
                       wallet
                     );
                     if (isWeb3Ready) connectMetaMask();
@@ -536,11 +488,17 @@ export default function ExamplesNavbar() {
                 */}
                   {wallet.chainId !== ""
                     ? "Connected ✔"
-                    : hasProvider
+                    : hasMetamask
                     ? "Connect"
                     : "No Wallet 😑"}
                 </div>
               </Button>
+            </NavItem>
+            <NavItem>
+              <SwitchButton
+                isOn={usingLocalWallet}
+                onClick={setUsingLocalWallet}
+              />
             </NavItem>
             {/* </div> */}
           </Nav>

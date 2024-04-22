@@ -36,6 +36,7 @@ export const GlobalContextProvider = ({ children }) => {
   const [MGSContractInitCompleted, setMGSContractInitCompleted] =
     useState(false);
   const [isProductsLoading, setIsProductsLoading] = useState(true);
+  const [usingLocalWallet, setUsingLocalWallet] = useState(false);
 
   const [userData, setUserData] = useState({
     name: undefined,
@@ -47,37 +48,24 @@ export const GlobalContextProvider = ({ children }) => {
   });
 
   const [rewards, setRewards] = useState([]);
-  // Reward Data Structure
-  /*
-    id: undefined,
-    price: undefined,
-    amount: undefined,
-    isEmpty: undefined,
-    isInfinite: undefined,
-    isDisabled: undefined,
-    name: undefined,
-    location: undefined
-  */
+
+  // ---- End of State Variables Init ----
+
+  useEffect(() => {
+    console.log("GlobalContext | UsingLocalWallet", usingLocalWallet);
+  }, [usingLocalWallet]);
 
   // Hooks
   const {
     wallet,
-    provider,
-    hasProvider,
-    /*
-    error: MetaMaskError,
-    errorMessage,
-    isConnecting,
-    connectMetaMask,
-    clearError,
-    */
+    provider: metamaskProvider,
+    hasMetamask,
     hasMetaMaskRun,
   } = useMetaMask();
 
+  // TODO:
   const { initialize /* isLoading  */ } = useContract(
-    provider,
-    // contractAddress,
-    // abi
+    metamaskProvider,
     deployedContractAddresses.RewardingToolAddress,
     Rewarding_ABI.abi
   );
@@ -86,7 +74,7 @@ export const GlobalContextProvider = ({ children }) => {
   // console.log("2. MGS Contract - ABI", MGS_ABI.abi);
 
   const { initialize: initializeMGS /* isLoading  */ } = useContract(
-    provider,
+    metamaskProvider,
     // contractAddress,
     // abi
     deployedContractAddresses.ERC20ContractAddress,
@@ -337,10 +325,10 @@ export const GlobalContextProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    console.log("1. From GlobalContext: ", hasMetaMaskRun);
-    console.log("2. From GlobalContext: ", hasProvider);
-    console.log("3. From GlobalContext: ", wallet);
-    console.log("4. From GlobalContext: ", contract);
+    console.log("1. From GlobalContext | hasMetaMaskRun: ", hasMetaMaskRun);
+    console.log("2. From GlobalContext | hasMetamask: ", hasMetamask);
+    console.log("3. From GlobalContext | wallet: ", wallet);
+    console.log("4. From GlobalContext | contract: ", contract);
 
     // [GUEST-MODE] - Initialization
     if (hasMetaMaskRun && contract === null && wallet.chainId === "") {
@@ -357,7 +345,7 @@ export const GlobalContextProvider = ({ children }) => {
 
     if (
       hasMetaMaskRun &&
-      hasProvider &&
+      hasMetamask &&
       wallet.chainId === 20231 &&
       // wallet.chainId === 31337 &&
       contract === null
@@ -389,7 +377,7 @@ export const GlobalContextProvider = ({ children }) => {
           console.error("💎 From: (GlobalContextProvider), useEffect: ", error);
           console.log(
             `📜 Global Context Provider: ${
-              hasProvider
+              hasMetamask
                 ? "User is on the wront network (Chain ID: " +
                   wallet.chainId +
                   ")"
@@ -546,6 +534,8 @@ export const GlobalContextProvider = ({ children }) => {
         updateUserTokens,
         isProductsLoading,
         getTokens,
+        setUsingLocalWallet,
+        usingLocalWallet,
       }}
     >
       {hasMetaMaskRun ? (

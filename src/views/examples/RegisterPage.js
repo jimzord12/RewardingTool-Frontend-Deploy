@@ -119,7 +119,7 @@ export default function LoginPage() {
   // Hooks
   // const { register, handleSubmit } = useForm();
   const { contract, contractInitCompleted } = useGlobalContext();
-  const { hasProvider, connectMetaMask, wallet, switchNetwork } = useMetaMask();
+  const { hasMetamask, connectMetaMask, wallet, switchNetwork } = useMetaMask();
 
   const {
     validateForm,
@@ -369,13 +369,13 @@ export default function LoginPage() {
                               <div>
                                 <Input
                                   type="checkbox"
-                                  checked={hasProvider}
+                                  checked={hasMetamask}
                                   readOnly
                                 />
                                 <span className="form-check-sign" /> Wallet
                                 Installed?*
                               </div>
-                              {!hasProvider && (
+                              {!hasMetamask && (
                                 <a href="https://metamask.io/"> Get One! </a>
                               )}
                             </div>

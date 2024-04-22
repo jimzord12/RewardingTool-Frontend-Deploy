@@ -47,7 +47,7 @@ import Footer from "components/Footer/Footer.js";
 
 import { useGlobalContext } from "contexts/GlobalContextProvider";
 import { useMetaMask } from "contexts/web3/MetaMaskContextProvider";
-import { useForm } from "react-hook-form";
+// import { useForm } from "react-hook-form";
 import { useFormValidation } from "../../hooks/useFormValidation.js";
 import { useLS } from "../../hooks/useLS.js";
 import { noAccountWarning } from "utils/LoginProcessHandler.js";
@@ -98,7 +98,7 @@ function getRevertedReason(error) {
   };
 }
 
-export default function LoginPage() {
+export default function Web3RegisterPage() {
   const [squares1to6, setSquares1to6] = React.useState("");
   const [squares7and8, setSquares7and8] = React.useState("");
   const [userNameFocus, setuserNameFocus] = React.useState(false);
@@ -126,7 +126,7 @@ export default function LoginPage() {
     setUserData,
     callContractFn,
   } = useGlobalContext();
-  const { hasProvider, connectMetaMask, wallet, switchNetwork } = useMetaMask();
+  const { hasMetamask, connectMetaMask, wallet, switchNetwork } = useMetaMask();
 
   const {
     validateForm,
@@ -304,13 +304,13 @@ export default function LoginPage() {
                               <div>
                                 <Input
                                   type="checkbox"
-                                  checked={hasProvider}
+                                  checked={hasMetamask}
                                   readOnly
                                 />
                                 <span className="form-check-sign" /> Wallet
                                 Installed?*
                               </div>
-                              {!hasProvider && (
+                              {!hasMetamask && (
                                 <a href="https://metamask.io/"> Get One! </a>
                               )}
                             </div>
@@ -390,6 +390,11 @@ export default function LoginPage() {
                               try {
                                 setIsLoading(true);
                                 console.log("Web3Register: :: ", contract);
+                                // TODO:
+                                // 1. Create User in Database (see: handlePlayerCreate.ts)
+                                //  - This checks for username & wallet duplicates
+                                //  - Sends the 0.5 ETH to the new user
+                                //  - Provides Starting Stats to User (required for Game App)
                                 const user_Tx = await contract.createUser(
                                   userNameField.value
                                 );

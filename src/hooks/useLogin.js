@@ -12,7 +12,7 @@ export function useLogin() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // const { hasProvider, wallet } = useMetaMask();
+  // const { hasMetamask, wallet } = useMetaMask();
 
   const loginUser = async (data) => {
     console.log("Logging in...");

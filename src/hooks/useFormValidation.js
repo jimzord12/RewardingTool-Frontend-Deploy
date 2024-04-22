@@ -5,7 +5,7 @@ import { useMetaMask } from "contexts/web3/MetaMaskContextProvider";
 export function useFormValidation() {
   const [hasErrors, setHasErrors] = useState([]);
 
-  const { hasProvider, wallet } = useMetaMask();
+  const { hasMetamask, wallet } = useMetaMask();
 
   const validateForm = (...fields) => {
     // console.log("useValidation: aargs: ", fields);
@@ -84,7 +84,7 @@ export function useFormValidation() {
     });
 
     // Check if wallet installed
-    if (!hasProvider) {
+    if (!hasMetamask) {
       const error = { name: "Wallet" };
       error.message = "Metamask must be installed";
       errors.push(error);

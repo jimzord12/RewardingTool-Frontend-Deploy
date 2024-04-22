@@ -37,12 +37,12 @@ export function MyPageHeader() {
       <Container>
         <div className="content-center brand">
           <h1 className="h1-seo">
-            Explore our{" "}
-            <span className="text-primary animated-text">Rewards</span>
+            Redeem your{" "}
+            <span className="text-primary animated-text">MGS Tokens</span>
           </h1>
           <h3 className="d-none d-sm-block">
-            redeem your <span className="text-success">MGS tokens</span> for
-            fascinating products and services
+            Here you spent your <span className="text-success">MGS tokens</span>{" "}
+            to obtain in-game rewards or other benefits.
           </h3>
         </div>
       </Container>

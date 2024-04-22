@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import axios from "axios";
 import { axiosOracle } from "api/config";
 
 import { useMetaMask } from "contexts/web3/MetaMaskContextProvider";
 import { useGlobalContext } from "contexts/GlobalContextProvider";
 import { toast } from "react-toastify";
-// import { axiosOracle } from "api/config";
 
 import {
   loginProcessHandler,
@@ -38,15 +36,18 @@ export async function getNonce() {
 }
 
 export function useWeb3Login() {
-  const { hasProvider, provider, wallet } = useMetaMask();
+  const { hasMetamask, provider, wallet } = useMetaMask();
   const { userData, setUserData, callContractFn } = useGlobalContext();
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [signer, setSigner] = useState(null);
 
+  // const { showToast } = useToastMsg();
+
   useEffect(() => {
     async function fetchUserData() {
       try {
+        // We try to fetch the user data from the contract
         const _userObj = await callContractFn("users", userData.wallet);
         console.log(_userObj);
 
@@ -101,9 +102,8 @@ export function useWeb3Login() {
   }, [isAuthenticated, userData.wallet]);
 
   const signMessage = async () => {
-    
     // Checks if wallet, provider, etc. exist
-    const isWeb3Ready = loginProcessHandler("login", hasProvider, wallet);
+    const isWeb3Ready = loginProcessHandler("login", hasMetamask, wallet);
 
     if (!isWeb3Ready) return;
 
@@ -113,11 +113,11 @@ export function useWeb3Login() {
     const message = `This is your generated random verification number: ${nonce}.\n \nNo action is required from your side concerning the random number. We simply show it for transparency reasons.\n \nBy allowing your Wallet to sign this message, using your private key, it can be proven that you are the true owner of this wallet, without the need for a password.\n \nPlease click "Sign" to proceed.`;
 
     console.log(provider);
-    
-    if (nonce && hasProvider) {
+
+    if (nonce && hasMetamask) {
       const wallet = new ethers.providers.Web3Provider(provider);
       const _signer = wallet.getSigner();
-      
+
       const _signerAddr = await _signer.getAddress();
       setSigner(_signer);
 

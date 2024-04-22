@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ethers } from "ethers";
 import { rpcUrl } from "web3/constants";
+import useToastMsg from "../hooks/useToastMsg";
 
 async function checkContractExists(provider, contractAddress) {
   const code = await provider.getCode(contractAddress);
@@ -9,11 +10,18 @@ async function checkContractExists(provider, contractAddress) {
 
 function useContract(provider, addr, abi) {
   const [isLoading, setIsLoading] = useState(false);
+  const { showToast } = useToastMsg();
 
   /**
    * @returns A Contract class instance that possess the blockchain functions as methods
    */
   const initialize = async (isReadOnly = false) => {
+    // console.log("1. useContract | addr: ", addr);
+    // console.log("2. useContract | abi: ", abi);
+    // console.log("3. useContract | provider: ", provider);
+    if (isReadOnly) {
+      provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+    }
     if (addr && abi && provider) {
       setIsLoading(true); //window.ethereum
       try {
@@ -43,7 +51,7 @@ function useContract(provider, addr, abi) {
 
         const itExists = await checkContractExists(providerReadOnly, addr);
         console.log("Does the contract exist? : ", itExists);
-        console.log("Does the contract exist? : ", addr);
+        console.log("The Contract's Address : ", addr);
         if (!itExists)
           throw new Error(`Contract with address: ${addr}, does not exist!`);
 
@@ -63,6 +71,8 @@ function useContract(provider, addr, abi) {
       } finally {
         setIsLoading(false);
       }
+    } else {
+      showToast("error", "Contract Address or ABI is missing!");
     }
   };
 

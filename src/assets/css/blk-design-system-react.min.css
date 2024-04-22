@@ -14814,6 +14814,7 @@ img {
   .navbar .navbar-nav .btn {
     margin-left: -3px;
     display: flex;
+    min-width: 200px;
   }
   .navbar .navbar-nav .btn i {
     margin-right: 12px;

@@ -888,7 +888,8 @@ input:-webkit-autofill:active {
   }
 
   .navbar-nav {
-    align-items: end;
+    align-items: start;
+    /* align-items: end; */
   }
 
   .navbar-nav > .nav-item > button {

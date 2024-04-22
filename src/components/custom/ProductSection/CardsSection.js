@@ -7,10 +7,9 @@ function CardsSection({ items, setModal, setSelectedReward }) {
   return (
     <div id="available-rewards-section" className="section">
       <Container>
-        <h3 className="title mb-5">Available Rewards</h3>
+        <h3 className="title mb-5">Available Redeem Method</h3>
         <h4 className=" mb-5">
-          You can obtain the following products/services by using our platform's
-          tokens
+          Please select one of the available redeem methods below:
         </h4>
         <CardGrid
           items={items}
