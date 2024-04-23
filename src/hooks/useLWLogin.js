@@ -6,28 +6,20 @@ import { useState } from "react";
 // import { useMetaMask } from "contexts/web3/MetaMaskContextProvider";
 // import { web3StructToObj } from "../utils/web3StructToObj";
 
-import { userAuth } from "api/api";
+import { getPlayerByWallet } from "../api/index";
 
-export function useLogin() {
+export function useLWLogin() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // const { hasMetamask, wallet } = useMetaMask();
 
-  const loginUser = async (data) => {
+  const loginUser = async (userData) => {
     console.log("Logging in...");
     setIsLoading(true);
-    // const convertedData = {
-    //   name: data.name.value,
-    //   password: data.password.value,
-    //   email: data.email.value,
-    //   wallet: data.wallet.value,
-    // };
-    // const response = await userAuth(data);
-    // console.log("Logged in Response: ", response);
-    // setIsLoading(false);
-    // setIsLoggedIn(true);
-    // return response;
+
+    if (userData.wallet.accounts.length === 0)
+      throw new Error("useLWLogin => loginUser> Wallet has no accounts.");
 
     const timeout = new Promise((resolve, reject) => {
       const id = setTimeout(() => {
@@ -37,12 +29,14 @@ export function useLogin() {
     });
 
     try {
-      const response = await Promise.race([userAuth(data), timeout]);
+      const response = await Promise.race([
+        getPlayerByWallet(userData.wallet.accounts[0]),
+        timeout,
+      ]);
       console.log("Logged in Response: ", response);
       setIsLoggedIn(true);
       return response;
     } catch (error) {
-      console.log(error);
       throw error;
     } finally {
       setIsLoading(false); // Set loading to false even on error.

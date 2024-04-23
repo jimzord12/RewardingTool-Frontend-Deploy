@@ -51,7 +51,7 @@ import { useMetaMask } from "contexts/web3/MetaMaskContextProvider";
 import { useFormValidation } from "../../hooks/useFormValidation.js";
 import { useLS } from "../../hooks/useLS.js";
 
-import { handleAccountCreation } from "../../api/api";
+import { handleAccountCreation } from "../../api/old/api.js";
 
 import { ReactComponent as MetamaskIcon } from "../../assets/img/genera/metamask.svg";
 

@@ -1,24 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/*!
-
-=========================================================
-* BLK Design System React - v1.2.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/blk-design-system-react
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/blk-design-system-react/blob/main/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-// import { ethers } from "ethers";
 import { toast } from "react-toastify";
 
 import LoadingButtonInfo from "components/custom/LoadingButton/LoadingButtonInfo.js";
@@ -32,6 +13,7 @@ import { copyToClipboard } from "utils/copy2clipboard.js";
 import { loginProcessHandler } from "utils/LoginProcessHandler.js";
 
 import { deployedContractAddresses } from "web3/constants/deployedContracts.js";
+import CustomToast from "./parts/CustomNavBarToast.js";
 
 import { useLogin } from "hooks/useLogin.js";
 // reactstrap components
@@ -49,59 +31,8 @@ import {
   UncontrolledTooltip,
 } from "reactstrap";
 import SwitchButton from "components/custom/SwitchButton/SwitchButton.jsx";
-
-// import ConnectModal from "../custom/ConnectModal/ConnectModal.js";
-const CustomToast = ({ text, text2, text3, link }) => (
-  <div
-    style={{
-      background: "#yourColor",
-      color: "#otherColor",
-    }}
-  >
-    {text}
-    {link && (
-      <>
-        <br />
-        <br />
-
-        <div
-          style={{
-            textAlign: "center",
-            border: "1.5px solid black",
-            borderRadius: 6,
-            backgroundColor: "yellow",
-            padding: 6,
-          }}
-        >
-          <a
-            href={link}
-            style={{ color: "blue" }}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Watch this quick Video!
-          </a>
-        </div>
-      </>
-    )}
-
-    {text2 && (
-      <>
-        <br />
-        <br />
-        {text2}
-      </>
-    )}
-
-    {text3 && (
-      <>
-        <br />
-        <br />
-        {text3}
-      </>
-    )}
-  </div>
-);
+import LoginButton from "./parts/LoginButton.jsx";
+import { set } from "react-hook-form";
 
 export default function ExamplesNavbar() {
   const [collapseOpen, setCollapseOpen] = React.useState(false);
@@ -110,20 +41,7 @@ export default function ExamplesNavbar() {
   const [tokenEventAnimate, setTokenEventAnimate] = React.useState(false);
   const [hasEffectRun, setHasEffectRun] = React.useState(false);
 
-  // const [hasMetamaskState, sethasMetamaskState] = React.useState(false);
-  // const [isConnectedState, setIsConnectedState] = React.useState(false);
-  // const [userAddr, setUserAddr] = React.useState(undefined);
-  // const [walletProvider, setWalletProvider] = React.useState(null);
-
-  const {
-    wallet,
-    hasMetamask,
-    connectMetaMask,
-    // error,
-    // errorMessage,
-    // isConnecting,
-    // clearError,
-  } = useMetaMask();
+  const { wallet, hasMetamask, connectMetaMask } = useMetaMask();
 
   const { navigate } = useNavigation();
   const location = useLocation();
@@ -138,84 +56,14 @@ export default function ExamplesNavbar() {
     usingLocalWallet,
   } = useGlobalContext();
   const { isAuthenticated, signMessage } = useWeb3Login();
-  // const [isCopy2ClipboardDone, setCopy2ClipboardDone] = useState(false);
 
-  // console.log("location: ", location);
   React.useEffect(() => {
     window.addEventListener("scroll", changeColor);
-
-    async function _getTokens() {
-      console.log("***********************************************");
-      console.log("Calling Contract (ViewTOkens) from [Navbar]");
-      const _userTokens = await callContractFn("viewYourPoints");
-      console.log("1. (RAW) The Manager's MGS Tokens: ", _userTokens);
-      const convertToString = _userTokens.toString();
-      console.log("2. (toString) The Manager's MGS Tokens: ", convertToString);
-
-      const userTokens_ =
-        convertToString === "0" ? 0 : convertToString.slice(0, -15);
-      console.log("3. (Step #3) The Manager's MGS Tokens: ", userTokens_);
-
-      const _userTokens_ =
-        _userTokens === 0 ? 0 : (parseInt(userTokens_) / 1000).toFixed(2);
-      console.log("4. (Step #4) The Manager's MGS Tokens: ", _userTokens_);
-
-      const userTokens =
-        Number(_userTokens_) === 0 ? "Can't find MGS" : Number(_userTokens_);
-
-      if (
-        Number(_userTokens_) === 0 &&
-        !location.pathname.includes("register")
-      ) {
-        toast.error(
-          <CustomToast
-            text={"You must add the MGS Tokens into your Wallet, manually."}
-            text2={
-              "Important! If you add the MGS Tokens into MetaMask but you don't have an Account, you will still see: (Can't find Tokens)"
-            }
-            link={"https://youtu.be/aH6C2toTImk"}
-          />,
-          {
-            position: "top-center",
-            autoClose: false,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-          }
-        );
-
-        await copyToClipboard(deployedContractAddresses.ERC20ContractAddress);
-        console.log("(NavBar - useEffect) User's Tokens: ", userTokens);
-        setUserData((prev) => {
-          return { ...prev, tokens: userTokens };
-          // return { ...prev, tokens: ethers.bigNumber.toNumber(userTokens) };
-        });
-      } else {
-        console.log("(NavBar - useEffect) User's Tokens: ", userTokens);
-        setUserData((prev) => {
-          return { ...prev, tokens: userTokens };
-          // return { ...prev, tokens: ethers.bigNumber.toNumber(userTokens) };
-        });
-      }
-    }
-
-    if (
-      userData.name !== undefined &&
-      wallet.chainId === 20231 &&
-      !hasEffectRun
-    ) {
-      _getTokens();
-      setHasEffectRun(true);
-    }
-    // if (userData.name !== undefined && wallet.chainId === 31337) _getTokens();
 
     return function cleanup() {
       window.removeEventListener("scroll", changeColor); //123456678asdhu
     };
-  }, [userData.name, userData.tokens]);
+  }, []);
 
   React.useEffect(() => {
     if (isAuthenticated) {
@@ -224,25 +72,18 @@ export default function ExamplesNavbar() {
     }
   }, [isAuthenticated, userData.tokens]);
 
-  // This is for the Vibration Animation
   React.useEffect(() => {
-    if (tokenEventFired) {
-      setTokenEventAnimate(true);
-
-      const timeoutId = setTimeout(() => {
-        setTokenEventAnimate(false);
-      }, 3000); // Set this to the duration of your animation (in this case, 1 second)
-
-      return () => clearTimeout(timeoutId); // This function is called for cleanup when the component unmounts or before this effect runs again
+    if (usingLocalWallet) {
+      // 1. Try to find the user's local wallet in the LS (if it exists)
+      // 1.1 If it exists:
+      //    1.1.1 Set the user's data to the wallet's data (setUserData)
+      //    1.1.2 Try to automatically login the user (useLWLogin.loginUser)
+      // 1.2 If it doesn't exist, set the user's data to the default data
+      setUserData((prev) => ({ ...prev, currentWalletMethod: "local" }));
+    } else {
+      setUserData((prev) => ({ ...prev, currentWalletMethod: "metamask" }));
     }
-  }, [tokenEventFired]); // This effect runs whenever `eventFired` changes
-
-  // This is for the Vibration Animation
-  React.useEffect(() => {
-    if (tokenEventAnimate === false) {
-      setTokenEventFired(false);
-    }
-  }, [tokenEventAnimate]);
+  }, [usingLocalWallet]);
 
   const changeColor = () => {
     if (
@@ -325,20 +166,7 @@ export default function ExamplesNavbar() {
           <Nav navbar>
             {!isAuthenticated && !userData.isLoggedIn && (
               <NavItem className="">
-                <Button
-                  className="genera-login-singup-btn"
-                  color="success"
-                  target="_blank"
-                  onClick={() => {
-                    if (location.pathname.includes("register")) {
-                      navigate("/rewards-page");
-                    } else {
-                      signMessage();
-                    }
-                  }}
-                >
-                  <i className="tim-icons icon-key-25" /> Log In
-                </Button>
+                <LoginButton />
               </NavItem>
             )}
 
