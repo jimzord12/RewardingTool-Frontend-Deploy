@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import { axiosOracle } from "api/config";
+import { getRandomNum, validateSignedMsg } from "api/index";
 
 import { useMetaMask } from "contexts/web3/MetaMaskContextProvider";
 import { useGlobalContext } from "contexts/GlobalContextProvider";
@@ -13,7 +13,7 @@ import {
 
 export async function getNonce() {
   try {
-    const response = await axiosOracle.get("/big-random-number");
+    const response = await getRandomNum("/big-random-number");
     const nonce = response.data.randomBigNumber;
     return nonce;
   } catch (error) {
@@ -40,7 +40,7 @@ export function useWeb3Login() {
   const { userData, setUserData, callContractFn } = useGlobalContext();
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [signer, setSigner] = useState(null);
+  // const [signer, setSigner] = useState(null);
 
   // const { showToast } = useToastMsg();
 
@@ -119,7 +119,7 @@ export function useWeb3Login() {
       const _signer = wallet.getSigner();
 
       const _signerAddr = await _signer.getAddress();
-      setSigner(_signer);
+      // setSigner(_signer);
 
       const signedMessage = _signer.signMessage(message);
 
@@ -128,11 +128,11 @@ export function useWeb3Login() {
 
         const responsePromise = signedMessage
           .then((signedMessage) =>
-            axiosOracle.post("/verify-signature", {
-              nonce: message,
+            validateSignedMsg("/verify-signature", {
+              message,
               //   nonce: "AAAAAA", // FOr testing: to get an Error
               userAddress: _signerAddr,
-              signedMessage: signedMessage,
+              signedMessage,
             })
           )
           .then((response) => {

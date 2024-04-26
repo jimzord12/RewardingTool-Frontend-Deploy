@@ -1,25 +1,25 @@
 // Gasless
-import { gaslessNewPlayer } from "./gasless/gaslessNewPlayer";
-import { gaslessOldPlayer } from "./gasless/gaslessOldPlayer";
+import { gaslessNewPlayer } from "./apiFns/gasless/gaslessNewPlayer";
+import { gaslessOldPlayer } from "./apiFns/gasless/gaslessOldPlayer";
 
 // Web3 Login (Wallet Ownership Validation)
-import { getRandomNum } from "./web3Login/getRandomNum";
-import { validateSignedMsg } from "./web3Login/validateSignedMsg";
+import { getRandomNum } from "./apiFns/web3login/getRandomNum";
+import { validateSignedMsg } from "./apiFns/web3login/validateSignedMsg";
 
 // Regarding Player
-import getPlayerByWallet from "./player/_getPlayerByWallet";
+import getPlayerByWallet from "./apiFns/player/_getPlayerByWallet";
 // import loginWithWallet from "./player/_loginWithWallet";
-import { createPlayer } from "./player/_createPlayer";
-import { updatePlayerData } from "./player/_updatePlayerData";
+import { createPlayer } from "./apiFns/player/_createPlayer";
+import { updatePlayerData } from "./apiFns/player/_updatePlayerData";
 
 // Regarding Cards
-import { getAllCards } from "./cards/_getAllCards";
-import { getCardById } from "./cards/_getCardById";
-import { updateCardData } from "./cards/_updateCardData";
-// import { deleteCard } from "./cards/_deleteCard";
+import { getAllCards } from "./apiFns/cards/_getAllCards";
+import { getCardById } from "./apiFns/cards/_getCardById";
+import { updateCardData } from "./apiFns/cards/_updateCardData";
+// import { deleteCard } from "./apiFns/cards/_deleteCard";
 
 // Smart Contract Functions
-import { getMGSBalance } from "./smartContractFns/_getMGSBalance";
+import { getMGSBalance } from "./apiFns/smartContractFns/_getMGSBalance";
 
 export {
   getPlayerByWallet,

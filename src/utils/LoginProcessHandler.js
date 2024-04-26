@@ -35,8 +35,8 @@ export function loginProcessHandler(operation, hasMetamask, wallet) {
     // 1. User doesnt have wallet
     toast.error(
       <CustomErrorToast
-        text1={`A Crypto Wallet is required,in order to interact with the site.`}
-        text2={"If just installed or activated one, please refresh the page."}
+        text1={`A Crypto Wallet is required, in order to interact with the site.`}
+        text2={"If you just installed one, please refresh the page."}
       />,
       {
         position: "top-center",

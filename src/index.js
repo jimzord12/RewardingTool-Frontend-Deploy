@@ -31,7 +31,8 @@ import { GlobalContextProvider } from "./contexts/GlobalContextProvider.js";
 import Index from "views/Index.js";
 import LandingPage from "views/examples/LandingPage.js";
 // import RegisterPage from "views/examples/RegisterPage.js";
-import Web3RegisterPage from "views/examples/Web3RegisterPage.js";
+import MetamaskRegisterPage from "views/examples/MetamaskRegisterPage.js";
+import LocalWalletRegisterPage from "views/examples/LocalWalletRegisterPage.js";
 import ProfilePage from "views/examples/ProfilePage.js";
 import RewardsPage from "views/examples/RewardsPage.js";
 import LoginPage from "views/examples/LoginPage.js";
@@ -70,8 +71,13 @@ ReactDOM.render(
               render={(props) => <LandingPage {...props} />}
             />
             <Route
-              path="/register-page"
-              render={(props) => <Web3RegisterPage {...props} />}
+              path="/metamask-register-page"
+              render={(props) => <MetamaskRegisterPage {...props} />}
+              // render={(props) => <RegisterPage {...props} />}
+            />
+            <Route
+              path="/localWallet-register-page"
+              render={(props) => <LocalWalletRegisterPage {...props} />}
               // render={(props) => <RegisterPage {...props} />}
             />
             <Route

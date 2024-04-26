@@ -68,7 +68,8 @@ const LoginButton = ({
         }
       }}
     >
-      <i className="tim-icons icon-key-25" /> Log In
+      <i className="tim-icons icon-key-25" />
+      {usingLocalWallet ? "Import Wallet" : "Log In"}
     </Button>
   );
 };

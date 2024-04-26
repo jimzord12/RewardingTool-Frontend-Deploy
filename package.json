@@ -18,21 +18,7 @@
     "web3",
     "rewarding tool",
     "rewards",
-    "ethers",
-    "blk",
-    "blk-react",
-    "design",
-    "design-react",
-    "system",
-    "system-react",
-    "design-system",
-    "design-system-react",
-    "blk-design",
-    "blk-design-react",
-    "blk-system",
-    "blk-system-react",
-    "blk-design-system",
-    "blk-design-system-react"
+    "ethers"
   ],
   "dependencies": {
     "@metamask/detect-provider": "^2.0.0",

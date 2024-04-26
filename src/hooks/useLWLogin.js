@@ -18,7 +18,7 @@ export function useLWLogin() {
     console.log("Logging in...");
     setIsLoading(true);
 
-    if (userData.wallet.accounts.length === 0)
+    if (userData.localWallet.account === "")
       throw new Error("useLWLogin => loginUser> Wallet has no accounts.");
 
     const timeout = new Promise((resolve, reject) => {

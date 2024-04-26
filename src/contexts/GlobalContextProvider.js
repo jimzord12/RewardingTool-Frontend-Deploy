@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { createContext, useContext, useState, useEffect } from "react";
-// import { ethers } from "ethers";
+import { ethers } from "ethers";
 import { Triangle } from "react-loader-spinner";
 
 import { useMetaMask } from "./web3/MetaMaskContextProvider";
@@ -17,6 +17,10 @@ import { ReactComponent as MetamaskIcon } from "../assets/img/genera/metamask.sv
 // ✨ import { copyToClipboard } from "utils/copy2clipboard";
 
 const GlobalContext = createContext();
+
+const provider = new ethers.providers.JsonRpcProvider(
+  "https://snf-34965.ok-kno.grnetcloud.net"
+);
 
 export const GlobalContextProvider = ({ children }) => {
   const [error, setError] = useState(null);
@@ -162,6 +166,7 @@ export const GlobalContextProvider = ({ children }) => {
         setUserData,
         setUsingLocalWallet,
         usingLocalWallet,
+        provider,
       }}
     >
       {hasMetaMaskRun ? (

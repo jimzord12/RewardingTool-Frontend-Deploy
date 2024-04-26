@@ -98,7 +98,7 @@ function getRevertedReason(error) {
   };
 }
 
-export default function Web3RegisterPage() {
+export default function MetamaskRegisterPage() {
   const [squares1to6, setSquares1to6] = React.useState("");
   const [squares7and8, setSquares7and8] = React.useState("");
   const [userNameFocus, setuserNameFocus] = React.useState(false);

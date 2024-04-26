@@ -1,17 +1,20 @@
-import React, { useState } from "react";
+import React from "react";
+import { useGlobalContext } from "contexts/GlobalContextProvider.js";
+
 import "./SwitchButton.css"; // Make sure to create this CSS file in your project
 
-const SwitchButton = ({ state, onClick }) => {
-  const [toggle, setToggle] = useState(state);
+const SwitchButton = () => {
+  const { usingLocalWallet, setUsingLocalWallet } = useGlobalContext();
+  // const [toggle, setToggle] = useState(state);
 
   const circleColor = "darkorange";
+  console.log("SW BTN | UsingLocalWallet: ", usingLocalWallet);
 
   const toggleSwitch = () => {
-    onClick((prev) => {
+    setUsingLocalWallet((prev) => {
       console.log("SW BTN | Using Local Wallet: ", !prev);
       return !prev;
     });
-    setToggle((prev) => !prev);
   };
 
   return (
@@ -19,8 +22,8 @@ const SwitchButton = ({ state, onClick }) => {
       <p className="switch-inside-text-local">L</p>
       <p className="switch-inside-text-metamask">M</p>
       <div
-        className={`switch-circle ${toggle ? "" : "active"}`}
-        style={{ backgroundColor: toggle ? undefined : circleColor }}
+        className={`switch-circle ${usingLocalWallet ? "" : "active"}`}
+        style={{ backgroundColor: usingLocalWallet ? undefined : circleColor }}
       ></div>
     </div>
   );
