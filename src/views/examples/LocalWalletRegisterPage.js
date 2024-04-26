@@ -30,9 +30,11 @@ import { useGlobalContext } from "contexts/GlobalContextProvider";
 import { useFormValidation_LW } from "../../hooks/useFormValidation_LW.js";
 import { useLS } from "../../hooks/useLS.js";
 import useLocalWallet from "hooks/useLocalWallet.js";
+import { useNavigation } from "hooks/useNavigation.js";
 
 import { handlePlayerCreate } from "bigHandlers/handlePlayerCreate.js";
 import { getPlayerByWallet, getMGSBalance } from "api/index.js";
+import useToastMsg from "hooks/useToastMsg.js";
 
 export default function LocalWalletRegisterPage() {
   const [isMounted, setIsMounted] = React.useState(true);
@@ -82,6 +84,10 @@ export default function LocalWalletRegisterPage() {
     "username",
     ""
   );
+
+  const { navigate } = useNavigation();
+
+  const { showToast } = useToastMsg();
 
   React.useEffect(() => {
     document.body.classList.toggle("register-page");
@@ -357,6 +363,13 @@ export default function LocalWalletRegisterPage() {
                                 playerCreation: false,
                                 sentEth: false,
                               });
+
+                              navigate("/rewards-page");
+                              showToast(
+                                "Account Creation",
+                                "Account created successfully!",
+                                "success"
+                              );
                             } else {
                               console.log(
                                 "Local Wallet Register Page | handlePlayerCreate, returned false"

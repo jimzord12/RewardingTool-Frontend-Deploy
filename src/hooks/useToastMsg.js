@@ -22,7 +22,7 @@ const useToastMsg = () => {
       case "success":
         return toast.success(
           <CustomToastSuccess title={title} message={message} />,
-          options
+          { ...options, theme: "light", position: "top-right" }
         );
       case "info":
         return toast.info(
