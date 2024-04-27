@@ -84,6 +84,7 @@ function useLocalWallet(provider) {
       newWallet.privateKey
     );
     setWallet(newWallet);
+    return newWallet.address;
   };
 
   // This is used for both restoring an existing one thorught user input and local storage.

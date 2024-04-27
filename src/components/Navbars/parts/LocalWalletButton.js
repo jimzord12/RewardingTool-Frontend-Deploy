@@ -9,7 +9,7 @@ const LocalWalletButton = ({
   userData,
   showLWModal,
   generateWallet,
-  automaticLogin,
+  provider,
   getEthBalance,
   setUserData,
 }) => {
@@ -36,9 +36,7 @@ const LocalWalletButton = ({
       //   }
       // );
     } else {
-      generateWallet();
-      const { localWalletExist, userData, error, walletAddress } =
-        await automaticLogin();
+      const walletAddress = generateWallet();
 
       const balance = await getEthBalance(walletAddress);
       setUserData((prev) => ({

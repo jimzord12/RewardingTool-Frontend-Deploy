@@ -50,7 +50,6 @@ export default function ExamplesNavbar() {
 
   const { navigate } = useNavigation();
   const location = useLocation();
-  const { isLoading, loginUser, setIsLoggedIn, isLoggedIn } = useLWLogin();
   const {
     userData,
     setUserData,
@@ -59,6 +58,8 @@ export default function ExamplesNavbar() {
     setTokenEventFired,
     setUsingLocalWallet,
     usingLocalWallet,
+    isLoggedIn,
+    isLoading,
     provider,
   } = useGlobalContext();
   const { isAuthenticated, signMessage } = useWeb3Login();
@@ -81,78 +82,76 @@ export default function ExamplesNavbar() {
     };
   }, []);
 
-  React.useEffect(() => {
-    if (isAuthenticated) {
-      console.log("is user authenticated: ", isAuthenticated);
-      console.log("User's Data: ", userData);
-    }
-  }, [isAuthenticated, userData, userData.tokens]);
+  // React.useEffect(() => {
+  //   if (isAuthenticated) {
+  //     console.log("is user authenticated: ", isAuthenticated);
+  //     console.log("User's Data: ", userData);
+  //   }
+  // }, [isAuthenticated, userData, userData.tokens]);
 
-  React.useEffect(() => {
-    console.log("NavBar | UsingLocalWallet", usingLocalWallet);
-  }, [usingLocalWallet]);
+  // React.useEffect(() => {
+  //   console.log("NavBar | UsingLocalWallet", usingLocalWallet);
+  // }, [usingLocalWallet]);
 
-  React.useEffect(() => {
-    if (usingLocalWallet) {
-      // TODO:
-      // 1. Try to find the user's local wallet in the LS (if it exists)
-      (async () => {
-        const { localWalletExist, userData, error, walletAddress } =
-          await automaticLogin();
+  // React.useEffect(() => {
+  //   if (usingLocalWallet) {
+  //     // TODO:
+  //     // 1. Try to find the user's local wallet in the LS (if it exists)
+  //     (async () => {
+  //       const { localWalletExist, userData, error, walletAddress } =
+  //         await automaticLogin();
 
-        if (!localWalletExist) {
-          setUserData((prev) => ({ ...prev, currentWalletMethod: "local" }));
-          return;
-        } else if (error === "Player not found") {
-          toast(
-            <CustomToast
-              text={
-                "Wallet found but User not found, you need to create an account"
-              }
-            />,
-            {
-              position: "top-right",
-              autoClose: 8000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-            }
-          );
+  //       if (!localWalletExist) {
+  //         setUserData((prev) => ({ ...prev, currentWalletMethod: "local" }));
+  //         return;
+  //       } else if (error === "Player not found") {
+  //         toast(
+  //           <CustomToast
+  //             text={
+  //               "Wallet found but User not found, you need to create an account"
+  //             }
+  //           />,
+  //           {
+  //             position: "top-right",
+  //             autoClose: 8000,
+  //             hideProgressBar: false,
+  //             closeOnClick: true,
+  //             pauseOnHover: true,
+  //             draggable: true,
+  //             progress: undefined,
+  //             theme: "light",
+  //           }
+  //         );
 
-          const balance = await getEthBalance(walletAddress);
-          // console.log("getEthBalance: ", balance);
+  //         const balance = await getEthBalance(walletAddress);
+  //         // console.log("getEthBalance: ", balance);
 
-          setUserData((prev) => ({
-            ...prev,
-            localWallet: { account: walletAddress, balance: balance },
-            currentWalletMethod: "local",
-          }));
-          return;
-        } else {
-          // const balanceWei = await provider.getBalance(walletAddress);
-          // const balanceEth = ethers.utils.formatEther(balanceWei);
-          const balanceEth = await getEthBalance_2(walletAddress);
-          const { balance: mgsBalance } = await getMGSBalance(walletAddress);
-          console.log("asdadas: ", mgsBalance, balanceEth, walletAddress);
-          setUserData((prev) => ({
-            ...prev,
-            name: userData.player.name,
-            mgsTokens: mgsBalance,
-            localWallet: { account: walletAddress, balance: balanceEth },
-            isLoggedIn: true,
-            hasAccount: true,
-            currentWalletMethod: "local",
-          }));
-          setIsLoggedIn(true);
-        }
-      })();
-    } else {
-      setUserData((prev) => ({ ...prev, currentWalletMethod: "metamask" }));
-    }
-  }, [usingLocalWallet]);
+  //         setUserData((prev) => ({
+  //           ...prev,
+  //           localWallet: { account: walletAddress, balance: balance },
+  //           currentWalletMethod: "local",
+  //         }));
+  //         return;
+  //       } else {
+  //         const balanceEth = await getEthBalance_2(walletAddress);
+  //         const { balance: mgsBalance } = await getMGSBalance(walletAddress);
+  //         console.log("asdadas: ", mgsBalance, balanceEth, walletAddress);
+  //         setUserData((prev) => ({
+  //           ...prev,
+  //           name: userData.player.name,
+  //           mgsTokens: mgsBalance,
+  //           localWallet: { account: walletAddress, balance: balanceEth },
+  //           isLoggedIn: true,
+  //           hasAccount: true,
+  //           currentWalletMethod: "local",
+  //         }));
+  //         setIsLoggedIn(true);
+  //       }
+  //     })();
+  //   } else {
+  //     setUserData((prev) => ({ ...prev, currentWalletMethod: "metamask" }));
+  //   }
+  // }, [usingLocalWallet]);
 
   const changeColor = () => {
     if (
@@ -233,29 +232,28 @@ export default function ExamplesNavbar() {
             </Row>
           </div>
           <Nav navbar>
-            {!userData.isLoggedIn && (
+            {!isLoggedIn && (
               <NavItem className="">
                 <LoginButton usingLocalWallet={usingLocalWallet} />
               </NavItem>
             )}
 
             {/* If User is on the <Register Page?, Do not show the <Register> Button AND is NOT Logged In */}
-            {!location.pathname.includes("register") &&
-              (userData.name === undefined ||
-                userData.name === "No Account") && (
-                <NavItem>
-                  <SignUpButton
-                    usingLocalWallet={usingLocalWallet}
-                    userData={userData}
-                  />
-                </NavItem>
-              )}
+            {!location.pathname.includes("register") && !isLoggedIn && (
+              <NavItem>
+                <SignUpButton
+                  usingLocalWallet={usingLocalWallet}
+                  userData={userData}
+                  isLoggedIn={isLoggedIn}
+                />
+              </NavItem>
+            )}
 
             {/* ************************************************************************ */}
 
             {/* If User is on the <Rewards Page> AND IS Logged In => Show User's Name + MGS Balance */}
             {/* {true && ( */}
-            {location.pathname.includes("rewards") && userData.isLoggedIn && (
+            {location.pathname.includes("rewards") && isLoggedIn && (
               <>
                 <NavItem>
                   <LoadingButtonInfo
@@ -287,7 +285,7 @@ export default function ExamplesNavbar() {
                 </NavItem>
 
                 {/* {true && ( */}
-                {userData.accessLevel && (
+                {/* {userData.accessLevel && (
                   <NavItem>
                     <LoadingButtonInfo
                       isLoading={isLoading}
@@ -298,7 +296,7 @@ export default function ExamplesNavbar() {
                       </div>
                     </LoadingButtonInfo>
                   </NavItem>
-                )}
+                )} */}
               </>
             )}
 
@@ -308,8 +306,8 @@ export default function ExamplesNavbar() {
                 <LocalWalletButton
                   userData={userData}
                   generateWallet={generateWallet}
-                  automaticLogin={automaticLogin}
-                  getEthBalance={getEthBalance}
+                  provider={provider}
+                  getEthBalance={getEthBalance_2}
                   setUserData={setUserData}
                 />
               ) : (

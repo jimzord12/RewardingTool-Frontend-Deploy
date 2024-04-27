@@ -73,9 +73,11 @@ export default function LocalWalletRegisterPage() {
   });
 
   // Hooks
-  const { userData, setUserData, provider } = useGlobalContext();
+  const { userData, setUserData, provider, loginUserLocalWallet } =
+    useGlobalContext();
 
-  const { getPrivKey, getEthBalance } = useLocalWallet(provider);
+  const { getPrivKey, getEthBalance, getEthBalance_2 } =
+    useLocalWallet(provider);
 
   const { validateForm, hasErrors, clearFormErrors, setHasErrors } =
     useFormValidation_LW();
@@ -338,26 +340,8 @@ export default function LocalWalletRegisterPage() {
                             );
 
                             if (success) {
-                              const { balance: mgsBalance } =
-                                await getMGSBalance(walletField.value);
-
-                              const { player: playerDataDB } =
-                                await getPlayerByWallet(walletField.value);
-                              setUserData((prev) => ({
-                                ...prev,
-                                name: playerDataDB.name,
-                                mgsTokens: mgsBalance,
-                                localWallet: {
-                                  account: walletField.value,
-                                  balance: ethBalanceField.value,
-                                },
-                                isLoggedIn: true,
-                                hasAccount: true,
-                              }));
-
-                              setEthBalanceField((prev) => {
-                                return { ...prev, value: mgsBalance };
-                              });
+                              console.log("User Data asd a: ", userData);
+                              await loginUserLocalWallet(userData);
 
                               setIsLoading({
                                 playerCreation: false,

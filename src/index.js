@@ -38,6 +38,7 @@ import RewardsPage from "views/examples/RewardsPage.js";
 import LoginPage from "views/examples/LoginPage.js";
 import ValidationPage from "views/examples/ValidationPage.js";
 import UserRewardsPage from "views/examples/UserRewardsPage.js";
+import LocalWalletImportPage from "views/examples/LocalWalletImportPage.js";
 
 // BLOCKCHAIN - START
 // import { Web3ReactProvider } from "@web3-react/core";
@@ -79,6 +80,10 @@ ReactDOM.render(
               path="/localWallet-register-page"
               render={(props) => <LocalWalletRegisterPage {...props} />}
               // render={(props) => <RegisterPage {...props} />}
+            />
+            <Route
+              path="/localWallet-import-page"
+              render={(props) => <LocalWalletImportPage {...props} />}
             />
             <Route
               path="/login-page"

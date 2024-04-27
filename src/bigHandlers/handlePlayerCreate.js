@@ -19,7 +19,12 @@ export const handlePlayerCreate = async (
 
     if (!wasPlayerInitSuccess) {
       console.error("⛔ Custom: HandlePlayerCreate, Player Init Failed");
-      setHasErrors(["An Error Occured. Please try again later."]);
+      setHasErrors([
+        {
+          name: "Player Creation Failed",
+          message: "An Error Occured. Please try again later.",
+        },
+      ]);
       return false;
     }
 
@@ -39,6 +44,7 @@ export const handlePlayerCreate = async (
             playerCreation: false,
             sentEth: true,
           });
+          console.log("🐱‍🏍 Starting Waiting for Transaction...");
           await waitForTx(provider, tx);
         }
       }
@@ -46,17 +52,42 @@ export const handlePlayerCreate = async (
     }
   } catch (error) {
     console.error("Response Error from Server: ", error);
-    if (error?.response) {
-      setHasErrors(["No Server Response"]);
-    } else if (error?.response?.data?.errno === 1062) {
+    setHasErrors([
+      {
+        name: "Server Error",
+        message: error.response.data.message,
+      },
+    ]);
+
+    if (error?.response?.data?.errno === 1062) {
       console.error("DUPLICATES!!");
-      setHasErrors(["Name or Wallet already exists!"]);
+      setHasErrors([
+        {
+          name: "Duplicate",
+          message: "Username or Wallet already exists",
+        },
+      ]);
     } else if (error?.response?.status === 400) {
-      setHasErrors(["Missing Username or Wallet"]);
+      setHasErrors([
+        {
+          name: "Invalid Input",
+          message: "Missing Username or Wallet",
+        },
+      ]);
     } else if (error?.response?.status === 401) {
-      setHasErrors(["Probably You don't have an Account"]);
+      setHasErrors([
+        {
+          name: "Unauthorized",
+          message: "Please create an account first.",
+        },
+      ]);
     } else {
-      setHasErrors(["Login Failed"]);
+      setHasErrors([
+        {
+          name: "Login Failed",
+          message: error.response.data.message,
+        },
+      ]);
     }
     return false;
   }

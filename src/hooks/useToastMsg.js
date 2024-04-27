@@ -25,10 +25,11 @@ const useToastMsg = () => {
           { ...options, theme: "light", position: "top-right" }
         );
       case "info":
-        return toast.info(
-          <CustomToastInfo title={title} message={message} />,
-          options
-        );
+        return toast.info(<CustomToastInfo title={title} message={message} />, {
+          ...options,
+          theme: "light",
+          position: "top-right",
+        });
       default:
         return toast.error(
           "We are experiencing issues with the Web Server, please try again later",
@@ -52,7 +53,7 @@ const CustomToastError = ({ title, message }) => {
     >
       <div style={{ marginLeft: "8px" }}>
         <h2 style={{ fontSize: 24 }}>{title}</h2>
-        <p style={{ color: "black" }}>{message}</p>
+        <p style={{ color: "white" }}>{message}</p>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { useGlobalContext } from "contexts/GlobalContextProvider.js";
 
 import "./SwitchButton.css"; // Make sure to create this CSS file in your project
 
-const SwitchButton = () => {
+const SwitchButton = React.memo(() => {
   const { usingLocalWallet, setUsingLocalWallet } = useGlobalContext();
   // const [toggle, setToggle] = useState(state);
 
@@ -27,6 +27,6 @@ const SwitchButton = () => {
       ></div>
     </div>
   );
-};
+});
 
 export default SwitchButton;

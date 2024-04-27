@@ -11,8 +11,14 @@ import {
   Rewarding_ABI,
   MGS_ABI,
 } from "../web3/constants/index";
+import { getMGSBalance } from "api/index";
 
 import { ReactComponent as MetamaskIcon } from "../assets/img/genera/metamask.svg";
+import useLocalWallet from "hooks/useLocalWallet";
+import { toast } from "react-toastify";
+import CustomToast from "components/Navbars/parts/CustomNavBarToast";
+import { useLWLogin } from "hooks/useLWLogin";
+import { set } from "react-hook-form";
 // import { LogDescription } from "ethers/lib/utils";
 // ✨ import { copyToClipboard } from "utils/copy2clipboard";
 
@@ -28,6 +34,9 @@ export const GlobalContextProvider = ({ children }) => {
 
   const [RTcontract, setRTContract] = useState(null);
   const [usingLocalWallet, setUsingLocalWallet] = useState(false); // False: Metamask, True: Local
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [userData, setUserData] = useState({
     name: undefined,
@@ -77,6 +86,121 @@ export const GlobalContextProvider = ({ children }) => {
     MGS_ABI.abi,
     usingLocalWallet
   );
+
+  const { loginUserLocalWallet } = useLWLogin(
+    usingLocalWallet,
+    setIsLoggedIn,
+    setUserData,
+    provider,
+    setIsLoading
+  );
+
+  const {
+    wallet: localWallet,
+    deleteWallet,
+    generateWallet,
+    retrieveWallet,
+    balance,
+    getEthBalance,
+    getEthBalance_2,
+    automaticLogin,
+  } = useLocalWallet(provider);
+
+  React.useEffect(() => {
+    if (usingLocalWallet) {
+      setIsLoggedIn(false);
+      setUserData({
+        name: undefined,
+        mgsTokens: undefined,
+        metamaskWallet: {
+          accounts: [],
+          balance: "",
+          chainId: "",
+        },
+        localWallet: {
+          account: "",
+          balance: "",
+        },
+        isLoggedIn: false,
+        hasAccount: false,
+        currentWalletMethod: "local",
+      });
+
+      // TODO:
+      // 1. Try to find the user's local wallet in the LS (if it exists)
+      (async () => {
+        const { localWalletExist, userData, error, walletAddress } =
+          await automaticLogin();
+
+        if (!localWalletExist) {
+          setUserData((prev) => ({ ...prev, currentWalletMethod: "local" }));
+          return;
+        } else if (error === "Player not found") {
+          toast(
+            <CustomToast
+              text={
+                "Wallet found but User not found, you need to create an account"
+              }
+            />,
+            {
+              position: "top-right",
+              autoClose: 8000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+            }
+          );
+
+          const balance = await getEthBalance(walletAddress);
+          // console.log("getEthBalance: ", balance);
+
+          setUserData((prev) => ({
+            ...prev,
+            localWallet: { account: walletAddress, balance: balance },
+            currentWalletMethod: "local",
+          }));
+          return;
+        } else {
+          const balanceEth = await getEthBalance_2(walletAddress);
+          const { balance: mgsBalance } = await getMGSBalance(walletAddress);
+          console.log("asdadas: ", mgsBalance, balanceEth, walletAddress);
+          setUserData((prev) => ({
+            ...prev,
+            name: userData.player.name,
+            mgsTokens: mgsBalance,
+            localWallet: { account: walletAddress, balance: balanceEth },
+            isLoggedIn: true,
+            hasAccount: true,
+            currentWalletMethod: "local",
+          }));
+          setIsLoggedIn(true);
+        }
+      })();
+    } else {
+      setIsLoggedIn(false);
+      setUserData({
+        name: undefined,
+        mgsTokens: undefined,
+        metamaskWallet: {
+          accounts: [],
+          balance: "",
+          chainId: "",
+        },
+        localWallet: {
+          account: "",
+          balance: "",
+        },
+        isLoggedIn: false,
+        hasAccount: false,
+        currentWalletMethod: "metamask",
+      });
+
+      // setUserData((prev) => ({ ...prev, currentWalletMethod: "metamask" }));
+    }
+  }, [usingLocalWallet]);
 
   useEffect(() => {
     console.log("1. From GlobalContext | hasMetaMaskRun: ", hasMetaMaskRun);
@@ -167,6 +291,10 @@ export const GlobalContextProvider = ({ children }) => {
         setUsingLocalWallet,
         usingLocalWallet,
         provider,
+        isLoggedIn,
+        setIsLoggedIn,
+        loginUserLocalWallet,
+        isLoading,
       }}
     >
       {hasMetaMaskRun ? (
