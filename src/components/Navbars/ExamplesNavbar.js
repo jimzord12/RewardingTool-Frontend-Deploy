@@ -38,6 +38,8 @@ import useLocalWallet from "hooks/useLocalWallet.js";
 import { getMGSBalance } from "../../api/index";
 import ConnectMetaMaskButton from "./parts/ConnectMetaMaskButton.js";
 import LocalWalletButton from "./parts/LocalWalletButton.js";
+import RefetchButton from "components/custom/RefetchButton/RefetchButton.js";
+import useToastMsg from "hooks/useToastMsg.js";
 
 export default function ExamplesNavbar() {
   const [collapseOpen, setCollapseOpen] = React.useState(false);
@@ -74,6 +76,8 @@ export default function ExamplesNavbar() {
     automaticLogin,
   } = useLocalWallet(provider);
 
+  const { showToast } = useToastMsg();
+
   React.useEffect(() => {
     window.addEventListener("scroll", changeColor);
 
@@ -81,77 +85,6 @@ export default function ExamplesNavbar() {
       window.removeEventListener("scroll", changeColor); //123456678asdhu
     };
   }, []);
-
-  // React.useEffect(() => {
-  //   if (isAuthenticated) {
-  //     console.log("is user authenticated: ", isAuthenticated);
-  //     console.log("User's Data: ", userData);
-  //   }
-  // }, [isAuthenticated, userData, userData.tokens]);
-
-  // React.useEffect(() => {
-  //   console.log("NavBar | UsingLocalWallet", usingLocalWallet);
-  // }, [usingLocalWallet]);
-
-  // React.useEffect(() => {
-  //   if (usingLocalWallet) {
-  //     // TODO:
-  //     // 1. Try to find the user's local wallet in the LS (if it exists)
-  //     (async () => {
-  //       const { localWalletExist, userData, error, walletAddress } =
-  //         await automaticLogin();
-
-  //       if (!localWalletExist) {
-  //         setUserData((prev) => ({ ...prev, currentWalletMethod: "local" }));
-  //         return;
-  //       } else if (error === "Player not found") {
-  //         toast(
-  //           <CustomToast
-  //             text={
-  //               "Wallet found but User not found, you need to create an account"
-  //             }
-  //           />,
-  //           {
-  //             position: "top-right",
-  //             autoClose: 8000,
-  //             hideProgressBar: false,
-  //             closeOnClick: true,
-  //             pauseOnHover: true,
-  //             draggable: true,
-  //             progress: undefined,
-  //             theme: "light",
-  //           }
-  //         );
-
-  //         const balance = await getEthBalance(walletAddress);
-  //         // console.log("getEthBalance: ", balance);
-
-  //         setUserData((prev) => ({
-  //           ...prev,
-  //           localWallet: { account: walletAddress, balance: balance },
-  //           currentWalletMethod: "local",
-  //         }));
-  //         return;
-  //       } else {
-  //         const balanceEth = await getEthBalance_2(walletAddress);
-  //         const { balance: mgsBalance } = await getMGSBalance(walletAddress);
-  //         console.log("asdadas: ", mgsBalance, balanceEth, walletAddress);
-  //         setUserData((prev) => ({
-  //           ...prev,
-  //           name: userData.player.name,
-  //           mgsTokens: mgsBalance,
-  //           localWallet: { account: walletAddress, balance: balanceEth },
-  //           isLoggedIn: true,
-  //           hasAccount: true,
-  //           currentWalletMethod: "local",
-  //         }));
-  //         setIsLoggedIn(true);
-  //       }
-  //     })();
-  //   } else {
-  //     setUserData((prev) => ({ ...prev, currentWalletMethod: "metamask" }));
-  //   }
-  // }, [usingLocalWallet]);
 
   const changeColor = () => {
     if (
@@ -258,28 +191,77 @@ export default function ExamplesNavbar() {
                 <NavItem>
                   <LoadingButtonInfo
                     isLoading={isLoading}
-                    onClick={() => navigate("/user-rewards-page")}
+                    // onClick={() => navigate("/user-rewards-page")}
                   >
                     <div className="user-details">
                       <div
                         style={{
                           display: "flex",
                           flexDirection: "row",
-                          gap: 6,
+                          gap: 12,
                         }}
                       >
-                        <i className="fa fa-user hide-icons" /> {userData.name}
+                        <div
+                        // style={{
+                        //   display: "flex",
+                        //   flexDirection: "row",
+                        //   gap: 6,
+                        // }}
+                        >
+                          <i className="fa fa-user hide-icons" />{" "}
+                          {userData.name}
+                        </div>
+                        <div
+                        // style={{
+                        //   display: "flex",
+                        //   flexDirection: "row",
+                        //   gap: 6,
+                        // }}
+                        >
+                          <i className="icon tim-icons icon-coins hide-icons" />{" "}
+                          {userData.mgsTokens}
+                        </div>
                       </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          gap: 6,
+                      <RefetchButton
+                        onClick={async () => {
+                          console.log("Refetching MGS Balance for: ", userData);
+                          let walletAdress = "";
+                          if (
+                            usingLocalWallet &&
+                            userData.localWallet.account
+                          ) {
+                            walletAdress = userData.localWallet.account;
+                          } else if (
+                            hasMetamask &&
+                            userData.metamask.accounts[0]
+                          ) {
+                            walletAdress = userData.metamask.accounts[0];
+                          } else {
+                            showToast(
+                              "Error",
+                              "Could not get your Wallet Address",
+                              "error"
+                            );
+                            return;
+                          }
+
+                          const { success, balance } = await getMGSBalance(
+                            walletAdress
+                          );
+                          if (success) {
+                            setUserData((prev) => ({
+                              ...prev,
+                              mgsTokens: balance,
+                            }));
+                          } else {
+                            showToast(
+                              "Error",
+                              "Could not get your MGS Balance",
+                              "error"
+                            );
+                          }
                         }}
-                      >
-                        <i className="icon tim-icons icon-coins hide-icons" />{" "}
-                        {userData.mgsTokens}
-                      </div>
+                      />
                     </div>
                   </LoadingButtonInfo>
                 </NavItem>

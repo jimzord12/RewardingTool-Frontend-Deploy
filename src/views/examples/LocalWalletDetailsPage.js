@@ -35,31 +35,37 @@ import { useNavigation } from "hooks/useNavigation.js";
 import { handlePlayerCreate } from "bigHandlers/handlePlayerCreate.js";
 import { getPlayerByWallet, getMGSBalance } from "api/index.js";
 import useToastMsg from "hooks/useToastMsg.js";
-import { isValidEthereumPrivateKey } from "utils/validatePrivKey.js";
 
-export default function LocalWalletImportPage() {
+export default function LocalWalletDetailsPage() {
+  const [isMounted, setIsMounted] = React.useState(true);
   const [squares1to6, setSquares1to6] = React.useState("");
   const [squares7and8, setSquares7and8] = React.useState("");
 
+  // Form Fields
+  const [walletFocus, setWalletFocus] = React.useState(false);
   const [privKeyFocus, setPrivKeyFocus] = React.useState(false);
+  const [ethBalanceFocus, setEthBalanceFocus] = React.useState(false);
 
-  const [successMessage, setSuccessMessage] = React.useState("");
-
+  const [walletField, setWalletField] = React.useState({
+    type: "Wallet Address",
+    value: "",
+  });
   const [privKeyField, setPrivKeyField] = React.useState({
     type: "Private Key",
     value: "",
   });
+  const [ethBalanceField, setEthBalanceField] = React.useState({
+    type: "EthBalance",
+    value: "",
+  });
+
+  const [successMessage, setSuccessMessage] = React.useState("");
 
   // Hooks
-  const {
-    userData,
-    setUserData,
-    provider,
-    loginUserLocalWallet,
-    usingLocalWallet,
-  } = useGlobalContext();
+  const { userData, setUserData, provider, loginUserLocalWallet } =
+    useGlobalContext();
 
-  const { getPrivKey, getEthBalance, getEthBalance_2, retrieveWallet } =
+  const { getPrivKey, getEthBalance_2, deleteWallet } =
     useLocalWallet(provider);
 
   const { validateForm, hasErrors, clearFormErrors, setHasErrors } =
@@ -72,12 +78,41 @@ export default function LocalWalletImportPage() {
   React.useEffect(() => {
     document.body.classList.toggle("register-page");
     document.documentElement.addEventListener("mousemove", followCursor);
+    // const username = getUsername();
+    const privKey = getPrivKey();
+
+    if (userData.localWallet.account) {
+      setWalletField((prev) => {
+        return { ...prev, value: userData.localWallet.account };
+      });
+      getEthBalance_2(userData.localWallet.account).then((balance) => {
+        if (isMounted) {
+          setEthBalanceField((prev) => {
+            return { ...prev, value: balance };
+          });
+        }
+      });
+    }
+
+    if (privKey)
+      setPrivKeyField((prev) => {
+        return { ...prev, value: privKey };
+      });
+
+    // if (username) {
+    //   const userInput = document.querySelector('input[placeholder^="User"]');
+    //   userInput.value = username;
+    //   setUserNameField({
+    //     type: "Username",
+    //     value: username,
+    //   });
+    // }
 
     // Specify how to clean up after this effect:
     return function cleanup() {
       document.body.classList.toggle("register-page");
       document.documentElement.removeEventListener("mousemove", followCursor);
-      // setIsMounted(false);
+      setIsMounted(false);
     };
   }, []);
 
@@ -130,10 +165,11 @@ export default function LocalWalletImportPage() {
                             hasErrors.length > 0 || successMessage.length > 0
                               ? "-100px"
                               : "-150px",
+                          width: "580px",
                         }}
                       />
-                      <CardTitle tag="h4" style={{ marginLeft: "4px" }}>
-                        Import
+                      <CardTitle tag="h4" style={{ marginLeft: 2 }}>
+                        Wallet Info
                       </CardTitle>
                     </CardHeader>
                     <CardBody>
@@ -157,7 +193,7 @@ export default function LocalWalletImportPage() {
                       )}
                       <Form className="form">
                         {/* Wallet Address Field */}
-                        {/* <InputGroup
+                        <InputGroup
                           className={classnames({
                             "input-group-focus": walletFocus,
                           })}
@@ -177,10 +213,7 @@ export default function LocalWalletImportPage() {
                             onFocus={(e) => setWalletFocus(true)}
                             onBlur={(e) => setWalletFocus(false)}
                           />
-                        </InputGroup> */}
-                        <p style={{ marginLeft: 4, marginBottom: 12 }}>
-                          Enter your Private Key below:
-                        </p>
+                        </InputGroup>
 
                         {/* Private Key Field */}
                         <InputGroup
@@ -198,96 +231,74 @@ export default function LocalWalletImportPage() {
                             placeholder={"Private Key"}
                             type="text"
                             name="private key"
+                            readOnly
                             value={privKeyField.value}
-                            onChange={(e) => {
-                              setPrivKeyField((prev) => {
-                                return { ...prev, value: e.target.value };
-                              });
-                            }}
                             onFocus={(e) => setPrivKeyFocus(true)}
                             onBlur={(e) => setPrivKeyFocus(false)}
                           />
                         </InputGroup>
 
+                        {/* ETH Balance Field */}
+                        <InputGroup
+                          className={classnames({
+                            "input-group-focus": ethBalanceFocus,
+                          })}
+                        >
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>
+                              <i className="icon tim-icons icon-coins hide-icons" />
+                            </InputGroupText>
+                          </InputGroupAddon>
+                          <Input
+                            style={{ backgroundColor: "transparent" }}
+                            placeholder={"ETH"}
+                            type="text"
+                            name="eth balance"
+                            readOnly
+                            value={`${ethBalanceField.value} ETH`}
+                            onFocus={(e) => setEthBalanceFocus(true)}
+                            onBlur={(e) => setEthBalanceFocus(false)}
+                          />
+                        </InputGroup>
+
                         <Button
                           className="btn-round register-btn"
-                          color="primary"
+                          color="danger"
                           size="lg"
                           type="submit"
-                          onClick={async (event) => {
-                            event.preventDefault();
-                            clearFormErrors();
-                            if (userData.localWallet.account) {
-                              navigate("/rewards-page");
-                              return;
-                            }
-
-                            if (!usingLocalWallet) {
-                              showToast(
-                                "Error",
-                                "You are not using a Local Wallet",
-                                "error"
-                              );
-                              return;
-                            }
-
-                            const privKey = privKeyField.value;
-                            const isValid = isValidEthereumPrivateKey(privKey);
-                            console.log("Is Priv Key Valid?:", isValid);
-
-                            if (isValid) {
-                              console.log("User Data asd a: ", userData);
-
-                              const { walletAddress } = retrieveWallet(privKey);
-                              const ethBalance = await getEthBalance_2(
-                                walletAddress
-                              );
-
-                              const newUserData = {
-                                ...userData,
-                                localWallet: {
-                                  account: walletAddress,
-                                  balance: ethBalance,
+                          onClick={() => {
+                            setUserData((prev) => {
+                              return {
+                                name: undefined,
+                                mgsTokens: undefined,
+                                metamaskWallet: {
+                                  accounts: [],
+                                  balance: "",
+                                  chainId: "",
                                 },
+                                localWallet: {
+                                  account: "",
+                                  balance: "",
+                                },
+                                isLoggedIn: false,
+                                hasAccount: false,
+                                currentWalletMethod: "local",
                               };
+                            });
 
-                              showToast(
-                                "Success",
-                                "Wallet was successfully imported!",
-                                "success"
-                              );
-
-                              try {
-                                await loginUserLocalWallet(newUserData);
-                                showToast(
-                                  "Auto Log in Successful!",
-                                  "We automatically logged you in",
-                                  "success"
-                                );
-                              } catch (error) {
-                                setUserData(newUserData);
-                                showToast(
-                                  "No Account Found",
-                                  "Please create an account to continue",
-                                  "info"
-                                );
-                              }
-
-                              // navigate("/rewards-page");
-                            } else {
-                              console.log(
-                                "⛔ Local Wallet Import Page | Import Wallet, failed"
-                              );
-                            }
+                            deleteWallet();
+                            navigate("rewards-page");
+                            showToast(
+                              "Wallet Deleted",
+                              "Your Local Wallet has been deleted.",
+                              "success"
+                            );
                           }}
                         >
-                          {userData.localWallet.account
-                            ? "Go Back"
-                            : "Import Wallet"}
+                          Delete Wallet
                         </Button>
                       </Form>
                     </CardBody>
-                    {/* <CardFooter></CardFooter> */}
                   </Card>
                 </Col>
               </Row>

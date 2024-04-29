@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { Button } from "reactstrap";
 
 import CustomToast from "./CustomNavBarToast";
+import { useNavigation } from "hooks/useNavigation";
 // import { loginProcessHandler } from "utils/LoginProcessHandler";
 
 const LocalWalletButton = ({
@@ -14,17 +15,18 @@ const LocalWalletButton = ({
   setUserData,
 }) => {
   const localWalletExists = userData.localWallet.account ? true : false;
+  const { navigate } = useNavigation();
 
   const hancleClick = async () => {
     if (localWalletExists) {
       // TODO: Show Local Wallet Modal
       console.log("🧪 1. Displaying Local Wallet Modal...");
       console.log("🧪 2. User Data: ", userData);
+      navigate("/localWallet-details-page");
       // toast(
       //   <CustomToast
       //     text={"If you want to Disconnect, you can do it from your Wallet"}
       //   />,
-      //   {
       //     position: "top-center",
       //     autoClose: 5000,
       //     hideProgressBar: false,

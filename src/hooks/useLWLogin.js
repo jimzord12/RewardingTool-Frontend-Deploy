@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { getMGSBalance } from "api/index";
 
 // import { ZeroAddress } from "ethers";
@@ -8,9 +7,10 @@ import { getMGSBalance } from "api/index";
 // import { useMetaMask } from "contexts/web3/MetaMaskContextProvider";
 // import { web3StructToObj } from "../utils/web3StructToObj";
 
-import { getPlayerByWallet } from "../api/index";
+import { getPlayerByWallet, gaslessOldPlayer } from "../api/index";
 import useToastMsg from "./useToastMsg";
 import useLocalWallet from "./useLocalWallet";
+import { waitForTx } from "utils/waitForTx";
 
 export function useLWLogin(
   usingLocalWallet,
@@ -63,6 +63,11 @@ export function useLWLogin(
       const walletAddress = response.player.wallet;
       console.log("2. useLWLogin | Server Response: ", walletAddress);
       console.log("3. useLWLogin | Params: ", userData);
+
+      const { message, tx } = await gaslessOldPlayer(walletAddress);
+      if (message !== "User sufficient ETH balance") {
+        await waitForTx(provider, tx);
+      }
 
       const balanceEth = await getEthBalance_2(walletAddress);
       const { balance: mgsBalance } = await getMGSBalance(walletAddress);

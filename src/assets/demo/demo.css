@@ -630,8 +630,11 @@ html {
 
 .user-details {
   display: flex;
-  gap: 2rem;
+  flex-direction: row;
+  gap: 1.5rem;
   padding: 0px 6px;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .register-btn {

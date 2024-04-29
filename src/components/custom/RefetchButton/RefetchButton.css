@@ -1,0 +1,19 @@
+.refetch-btn-container {
+  width: 36px;
+  height: 36px;
+  aspect-ratio: 1/1;
+  border-radius: 100%;
+  background-color: lightblue;
+  box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.75);
+  padding: 5px;
+}
+
+.refetch-btn-icon {
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+.refetch-btn-icon:hover {
+  transform: rotateZ(180deg);
+}
