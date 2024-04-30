@@ -35,12 +35,14 @@ export const GlobalContextProvider = ({ children }) => {
   const [RTcontract, setRTContract] = useState(null);
   const [usingLocalWallet, setUsingLocalWallet] = useState(false); // False: Metamask, True: Local
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const [userData, setUserData] = useState({
     name: undefined,
+    playerData: undefined,
     mgsTokens: undefined,
+    cards: [],
     metamaskWallet: {
       accounts: [],
       balance: "",
@@ -63,7 +65,7 @@ export const GlobalContextProvider = ({ children }) => {
 
   // Hooks
   const {
-    wallet,
+    wallet: metamaskWallet,
     provider: metamaskProvider,
     hasMetamask,
     hasMetaMaskRun,
@@ -89,7 +91,6 @@ export const GlobalContextProvider = ({ children }) => {
 
   const { loginUserLocalWallet } = useLWLogin(
     usingLocalWallet,
-    setIsLoggedIn,
     setUserData,
     provider,
     setIsLoading
@@ -108,10 +109,10 @@ export const GlobalContextProvider = ({ children }) => {
 
   React.useEffect(() => {
     if (usingLocalWallet) {
-      setIsLoggedIn(false);
       setUserData({
         name: undefined,
         mgsTokens: undefined,
+        cards: [],
         metamaskWallet: {
           accounts: [],
           balance: "",
@@ -129,7 +130,7 @@ export const GlobalContextProvider = ({ children }) => {
       // TODO:
       // 1. Try to find the user's local wallet in the LS (if it exists)
       (async () => {
-        const { localWalletExist, userData, error, walletAddress } =
+        const { localWalletExist, playerData, error, walletAddress } =
           await automaticLogin();
 
         if (!localWalletExist) {
@@ -169,25 +170,26 @@ export const GlobalContextProvider = ({ children }) => {
           console.log("asdadas: ", mgsBalance, balanceEth, walletAddress);
           setUserData((prev) => ({
             ...prev,
-            name: userData.player.name,
+            name: playerData.player.name,
+            cards: playerData.cards,
+            playerData: playerData.player,
             mgsTokens: mgsBalance,
             localWallet: { account: walletAddress, balance: balanceEth },
             isLoggedIn: true,
             hasAccount: true,
             currentWalletMethod: "local",
           }));
-          setIsLoggedIn(true);
         }
       })();
     } else {
-      setIsLoggedIn(false);
+      console.log(" -🎁- Metamask Wallet: ", metamaskWallet);
       setUserData({
         name: undefined,
         mgsTokens: undefined,
         metamaskWallet: {
-          accounts: [],
-          balance: "",
-          chainId: "",
+          accounts: metamaskWallet.accounts,
+          balance: metamaskWallet.balance,
+          chainId: metamaskWallet.chainId,
         },
         localWallet: {
           account: "",
@@ -200,14 +202,7 @@ export const GlobalContextProvider = ({ children }) => {
 
       // setUserData((prev) => ({ ...prev, currentWalletMethod: "metamask" }));
     }
-  }, [usingLocalWallet]);
-
-  useEffect(() => {
-    console.log("1. From GlobalContext | hasMetaMaskRun: ", hasMetaMaskRun);
-    console.log("2. From GlobalContext | hasMetamask: ", hasMetamask);
-    console.log("3. From GlobalContext | wallet: ", wallet);
-    console.log("4. From GlobalContext | contract: ", RTcontract);
-  }, []);
+  }, [usingLocalWallet, metamaskWallet.accounts[0]]);
 
   async function callRTContractFn(fnName, ...args) {
     if (typeof fnName !== "string")
@@ -291,8 +286,6 @@ export const GlobalContextProvider = ({ children }) => {
         setUsingLocalWallet,
         usingLocalWallet,
         provider,
-        isLoggedIn,
-        setIsLoggedIn,
         loginUserLocalWallet,
         isLoading,
       }}

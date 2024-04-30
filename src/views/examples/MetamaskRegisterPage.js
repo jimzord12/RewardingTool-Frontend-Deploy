@@ -55,48 +55,52 @@ import { noAccountWarning } from "utils/LoginProcessHandler.js";
 // import { handleAccountCreation } from "../../api/api.js";
 
 import { ReactComponent as MetamaskIcon } from "../../assets/img/genera/metamask.svg";
+import { handlePlayerCreate } from "bigHandlers/handlePlayerCreate.js";
+import { useNavigation } from "hooks/useNavigation.js";
+import useToastMsg from "hooks/useToastMsg.js";
+import { set } from "react-hook-form";
 
-function getRevertedReason(error) {
-  if (typeof error !== "object" || error === null) {
-    throw new TypeError("The argument should be an object");
-  }
+// function getRevertedReason(error) {
+//   if (typeof error !== "object" || error === null) {
+//     throw new TypeError("The argument should be an object");
+//   }
 
-  if (error.reason === "user rejected transaction") {
-    return {
-      isContractError: true,
-      message: `The User rejected the Tx`,
-    };
-  }
+//   if (error.reason === "user rejected transaction") {
+//     return {
+//       isContractError: true,
+//       message: `The User rejected the Tx`,
+//     };
+//   }
 
-  if (
-    error.error &&
-    error.error.data &&
-    error.error.data.data &&
-    error.error.data.data.message
-  ) {
-    let revertedReason = error.error.data.data.message;
-    const prefix = "reverted with reason string '";
-    const postfix = "'";
-    const startIndex = revertedReason.indexOf(prefix);
-    const endIndex = revertedReason.lastIndexOf(postfix);
+//   if (
+//     error.error &&
+//     error.error.data &&
+//     error.error.data.data &&
+//     error.error.data.data.message
+//   ) {
+//     let revertedReason = error.error.data.data.message;
+//     const prefix = "reverted with reason string '";
+//     const postfix = "'";
+//     const startIndex = revertedReason.indexOf(prefix);
+//     const endIndex = revertedReason.lastIndexOf(postfix);
 
-    if (startIndex !== -1 && endIndex !== -1) {
-      revertedReason = revertedReason.slice(
-        startIndex + prefix.length,
-        endIndex
-      );
-      return {
-        isContractError: true,
-        message: `The Tx reverted for this reason: (${revertedReason})`,
-      };
-    }
-  }
+//     if (startIndex !== -1 && endIndex !== -1) {
+//       revertedReason = revertedReason.slice(
+//         startIndex + prefix.length,
+//         endIndex
+//       );
+//       return {
+//         isContractError: true,
+//         message: `The Tx reverted for this reason: (${revertedReason})`,
+//       };
+//     }
+//   }
 
-  return {
-    isContractError: true,
-    message: "Something went wrong",
-  };
-}
+//   return {
+//     isContractError: true,
+//     message: "Something went wrong",
+//   };
+// }
 
 export default function MetamaskRegisterPage() {
   const [squares1to6, setSquares1to6] = React.useState("");
@@ -118,7 +122,8 @@ export default function MetamaskRegisterPage() {
   });
 
   // Hooks
-  // const { register, handleSubmit } = useForm();
+  const { navigate } = useNavigation();
+  const { showToast } = useToastMsg();
   const {
     contract,
     contractInitCompleted,
@@ -126,7 +131,14 @@ export default function MetamaskRegisterPage() {
     setUserData,
     callContractFn,
   } = useGlobalContext();
-  const { hasMetamask, connectMetaMask, wallet, switchNetwork } = useMetaMask();
+  const {
+    hasMetamask,
+    connectMetaMask,
+    wallet,
+    switchNetwork,
+    metamaskLogin,
+    provider,
+  } = useMetaMask();
 
   const {
     validateForm,
@@ -386,125 +398,63 @@ export default function MetamaskRegisterPage() {
                             );
                             console.log("Is Form Valid?:", isValid);
 
-                            if (isValid === true) {
-                              try {
-                                setIsLoading(true);
-                                console.log("Web3Register: :: ", contract);
-                                // TODO:
-                                // 1. Create User in Database (see: handlePlayerCreate.ts)
-                                //  - This checks for username & wallet duplicates
-                                //  - Sends the 0.5 ETH to the new user
-                                //  - Provides Starting Stats to User (required for Game App)
-                                const user_Tx = await contract.createUser(
-                                  userNameField.value
-                                );
-                                console.log(
-                                  "Web3Register: :user_Tx: ",
-                                  user_Tx
-                                );
-                                const a = await user_Tx.wait();
-                                console.log("Web3Register: :user_Tx: AAA: ", a);
-                                setSuccessMessage(
-                                  "Account created successfully!"
-                                );
-                                setHasErrors([]);
-                                try {
-                                  const _userObj = await callContractFn(
-                                    "users",
-                                    userData.wallet
-                                  );
-                                  console.log(_userObj);
+                            setIsLoading({
+                              playerCreation: true,
+                              sentEth: false,
+                            });
 
-                                  console.log(
-                                    "(Web3 Register Page): The user obj from contract: ",
-                                    _userObj
-                                  );
+                            const success = await handlePlayerCreate(
+                              userNameField.value,
+                              walletField.value,
+                              wallet.balance,
+                              setSuccessMessage,
+                              setHasErrors,
+                              setIsLoading,
+                              provider
+                            );
 
-                                  if (_userObj[2] === "") {
-                                    noAccountWarning();
-                                    setUserData((prev) => {
-                                      return {
-                                        ...prev,
-                                        name: "No Account",
-                                      };
-                                    });
-                                    return;
-                                  }
+                            if (success) {
+                              console.log("User Data asd a: ", userData);
+                              const {
+                                success: loginSuccess,
+                                player,
+                                cards,
+                                mgsBalance,
+                              } = await metamaskLogin();
 
-                                  const _isManager = await callContractFn(
-                                    "checkManagerRole",
-                                    userData.wallet
-                                  );
+                              if (!loginSuccess) return;
 
-                                  const _isOwner = await callContractFn(
-                                    "checkOwnerRole",
-                                    userData.wallet
-                                  );
-                                  // const _pendingRewards = await callContractFn(
-                                  //   "getUserProducts",
-                                  //   userData.wallet
-                                  // );
+                              setIsLoading({
+                                playerCreation: false,
+                                sentEth: false,
+                              });
 
-                                  setUserData((prev) => {
-                                    return {
-                                      ...prev,
-                                      name: _userObj[2],
-                                      // tokens: (parseInt(userTokens) / 1000).toFixed(2),
-                                      // pendingRewards: _pendingRewards,
-                                      accessLevel: _isManager
-                                        ? "manager"
-                                        : _isOwner
-                                        ? "owner"
-                                        : "",
-                                    };
-                                  });
-                                } catch (error) {
-                                  console.error(
-                                    "Error fetching user data:",
-                                    error
-                                  );
-                                }
+                              setUserData((prev) => ({
+                                ...prev,
+                                name: player.name,
+                                player: player,
+                                cards: cards,
+                                mgsTokens: mgsBalance,
+                                isLoggedIn: true,
+                                hasAccount: true,
+                              }));
 
-                                /* OLD Register Stategy (with Express Server) */
-                                // const { wasSuccessful } =
-                                //   await handleAccountCreation({
-                                //     name: userNameField.value,
-                                //     wallet: walletField.value,
-                                //   });
-                                // if (wasSuccessful) {
-                                //   setSuccessMessage(
-                                //     "Account created successfully!"
-                                //   );
-                                //   setHasErrors([]);
-                                // }
-                              } catch (error) {
-                                // Handling Errors from Server
-                                console.log(
-                                  "💎 Register Error from Contract: ",
-                                  error
-                                );
-                                const contractError = getRevertedReason(error);
-
-                                if (contractError?.isContractError) {
-                                  handleServerErrors(
-                                    "contract",
-                                    contractError.message
-                                  );
-                                }
-                                // else if (error.code === "ERR_NETWORK") {
-                                //   handleServerErrors("ERR_NETWORK");
-                                // } else if (
-                                //   error.response.data.code === "ER_DUP_ENTRY"
-                                // ) {
-                                //   handleServerErrors("ER_DUP_ENTRY");
-                                // } else {
-                                //   console.log(error);
-                                //   handleServerErrors();
-                                // }
-                                setSuccessMessage("");
-                              } finally {
-                                setIsLoading(false);
-                              }
+                              showToast(
+                                "Account Creation",
+                                "Account created successfully!",
+                                "success"
+                              );
+                              setTimeout(() => {
+                                navigate("/rewards-page");
+                              }, 2000);
+                            } else {
+                              console.log(
+                                "Local Wallet Register Page | handlePlayerCreate, returned false"
+                              );
+                              setIsLoading({
+                                playerCreation: false,
+                                sentEth: false,
+                              });
                             }
                           }}
                         >

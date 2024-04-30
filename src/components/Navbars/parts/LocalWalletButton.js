@@ -4,6 +4,7 @@ import { Button } from "reactstrap";
 
 import CustomToast from "./CustomNavBarToast";
 import { useNavigation } from "hooks/useNavigation";
+import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 // import { loginProcessHandler } from "utils/LoginProcessHandler";
 
 const LocalWalletButton = ({
@@ -16,27 +17,21 @@ const LocalWalletButton = ({
 }) => {
   const localWalletExists = userData.localWallet.account ? true : false;
   const { navigate } = useNavigation();
+  const location = useLocation();
+  const isInWalletDetailsPage = location.pathname.includes(
+    "localWallet-details-page"
+  );
 
   const hancleClick = async () => {
     if (localWalletExists) {
       // TODO: Show Local Wallet Modal
-      console.log("🧪 1. Displaying Local Wallet Modal...");
-      console.log("🧪 2. User Data: ", userData);
-      navigate("/localWallet-details-page");
-      // toast(
-      //   <CustomToast
-      //     text={"If you want to Disconnect, you can do it from your Wallet"}
-      //   />,
-      //     position: "top-center",
-      //     autoClose: 5000,
-      //     hideProgressBar: false,
-      //     closeOnClick: true,
-      //     pauseOnHover: true,
-      //     draggable: true,
-      //     progress: undefined,
-      //     theme: "light",
-      //   }
-      // );
+      if (isInWalletDetailsPage) {
+        navigate("/rewards-page");
+      } else {
+        console.log("🧪 1. Displaying Local Wallet Modal...");
+        console.log("🧪 2. User Data: ", userData);
+        navigate("/localWallet-details-page");
+      }
     } else {
       const walletAddress = generateWallet();
 
@@ -102,7 +97,11 @@ const LocalWalletButton = ({
   1. Checkes if User is connected by checking if the wallet has an chainId property with any value
   2. If this fails, checks if the user possess a wallet in general 
 */}
-        {localWalletExists ? "Local Wallet" : "Create Wallet"}
+        {localWalletExists
+          ? isInWalletDetailsPage
+            ? "Go Back"
+            : "Local Wallet"
+          : "Create Wallet"}
       </div>
     </Button>
   );

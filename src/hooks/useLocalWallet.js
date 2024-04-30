@@ -50,11 +50,11 @@ function useLocalWallet(provider) {
           "✅ - Local Wallet Discovery Success. Retrieving User Data...",
           walletAddress
         );
-        const userData = await getPlayerByWallet(walletAddress);
-        return { localWalletExist: success, userData, walletAddress };
+        const playerData = await getPlayerByWallet(walletAddress);
+        return { localWalletExist: success, playerData, walletAddress };
       } else {
         console.log("💥 - No Local Wallet was found");
-        return { localWalletExist: false, userData: null, walletAddress: null };
+        return { localWalletExist: false, playerData: null, walletAddress: null };
       }
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

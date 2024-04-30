@@ -1,7 +1,7 @@
 import { useState } from "react";
 import detectEthereumProvider from "@metamask/detect-provider";
 
-function useMetamask() {
+function DEAD_useMetamask() {
   const [provider, setProvider] = useState(null);
 
   const hasMetamask = () => {
@@ -30,7 +30,7 @@ function useMetamask() {
       const accounts = await provider.request({
         method: "eth_requestAccounts",
       });
-      console.log("useMetamask: getAccount(): acoounts: ", accounts);
+      console.log("DEAD_useMetamask: getAccount(): acoounts: ", accounts);
       return accounts.length > 0 ? accounts[0] : null;
     }
     return null;
@@ -56,4 +56,4 @@ function useMetamask() {
   };
 }
 
-export default useMetamask;
+export default DEAD_useMetamask;

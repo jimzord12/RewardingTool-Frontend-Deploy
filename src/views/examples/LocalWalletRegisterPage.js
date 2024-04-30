@@ -348,12 +348,15 @@ export default function LocalWalletRegisterPage() {
                                 sentEth: false,
                               });
 
-                              navigate("/rewards-page");
                               showToast(
                                 "Account Creation",
                                 "Account created successfully!",
                                 "success"
                               );
+
+                              setTimeout(() => {
+                                navigate("/rewards-page");
+                              }, 2000);
                             } else {
                               console.log(
                                 "Local Wallet Register Page | handlePlayerCreate, returned false"

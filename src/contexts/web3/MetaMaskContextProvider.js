@@ -11,6 +11,10 @@ import detectEthereumProvider from "@metamask/detect-provider";
 import { formatBalance, formatChainAsNum } from "../../utils/index";
 
 import { generaChain } from "constants/chainDetails";
+import useToastMsg from "hooks/useToastMsg";
+import { useWeb3Login } from "hooks/useWeb3Login";
+import { getPlayerByWallet } from "api";
+import { getMGSBalance } from "api";
 
 const mm = window.ethereum;
 const disconnectedState = { accounts: [], balance: "", chainId: "" };
@@ -24,9 +28,13 @@ export const MetaMaskContextProvider = ({ children }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const clearError = () => setErrorMessage("");
 
+  const { showToast } = useToastMsg();
+
   const [hasMetaMaskRun, setHasMetaMaskRun] = useState(false);
 
   const [wallet, setWallet] = useState(disconnectedState);
+
+  const { signMessage } = useWeb3Login(hasMetamask, provider, wallet);
   // useCallback ensures that you don't uselessly recreate the _updateWallet function on every render
   const _updateWallet = useCallback(async (providedAccounts) => {
     const accounts =
@@ -157,6 +165,35 @@ export const MetaMaskContextProvider = ({ children }) => {
     }
   };
 
+  const metamaskLogin = async () => {
+    const walletAddress = wallet.accounts[0];
+    if (!walletAddress) {
+      showToast("Login Error", "No Wallet found.", "error");
+      return;
+    }
+    // 1. Check Ownership of Wallet
+    const resposnse = await signMessage();
+    console.log(resposnse.verified);
+    // 2. Check if Wallet is already registered
+    try {
+      const playerData = await getPlayerByWallet(walletAddress);
+      console.log("✅ Metamask Login | Player Data:", playerData);
+      const { player, cards } = playerData;
+      const { balance: mgsBalance } = await getMGSBalance(walletAddress);
+
+      return { success: true, player, cards, mgsBalance };
+    } catch (error) {
+      console.log("⛔ Login Button | Error:", error);
+      // 3. If not, register the wallet
+      if (error?.response?.data?.error === "Player not found") {
+        showToast("Login Error", "You need to create an Account", "error");
+      } else {
+        showToast("Login Error", "Something went wrong", "error");
+      }
+      return { success: false };
+    }
+  };
+
   return (
     <MetaMaskContext.Provider
       value={{
@@ -171,6 +208,7 @@ export const MetaMaskContextProvider = ({ children }) => {
         hasMetaMaskRun,
         addNetwork,
         switchNetwork,
+        metamaskLogin,
       }}
     >
       {children}

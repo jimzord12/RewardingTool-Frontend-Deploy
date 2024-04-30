@@ -11,3 +11,10 @@ export const formatChainAsNum = (chainIdHex) => {
 export const formatAddress = (addr) => {
   return `${addr.substring(0, 8)}...`;
 };
+
+export const remove_Ox = (addr) => {
+  if (addr.substring(0, 2) !== "0x") {
+    return addr;
+  }
+  return addr.substring(2);
+};

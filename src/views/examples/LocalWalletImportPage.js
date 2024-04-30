@@ -28,14 +28,12 @@ import Footer from "components/Footer/Footer.js";
 
 import { useGlobalContext } from "contexts/GlobalContextProvider";
 import { useFormValidation_LW } from "../../hooks/useFormValidation_LW.js";
-import { useLS } from "../../hooks/useLS.js";
 import useLocalWallet from "hooks/useLocalWallet.js";
 import { useNavigation } from "hooks/useNavigation.js";
 
-import { handlePlayerCreate } from "bigHandlers/handlePlayerCreate.js";
-import { getPlayerByWallet, getMGSBalance } from "api/index.js";
 import useToastMsg from "hooks/useToastMsg.js";
 import { isValidEthereumPrivateKey } from "utils/validatePrivKey.js";
+import { remove_Ox } from "utils/web3Formating.js";
 
 export default function LocalWalletImportPage() {
   const [squares1to6, setSquares1to6] = React.useState("");
@@ -231,7 +229,7 @@ export default function LocalWalletImportPage() {
                               return;
                             }
 
-                            const privKey = privKeyField.value;
+                            const privKey = remove_Ox(privKeyField.value);
                             const isValid = isValidEthereumPrivateKey(privKey);
                             console.log("Is Priv Key Valid?:", isValid);
 

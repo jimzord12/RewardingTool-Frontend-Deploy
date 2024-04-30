@@ -14,7 +14,6 @@ import { waitForTx } from "utils/waitForTx";
 
 export function useLWLogin(
   usingLocalWallet,
-  setIsLoggedIn,
   setUserData,
   provider,
   setIsLoading
@@ -74,8 +73,9 @@ export function useLWLogin(
       setUserData((prev) => {
         return {
           ...prev,
-          ...response,
           name: response.player.name,
+          player: response.player,
+          cards: response.cards,
           mgsTokens: mgsBalance,
           localWallet: {
             account: walletAddress,
@@ -86,7 +86,6 @@ export function useLWLogin(
           currentWalletMethod: "local",
         };
       });
-      setIsLoggedIn(true);
       // return response;
     } catch (error) {
       console.log("Login Error: ", error);
@@ -97,7 +96,6 @@ export function useLWLogin(
   };
 
   const loggedOut = () => {
-    setIsLoggedIn(false);
     setUserData({
       name: undefined,
       mgsTokens: undefined,

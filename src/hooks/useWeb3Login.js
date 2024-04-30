@@ -2,22 +2,25 @@ import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { getRandomNum, validateSignedMsg } from "api/index";
 
-import { useMetaMask } from "contexts/web3/MetaMaskContextProvider";
-import { useGlobalContext } from "contexts/GlobalContextProvider";
+// import { useMetaMask } from "contexts/web3/MetaMaskContextProvider";
+// import { useGlobalContext } from "contexts/GlobalContextProvider";
 import { toast } from "react-toastify";
 
 import {
   loginProcessHandler,
   noAccountWarning,
 } from "utils/LoginProcessHandler";
+import { getPlayerByWallet } from "api";
+import { resolveTypeReferenceDirective } from "typescript";
 
 export async function getNonce() {
   try {
-    const response = await getRandomNum("/big-random-number");
-    const nonce = response.data.randomBigNumber;
+    const response = await getRandomNum();
+
+    const nonce = response.nonce;
     return nonce;
   } catch (error) {
-    console.error("⛔ (Express Oracle) Failed to fetch nonce:", error);
+    console.error("⛔ (Express) Failed to fetch nonce:", error);
     toast.error(
       "We are experiencing issues with the Web Server, please try again later",
       {
@@ -35,75 +38,37 @@ export async function getNonce() {
   }
 }
 
-export function useWeb3Login() {
-  const { hasMetamask, provider, wallet } = useMetaMask();
-  const { userData, setUserData, callContractFn } = useGlobalContext();
+export function useWeb3Login(hasMetamask, provider, wallet) {
+  // const { hasMetamask, provider, wallet } = useMetaMask();
+  // const { userData, setUserData } = useGlobalContext();
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // const [isAuthenticated, setIsAuthenticated] = useState(false);
   // const [signer, setSigner] = useState(null);
 
   // const { showToast } = useToastMsg();
 
-  useEffect(() => {
-    async function fetchUserData() {
-      try {
-        // We try to fetch the user data from the contract
-        const _userObj = await callContractFn("users", userData.wallet);
-        console.log(_userObj);
+  // useEffect(() => {
+  //   async function fetchUserData() {
+  //     try {
+  //       getPlayerByWallet()
+  //     } catch (error) {
+  //       console.error("Error fetching user data:", error);
+  //     }
+  //   }
 
-        console.log("(Web3Login): The user obj from contract: ", _userObj);
-
-        if (_userObj[2] === "") {
-          noAccountWarning();
-          setUserData((prev) => {
-            return {
-              ...prev,
-              name: "No Account",
-            };
-          });
-          return;
-        }
-
-        const _isManager = await callContractFn(
-          "checkManagerRole",
-          userData.wallet
-        );
-
-        const _isOwner = await callContractFn(
-          "checkOwnerRole",
-          userData.wallet
-        );
-        // const _pendingRewards = await callContractFn(
-        //   "getUserProducts",
-        //   userData.wallet
-        // );
-
-        setUserData((prev) => {
-          return {
-            ...prev,
-            name: _userObj[2],
-            // tokens: (parseInt(userTokens) / 1000).toFixed(2),
-            // pendingRewards: _pendingRewards,
-            accessLevel: _isManager ? "manager" : _isOwner ? "owner" : "",
-          };
-        });
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    }
-
-    console.log(isAuthenticated);
-    console.log(userData.wallet);
-    if (isAuthenticated && userData.wallet) {
-      console.log("I am Running you guys!!!");
-      fetchUserData();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, userData.wallet]);
+  //   console.log(isAuthenticated);
+  //   console.log(userData.wallet);
+  //   if (isAuthenticated && userData.wallet) {
+  //     console.log("I am Running you guys!!!");
+  //     fetchUserData();
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [isAuthenticated, userData.wallet]);
 
   const signMessage = async () => {
     // Checks if wallet, provider, etc. exist
     const isWeb3Ready = loginProcessHandler("login", hasMetamask, wallet);
+    let isTrueOwner = false;
 
     if (!isWeb3Ready) return;
 
@@ -128,15 +93,10 @@ export function useWeb3Login() {
 
         const responsePromise = signedMessage
           .then((signedMessage) =>
-            validateSignedMsg("/verify-signature", {
-              message,
-              //   nonce: "AAAAAA", // FOr testing: to get an Error
-              userAddress: _signerAddr,
-              signedMessage,
-            })
+            validateSignedMsg(message, _signerAddr, signedMessage)
           )
           .then((response) => {
-            if (response.data.verified) {
+            if (response.verified) {
               return response;
             } else {
               throw new Error("Signature verification failed");
@@ -149,16 +109,9 @@ export function useWeb3Login() {
             pending: "Sign this message and await for verification...",
             success: {
               render: ({ data }) => {
-                console.log(data.data);
-                setIsAuthenticated(data.data.verified);
-                if (data.data.verified) {
-                  setUserData((prev) => {
-                    return {
-                      ...prev,
-                      isLoggedIn: true,
-                      wallet: _signerAddr,
-                    };
-                  });
+                console.log(data);
+                if (data.verified) {
+                  isTrueOwner = true;
                   return "Your signature is valid! Welcome ";
                 } else {
                   return "The signature is invalid!";
@@ -178,11 +131,13 @@ export function useWeb3Login() {
             theme: "colored",
           }
         );
+
+        return responsePromise;
       } catch (error) {
         console.error("Failed to verify signed message:", error);
       }
     }
   };
 
-  return { isAuthenticated, signMessage };
+  return { signMessage };
 }

@@ -9,7 +9,7 @@ import LoadingButtonInfo from "components/custom/LoadingButton/LoadingButtonInfo
 import { useNavigation } from "hooks/useNavigation.js";
 import { useMetaMask } from "../../contexts/web3/MetaMaskContextProvider.js";
 import { useGlobalContext } from "contexts/GlobalContextProvider.js";
-import { useWeb3Login } from "hooks/useWeb3Login.js";
+// import { useWeb3Login } from "hooks/useWeb3Login.js";
 // import { copyToClipboard } from "utils/copy2clipboard.js";
 
 // import { deployedContractAddresses } from "web3/constants/deployedContracts.js";
@@ -52,19 +52,9 @@ export default function ExamplesNavbar() {
 
   const { navigate } = useNavigation();
   const location = useLocation();
-  const {
-    userData,
-    setUserData,
-    callContractFn,
-    tokenEventFired,
-    setTokenEventFired,
-    setUsingLocalWallet,
-    usingLocalWallet,
-    isLoggedIn,
-    isLoading,
-    provider,
-  } = useGlobalContext();
-  const { isAuthenticated, signMessage } = useWeb3Login();
+  const { userData, setUserData, usingLocalWallet, isLoading, provider } =
+    useGlobalContext();
+  // const { isAuthenticated, signMessage } = useWeb3Login();
   const {
     wallet: localWallet,
     deleteWallet,
@@ -77,6 +67,10 @@ export default function ExamplesNavbar() {
   } = useLocalWallet(provider);
 
   const { showToast } = useToastMsg();
+
+  React.useEffect(() => {
+    console.log("NavBat: userData: ", userData);
+  }, [userData, userData.metamaskWallet.isLoggedIn]);
 
   React.useEffect(() => {
     window.addEventListener("scroll", changeColor);
@@ -165,28 +159,33 @@ export default function ExamplesNavbar() {
             </Row>
           </div>
           <Nav navbar>
-            {!isLoggedIn && (
+            {!userData.isLoggedIn && (
               <NavItem className="">
-                <LoginButton usingLocalWallet={usingLocalWallet} />
+                <LoginButton
+                  usingLocalWallet={usingLocalWallet}
+                  userData={userData}
+                  setUserData={setUserData}
+                />
               </NavItem>
             )}
 
             {/* If User is on the <Register Page?, Do not show the <Register> Button AND is NOT Logged In */}
-            {!location.pathname.includes("register") && !isLoggedIn && (
-              <NavItem>
-                <SignUpButton
-                  usingLocalWallet={usingLocalWallet}
-                  userData={userData}
-                  isLoggedIn={isLoggedIn}
-                />
-              </NavItem>
-            )}
+            {!location.pathname.includes("register") &&
+              !userData.isLoggedIn && (
+                <NavItem>
+                  <SignUpButton
+                    usingLocalWallet={usingLocalWallet}
+                    userData={userData}
+                    isLoggedIn={userData.isLoggedIn}
+                  />
+                </NavItem>
+              )}
 
             {/* ************************************************************************ */}
 
             {/* If User is on the <Rewards Page> AND IS Logged In => Show User's Name + MGS Balance */}
             {/* {true && ( */}
-            {location.pathname.includes("rewards") && isLoggedIn && (
+            {location.pathname.includes("rewards") && userData.isLoggedIn && (
               <>
                 <NavItem>
                   <LoadingButtonInfo
@@ -233,9 +232,9 @@ export default function ExamplesNavbar() {
                             walletAdress = userData.localWallet.account;
                           } else if (
                             hasMetamask &&
-                            userData.metamask.accounts[0]
+                            userData.metamaskWallet.accounts[0]
                           ) {
-                            walletAdress = userData.metamask.accounts[0];
+                            walletAdress = userData.metamaskWallet.accounts[0];
                           } else {
                             showToast(
                               "Error",
@@ -287,10 +286,10 @@ export default function ExamplesNavbar() {
               {usingLocalWallet ? (
                 <LocalWalletButton
                   userData={userData}
+                  setUserData={setUserData}
                   generateWallet={generateWallet}
                   provider={provider}
                   getEthBalance={getEthBalance_2}
-                  setUserData={setUserData}
                 />
               ) : (
                 <ConnectMetaMaskButton />

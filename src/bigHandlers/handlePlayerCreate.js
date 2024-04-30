@@ -29,7 +29,7 @@ export const handlePlayerCreate = async (
     }
 
     if (success) {
-      setSuccessMessage("Account created successfully!");
+      setSuccessMessage("Account created!\n We are now logging you in");
       setHasErrors([]);
       if (Number(ethBlanace) < 0.2) {
         console.log("🐱‍🏍 Starting the Gasless Mechanism...");
