@@ -9,13 +9,13 @@ function CardGrid({ items, setModal, setSelectedReward }) {
       {console.log("(CardGrid): Items: ", items)}
       {items.map((item) => (
         <Col
-          className={`${
-            item?.isDisabled
-              ? "disabled-card"
-              : item?.isRedeemed
-              ? "disabled-card"
-              : ""
-          }`}
+          // className={`${
+          //   item?.isDisabled
+          //     ? "disabled-card"
+          //     : item?.isRedeemed
+          //     ? "disabled-card"
+          //     : ""
+          //  }`}
           sm="4"
           key={item.id}
           onClick={() => {

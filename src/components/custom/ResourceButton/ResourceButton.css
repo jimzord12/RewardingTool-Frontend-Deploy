@@ -1,0 +1,43 @@
+.resource-grid-button {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  height: fit-content;
+  padding: 10px;
+  /* border: 1px solid #e0e0e0; */
+  border-radius: 4px;
+  background-color: purple;
+  cursor: pointer;
+  transition: all 0.4s;
+}
+
+.resource-grid-button:hover {
+  filter: brightness(80%);
+  box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.85); /* Inner shadow */
+}
+
+.resource-grid-button-selected {
+  filter: brightness(80%);
+  box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.85); /* Inner shadow */
+}
+
+.resource-grid-button-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+  height: 60px;
+}
+
+.resource-grid-button-image {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  margin: 0 !important;
+}
+
+.resource-grid-button-text {
+  text-transform: capitalize;
+  margin: 0 !important;
+}

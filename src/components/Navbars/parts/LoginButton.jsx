@@ -43,6 +43,7 @@ const LoginButton = (props) => {
             props.setUserData((prev) => ({
               ...prev,
               name: player.name,
+              player: player,
               cards: cards,
               mgsTokens: mgsBalance,
               isLoggedIn: true,

@@ -8,7 +8,7 @@ export const handlePlayerCreate = async (
   ethBlanace,
   setSuccessMessage,
   setHasErrors,
-  setIsLoading,
+  setRegistrationStage,
   provider
 ) => {
   try {
@@ -35,15 +35,16 @@ export const handlePlayerCreate = async (
         console.log("🐱‍🏍 Starting the Gasless Mechanism...");
         const { message, tx } = await gaslessNewPlayer(address);
         if (message === "User sufficient ETH balance") {
-          setIsLoading({
-            playerCreation: false,
-            sentEth: false,
-          });
+          // setIsLoading({
+          //   playerCreation: false,
+          //   sentEth: false,
+          // });
         } else {
-          setIsLoading({
-            playerCreation: false,
-            sentEth: true,
-          });
+          // setIsLoading({
+          //   playerCreation: false,
+          //   sentEth: true,
+          // });
+          setRegistrationStage("sentEth");
           console.log("🐱‍🏍 Starting Waiting for Transaction...");
           await waitForTx(provider, tx);
         }

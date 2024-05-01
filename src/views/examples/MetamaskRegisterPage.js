@@ -110,7 +110,8 @@ export default function MetamaskRegisterPage() {
   const [successMessage, setSuccessMessage] = React.useState("");
 
   // const [hasError, setHasError] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [registrationStage, setRegistrationStage] =
+    React.useState("playerCreation");
 
   const [userNameField, setUserNameField] = React.useState({
     type: "Username",
@@ -201,6 +202,15 @@ export default function MetamaskRegisterPage() {
         posY * -0.02 +
         "deg)"
     );
+  };
+
+  const buttonText = {
+    playerCreation: "Create Account",
+    playerCreationFailed: "Try Again Later",
+    sentEth: "Sending ETH...",
+    autoLogin: "Auto Login...",
+    loginFailed: "Auto Login Failed",
+    loginSuccess: "Auto Login Success",
   };
 
   return (
@@ -389,6 +399,7 @@ export default function MetamaskRegisterPage() {
                           color="primary"
                           size="lg"
                           type="submit"
+                          disabled={registrationStage !== "playerCreation"}
                           onClick={async (event) => {
                             event.preventDefault();
                             clearFormErrors();
@@ -398,10 +409,10 @@ export default function MetamaskRegisterPage() {
                             );
                             console.log("Is Form Valid?:", isValid);
 
-                            setIsLoading({
-                              playerCreation: true,
-                              sentEth: false,
-                            });
+                            // setIsLoading({
+                            //   playerCreation: true,
+                            //   sentEth: false,
+                            // });
 
                             const success = await handlePlayerCreate(
                               userNameField.value,
@@ -409,7 +420,7 @@ export default function MetamaskRegisterPage() {
                               wallet.balance,
                               setSuccessMessage,
                               setHasErrors,
-                              setIsLoading,
+                              setRegistrationStage,
                               provider
                             );
 
@@ -422,12 +433,16 @@ export default function MetamaskRegisterPage() {
                                 mgsBalance,
                               } = await metamaskLogin();
 
-                              if (!loginSuccess) return;
+                              if (!loginSuccess) {
+                                setHasErrors((prev) => [
+                                  ...prev,
+                                  { name: "Auto Login", message: "has failed" },
+                                ]);
+                                setRegistrationStage("loginFailed");
+                                return;
+                              }
 
-                              setIsLoading({
-                                playerCreation: false,
-                                sentEth: false,
-                              });
+                              setRegistrationStage("loginSuccess");
 
                               setUserData((prev) => ({
                                 ...prev,
@@ -451,14 +466,11 @@ export default function MetamaskRegisterPage() {
                               console.log(
                                 "Local Wallet Register Page | handlePlayerCreate, returned false"
                               );
-                              setIsLoading({
-                                playerCreation: false,
-                                sentEth: false,
-                              });
+                              setRegistrationStage("playerCreationFailed");
                             }
                           }}
                         >
-                          {isLoading ? "A moment please..." : "Get Started"}
+                          {buttonText[registrationStage]}
                         </Button>
                       </Form>
                     </CardBody>

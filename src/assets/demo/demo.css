@@ -612,6 +612,10 @@ html {
   text-align: right;
 }
 
+.product-card {
+  min-height: 300px;
+}
+
 .product-card:hover {
   box-shadow: 0 0 20px 4px #aa3ed8;
   cursor: pointer;
@@ -622,6 +626,39 @@ html {
   pointer-events: none; /* Disable user interactions */
   opacity: 0.7; /* Optionally, make the element semi-transparent */
   cursor: not-allowed; /* Optionally, change the cursor to show the element is not interactive */
+}
+
+.mgs-to-resources-grid {
+  width: 100%;
+  max-height: 200px;
+  display: grid;
+  gap: 0.25rem;
+  /* border-radius: 15%; */
+  /* overflow: hidden; */
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+
+.mgs-to-resources-grid-item-1 {
+  font-size: 24px;
+  background-color: red;
+  border-top-left-radius: 5px;
+}
+.mgs-to-resources-grid-item-2 {
+  font-size: 24px;
+  background-color: blue;
+  border-top-right-radius: 5px;
+}
+.mgs-to-resources-grid-item-3 {
+  font-size: 24px;
+  background-color: yellow;
+  border-bottom-left-radius: 5px;
+}
+
+.mgs-to-resources-grid-item-4 {
+  font-size: 24px;
+  background-color: green;
+  border-bottom-right-radius: 5px;
 }
 
 .product-card-selected {
@@ -930,5 +967,15 @@ input:-webkit-autofill:active {
 
   .mobile-font-custom > h3 {
     font-size: small;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .mgs-to-resources-grid {
+    display: grid;
+    gap: 0.25rem;
+    grid-template-columns: repeat(1, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    min-height: 350px;
   }
 }

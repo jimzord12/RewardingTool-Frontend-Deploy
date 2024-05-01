@@ -11,7 +11,31 @@ import RedeemModal from "components/custom/MyModals/RedeemModal.js";
 import { useGlobalContext } from "contexts/GlobalContextProvider.js";
 // import { useLS } from "hooks/useLS.js";
 
-import testImage from "assets/img/genera/v3/MGS_to_Rarity.webp";
+import MGS_to_Rarity from "assets/img/genera/v3/MGS_to_Rarity.webp";
+import MGS_to_Enable_SP_Cards from "assets/img/genera/v3/MGS_to_Enable_SP_Cards.webp";
+import MGS_to_Resources from "assets/img/genera/v3/MGS_to_Resources.webp";
+import { id } from "ethers/lib/utils";
+
+const rewardOptions = [
+  {
+    id: 1,
+    name: "MGS to Resources",
+    description: "Spend MGS to get resources",
+    image: MGS_to_Resources,
+  },
+  {
+    id: 2,
+    name: "Card Rarity Upgrade",
+    description: "Spend MGS to upgrade card rarity",
+    image: MGS_to_Rarity,
+  },
+  {
+    id: 3,
+    name: "Enable Special Cards",
+    description: "Spend MGS to re-enable disabled Special Cards",
+    image: MGS_to_Enable_SP_Cards,
+  },
+];
 
 export default function RewardsPage() {
   const [modalState, setModal] = useState(false);
@@ -24,8 +48,6 @@ export default function RewardsPage() {
   });
 
   const { userData, callContractFn, callMGSContractFn } = useGlobalContext();
-
-  // const [saveToLS] = useLS();
 
   React.useEffect(() => {
     document.body.classList.toggle("index-page");
@@ -50,7 +72,7 @@ export default function RewardsPage() {
             isOpen={modalState}
             setModal={setModal}
             title={selectedReward?.name}
-            imageSrc={testImage}
+            imageSrc={selectedReward?.image}
             price={selectedReward?.price}
             status="Available"
             location={selectedReward?.location}
@@ -62,15 +84,14 @@ export default function RewardsPage() {
             resetRedeem={() =>
               console.log("Implement Reset Redeem Function Here")
             }
-            userData={userData}
-            gmapsLink={
-              "https://www.google.com/maps/place/Palazzo+Doglio/@39.2231215,9.1203936,15.85z/data=!4m17!1m7!3m6!1s0x12ddc48d448d3591:0x339674b6e4ab6631!2sSardinia!8m2!3d40.1208752!4d9.0128926!16zL20vMDc4bGs!3m8!1s0x12e7340ae7363ed1:0xe7882a7e8d11b539!5m2!4m1!1i2!8m2!3d39.2135929!4d9.1218507!16s%2Fg%2F11f2r_pq0y?entry=ttu"
-            }
+            // gmapsLink={
+            //   "https://www.google.com/maps/place/Palazzo+Doglio/@39.2231215,9.1203936,15.85z/data=!4m17!1m7!3m6!1s0x12ddc48d448d3591:0x339674b6e4ab6631!2sSardinia!8m2!3d40.1208752!4d9.0128926!16zL20vMDc4bGs!3m8!1s0x12e7340ae7363ed1:0xe7882a7e8d11b539!5m2!4m1!1i2!8m2!3d39.2135929!4d9.1218507!16s%2Fg%2F11f2r_pq0y?entry=ttu"
+            // }
           />
           <CarouselSection />
           {/* TODO: Create an Array of Objects that will hold data about the 3 Features*/}
           <CardsSection
-            items={[]}
+            items={rewardOptions}
             setModal={setModal}
             setSelectedReward={setSelectedReward}
           />

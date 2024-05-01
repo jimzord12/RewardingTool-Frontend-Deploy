@@ -4,13 +4,13 @@ import { ethers } from "ethers";
 import { Triangle } from "react-loader-spinner";
 
 import { useMetaMask } from "./web3/MetaMaskContextProvider";
-import useContract from "hooks/useContract";
-// import { contractAddress, abi } from "../web3/constants/index";
-import {
-  deployedContractAddresses,
-  Rewarding_ABI,
-  MGS_ABI,
-} from "../web3/constants/index";
+// import useContract from "hooks/useContract";
+// // import { contractAddress, abi } from "../web3/constants/index";
+// import {
+//   deployedContractAddresses,
+//   Rewarding_ABI,
+//   MGS_ABI,
+// } from "../web3/constants/index";
 import { getMGSBalance } from "api/index";
 
 import { ReactComponent as MetamaskIcon } from "../assets/img/genera/metamask.svg";
@@ -72,22 +72,22 @@ export const GlobalContextProvider = ({ children }) => {
   } = useMetaMask();
 
   // TODO:
-  const { initialize /* isLoading  */ } = useContract(
-    metamaskProvider,
-    deployedContractAddresses.RewardingToolAddress,
-    Rewarding_ABI.abi,
-    usingLocalWallet
-  );
+  // const { initialize /* isLoading  */ } = useContract(
+  //   metamaskProvider,
+  //   deployedContractAddresses.RewardingToolAddress,
+  //   Rewarding_ABI.abi,
+  //   usingLocalWallet
+  // );
 
   // console.log("1. MGS Contract - Address", MGSAddress);
   // console.log("2. MGS Contract - ABI", MGS_ABI.abi);
 
-  const { initialize: initializeMGS /* isLoading  */ } = useContract(
-    metamaskProvider,
-    deployedContractAddresses.ERC20ContractAddress,
-    MGS_ABI.abi,
-    usingLocalWallet
-  );
+  // const { initialize: initializeMGS /* isLoading  */ } = useContract(
+  //   metamaskProvider,
+  //   deployedContractAddresses.ERC20ContractAddress,
+  //   MGS_ABI.abi,
+  //   usingLocalWallet
+  // );
 
   const { loginUserLocalWallet } = useLWLogin(
     usingLocalWallet,
@@ -204,83 +204,83 @@ export const GlobalContextProvider = ({ children }) => {
     }
   }, [usingLocalWallet, metamaskWallet.accounts[0]]);
 
-  async function callRTContractFn(fnName, ...args) {
-    if (typeof fnName !== "string")
-      throw new Error(
-        `💎 callContractFn: Invalid Arg Type. (${fnName}) must be of type string, however the received argument's type is: (${typeof fnName})`
-      );
-    try {
-      console.log("===============================================");
+  // async function callRTContractFn(fnName, ...args) {
+  //   if (typeof fnName !== "string")
+  //     throw new Error(
+  //       `💎 callContractFn: Invalid Arg Type. (${fnName}) must be of type string, however the received argument's type is: (${typeof fnName})`
+  //     );
+  //   try {
+  //     console.log("===============================================");
 
-      console.log("1. Calling: (", fnName, ")");
-      console.log("2. Args: (", ...args, ")");
-      if (RTcontract === null) {
-        console.log("callContractFn: Contract was NOT initialized");
-        console.log("callContractFn: Initialzing Contract...");
-        const _contract = await initialize();
-        setRTContract(_contract);
-        console.log("callContractFn: ✅ Contract Initialized! ");
-        console.log("callContractFn: The contract: ", _contract);
-        return args.length === 0
-          ? RTcontract[fnName]()
-          : RTcontract[fnName](...args);
-      } else {
-        // console.log("callContractFn: The contract: ", contract);
-        console.log("===============================================");
+  //     console.log("1. Calling: (", fnName, ")");
+  //     console.log("2. Args: (", ...args, ")");
+  //     if (RTcontract === null) {
+  //       console.log("callContractFn: Contract was NOT initialized");
+  //       console.log("callContractFn: Initialzing Contract...");
+  //       const _contract = await initialize();
+  //       setRTContract(_contract);
+  //       console.log("callContractFn: ✅ Contract Initialized! ");
+  //       console.log("callContractFn: The contract: ", _contract);
+  //       return args.length === 0
+  //         ? RTcontract[fnName]()
+  //         : RTcontract[fnName](...args);
+  //     } else {
+  //       // console.log("callContractFn: The contract: ", contract);
+  //       console.log("===============================================");
 
-        return args.length === 0
-          ? RTcontract[fnName]()
-          : RTcontract[fnName](...args);
-      }
-    } catch (err) {
-      setError(err);
-      console.error("💎 (Global): Contract Error: ", err);
-    }
-  }
+  //       return args.length === 0
+  //         ? RTcontract[fnName]()
+  //         : RTcontract[fnName](...args);
+  //     }
+  //   } catch (err) {
+  //     setError(err);
+  //     console.error("💎 (Global): Contract Error: ", err);
+  //   }
+  // }
 
-  async function callMGSContractFn(fnName, ...args) {
-    console.log("gggggggggsss: ", MGScontract);
+  // async function callMGSContractFn(fnName, ...args) {
+  //   console.log("gggggggggsss: ", MGScontract);
 
-    if (typeof fnName !== "string")
-      throw new Error(
-        `💎 MGS - callContractFn: Invalid Arg Type. (${fnName}) must be of type string, however the received argument's type is: (${typeof fnName})`
-      );
-    try {
-      console.log("===============================================");
+  //   if (typeof fnName !== "string")
+  //     throw new Error(
+  //       `💎 MGS - callContractFn: Invalid Arg Type. (${fnName}) must be of type string, however the received argument's type is: (${typeof fnName})`
+  //     );
+  //   try {
+  //     console.log("===============================================");
 
-      console.log("1. Calling: (", fnName, ")");
-      console.log("2. Args: (", ...args, ")");
-      if (MGScontract === null) {
-        console.log("MGS - callContractFn: Contract was NOT initialized");
-        console.log("MGS - callContractFn: Initialzing Contract...");
-        const _MGScontract = await initializeMGS();
-        setMGSContract(_MGScontract);
-        console.log("MGS - callContractFn: ✅ Contract Initialized! ");
-        console.log("MGS - callContractFn: The contract: ", _MGScontract);
-        return args.length === 0
-          ? _MGScontract[fnName]()
-          : _MGScontract[fnName](...args);
-      } else {
-        // console.log("MGS - callContractFn: The contract: ", contract);
-        console.log("===============================================");
-        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+  //     console.log("1. Calling: (", fnName, ")");
+  //     console.log("2. Args: (", ...args, ")");
+  //     if (MGScontract === null) {
+  //       console.log("MGS - callContractFn: Contract was NOT initialized");
+  //       console.log("MGS - callContractFn: Initialzing Contract...");
+  //       const _MGScontract = await initializeMGS();
+  //       setMGSContract(_MGScontract);
+  //       console.log("MGS - callContractFn: ✅ Contract Initialized! ");
+  //       console.log("MGS - callContractFn: The contract: ", _MGScontract);
+  //       return args.length === 0
+  //         ? _MGScontract[fnName]()
+  //         : _MGScontract[fnName](...args);
+  //     } else {
+  //       // console.log("MGS - callContractFn: The contract: ", contract);
+  //       console.log("===============================================");
+  //       console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
-        return args.length === 0
-          ? MGScontract[fnName]()
-          : MGScontract[fnName](...args);
-      }
-    } catch (err) {
-      setError(err);
-      console.error("💎 Contract Error: ", err);
-    }
-  }
+  //       return args.length === 0
+  //         ? MGScontract[fnName]()
+  //         : MGScontract[fnName](...args);
+  //     }
+  //   } catch (err) {
+  //     setError(err);
+  //     console.error("💎 Contract Error: ", err);
+  //   }
+  // }
 
   return (
     <GlobalContext.Provider
       value={{
         error,
-        callRTContractFn,
-        callMGSContractFn,
+        // callRTContractFn,
+        // callMGSContractFn,
         userData,
         setUserData,
         setUsingLocalWallet,
@@ -288,6 +288,7 @@ export const GlobalContextProvider = ({ children }) => {
         provider,
         loginUserLocalWallet,
         isLoading,
+        localWallet,
       }}
     >
       {hasMetaMaskRun ? (

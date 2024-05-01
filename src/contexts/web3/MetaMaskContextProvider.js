@@ -171,11 +171,11 @@ export const MetaMaskContextProvider = ({ children }) => {
       showToast("Login Error", "No Wallet found.", "error");
       return;
     }
-    // 1. Check Ownership of Wallet
-    const resposnse = await signMessage();
-    console.log(resposnse.verified);
-    // 2. Check if Wallet is already registered
     try {
+      // 1. Check Ownership of Wallet
+      const resposnse = await signMessage();
+      console.log(resposnse.verified);
+      // 2. Check if Wallet is already registered
       const playerData = await getPlayerByWallet(walletAddress);
       console.log("✅ Metamask Login | Player Data:", playerData);
       const { player, cards } = playerData;

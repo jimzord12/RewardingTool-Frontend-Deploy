@@ -50,10 +50,8 @@ export default function LocalWalletRegisterPage() {
   const [successMessage, setSuccessMessage] = React.useState("");
 
   // const [hasError, setHasError] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState({
-    playerCreation: false,
-    sentEth: false,
-  });
+  const [registrationStage, setRegistrationStage] =
+    React.useState("playerCreation");
 
   const [userNameField, setUserNameField] = React.useState({
     type: "Username",
@@ -151,14 +149,13 @@ export default function LocalWalletRegisterPage() {
     );
   };
 
-  const buttonTextPicker = () => {
-    if (isLoading.playerCreation) {
-      return "Creating Account...";
-    } else if (isLoading.sentEth) {
-      return "Sending ETH to your Account...";
-    } else {
-      return "Create Account";
-    }
+  const buttonText = {
+    playerCreation: "Create Account",
+    playerCreationFailed: "Try Again Later",
+    sentEth: "Sending ETH...",
+    autoLogin: "Auto Login...",
+    loginFailed: "Auto Login Failed",
+    loginSuccess: "Auto Login Success",
   };
 
   return (
@@ -324,29 +321,31 @@ export default function LocalWalletRegisterPage() {
                             );
                             console.log("Is Form Valid?:", isValid);
 
-                            setIsLoading({
-                              playerCreation: true,
-                              sentEth: false,
-                            });
-
                             const success = await handlePlayerCreate(
                               userNameField.value,
                               walletField.value,
                               ethBalanceField.value,
                               setSuccessMessage,
                               setHasErrors,
-                              setIsLoading,
+                              setRegistrationStage,
                               provider
                             );
 
                             if (success) {
                               console.log("User Data asd a: ", userData);
-                              await loginUserLocalWallet(userData);
-
-                              setIsLoading({
-                                playerCreation: false,
-                                sentEth: false,
-                              });
+                              try {
+                                await loginUserLocalWallet(userData);
+                                setRegistrationStage("loginSuccess");
+                              } catch (error) {
+                                setHasErrors((prev) => [
+                                  ...prev,
+                                  { name: "Auto Login", message: "has failed" },
+                                ]);
+                                console.log(
+                                  "⛔ LocalWalletResgiterPage: Login Error: ",
+                                  error
+                                );
+                              }
 
                               showToast(
                                 "Account Creation",
@@ -361,10 +360,14 @@ export default function LocalWalletRegisterPage() {
                               console.log(
                                 "Local Wallet Register Page | handlePlayerCreate, returned false"
                               );
-                              setIsLoading({
-                                playerCreation: false,
-                                sentEth: false,
-                              });
+                              setHasErrors((prev) => [
+                                ...prev,
+                                {
+                                  name: "Account Creation",
+                                  message: "has failed",
+                                },
+                              ]);
+                              setRegistrationStage("playerCreationFailed");
                             }
                           }}
                           // onClick={async (event) => {
@@ -498,7 +501,7 @@ export default function LocalWalletRegisterPage() {
                           //   }
                           // }}
                         >
-                          {buttonTextPicker()}
+                          {buttonText[registrationStage]}
                         </Button>
                       </Form>
                     </CardBody>

@@ -1,16 +1,12 @@
 import { Card, CardBody, CardTitle, CardText, CardImg } from "reactstrap";
-import testImage from "assets/img/genera/v3/MGS_to_Rarity.webp";
-// import { useLS } from "hooks/useLS";
 
 function MyCard({ item }) {
-  // const [, getFromLS] = useLS(item.pendindRewardID, null);
-
   return (
     <Card className={`product-card`}>
       <CardImg
         top
         className="card-img-top"
-        src={testImage}
+        src={item.image}
         alt="Card image cap"
         // onClick={() => {
         //   const secretCode = getFromLS();
@@ -24,7 +20,7 @@ function MyCard({ item }) {
       <CardBody>
         <CardTitle tag="h5">{item.name}</CardTitle>
         <CardText>{item.description}</CardText>
-        <div className="info-row">
+        {/* <div className="info-row">
           <div className="info-title">Price:</div>
           <div className="info-data text-success">
             <b>{item.price}</b>
@@ -59,7 +55,7 @@ function MyCard({ item }) {
               </div>
             </div>
           </>
-        )}
+        )} */}
       </CardBody>
     </Card>
   );
