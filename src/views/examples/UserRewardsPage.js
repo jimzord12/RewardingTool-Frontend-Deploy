@@ -31,7 +31,7 @@ import ExamplesNavbar from "components/Navbars/ExamplesNavbar.js";
 import Footer from "components/Footer/Footer.js";
 import { productDetails as rewardDetails } from "../../data/productDetails.js";
 import CardGrid from "components/custom/ProductSection/CardGrid.js";
-import UserRewardsCodesModal from "components/custom/MyModals/UserRewardsCodesModal";
+import UserRewardsCodesModal from "components/custom/MyModals/UserRewardsCodeModal/UserRewardsCodesModal";
 
 // Hooks
 

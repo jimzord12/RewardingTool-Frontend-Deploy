@@ -66,7 +66,7 @@ import { productDetails as rewardDetails } from "../../data/productDetails.js";
 //   guided_tour,
 // } from "../../assets/img/genera/index.js";
 
-import ValidationModal from "components/custom/MyModals/ValidationModal";
+import ValidationModal from "components/custom/MyModals/ValidationModal/ValidationModal";
 // import bigChartData from "variables/charts.js";
 
 // import { scrollToSection } from "genera/myJS";

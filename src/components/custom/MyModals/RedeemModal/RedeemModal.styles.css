@@ -54,6 +54,11 @@
   /* color: #ce510e; */
   text-shadow: 2px 1px 1px rgba(0, 0, 0, 1);
   padding-top: 8px;
+  opacity: 1;
+}
+
+.close:hover {
+  scale: 1.15;
 }
 
 .modal-body a {
