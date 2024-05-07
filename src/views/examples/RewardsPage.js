@@ -92,9 +92,6 @@ export default function RewardsPage() {
             resetRedeem={() =>
               console.log("Implement Reset Redeem Function Here")
             }
-            // gmapsLink={
-            //   "https://www.google.com/maps/place/Palazzo+Doglio/@39.2231215,9.1203936,15.85z/data=!4m17!1m7!3m6!1s0x12ddc48d448d3591:0x339674b6e4ab6631!2sSardinia!8m2!3d40.1208752!4d9.0128926!16zL20vMDc4bGs!3m8!1s0x12e7340ae7363ed1:0xe7882a7e8d11b539!5m2!4m1!1i2!8m2!3d39.2135929!4d9.1218507!16s%2Fg%2F11f2r_pq0y?entry=ttu"
-            // }
           />
           <CarouselSection />
           {/* TODO: Create an Array of Objects that will hold data about the 3 Features*/}

@@ -10,7 +10,6 @@ import {
   ModalFooter,
 } from "reactstrap";
 import MGSToResourceHandler from "../FeaturesClickHandlers/MGSToResourceHandler";
-import { useMetaMask } from "contexts/web3/MetaMaskContextProvider";
 import { useGlobalContext } from "contexts/GlobalContextProvider";
 import useContractLocalWallet from "hooks/useContractLocalWallet";
 import { mgsContractDetails } from "constants/mgsContractDetails";
@@ -29,7 +28,6 @@ const MGSToResources = () => {
 
   const [isTransactionLoading, setIsTransactionLoading] = React.useState(false);
 
-  const { hasMetamask, wallet } = useMetaMask();
   const { setUserData, userData, usingLocalWallet } = useGlobalContext();
   const { initializeLWContract, isLoadingLWContract } = useContractLocalWallet(
     mgsContractDetails.address,
@@ -126,7 +124,6 @@ const MGSToResources = () => {
           style={{
             backgroundColor: "lightblue",
             borderRadius: 10,
-            // border: "1px solid black",
           }}
           className={classNames({
             "input-group-focus": false,
