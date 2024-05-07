@@ -1,15 +1,44 @@
 import classNames from "classnames";
 import ResourceButton from "components/custom/ResourceButton/ResourceButton";
 import React, { useEffect } from "react";
-import { Input, InputGroup, InputGroupAddon, InputGroupText } from "reactstrap";
+import {
+  Button,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  ModalFooter,
+} from "reactstrap";
+import MGSToResourceHandler from "../FeaturesClickHandlers/MGSToResourceHandler";
+import { useMetaMask } from "contexts/web3/MetaMaskContextProvider";
+import { useGlobalContext } from "contexts/GlobalContextProvider";
+import useContractLocalWallet from "hooks/useContractLocalWallet";
+import { mgsContractDetails } from "constants/mgsContractDetails";
+import useContractMetamask from "hooks/useContractMetamask";
+import SimpleSpinner from "components/custom/SimpleSpinner/SimpleSpinner";
+import useToastMsg from "hooks/useToastMsg";
 
 const MGSToResources = () => {
-  const [resourceType, setResourceType] = React.useState(null);
   const [resourceAmountField, setResourceAmountField] = React.useState({
     value: "",
   });
   const [resourceAmountFocus, setResourceAmountFocus] = React.useState(false);
+
+  const [resourceType, setResourceType] = React.useState(null);
   const [MGSCost, setMGSCost] = React.useState(0);
+
+  const [isTransactionLoading, setIsTransactionLoading] = React.useState(false);
+
+  const { hasMetamask, wallet } = useMetaMask();
+  const { setUserData, userData, usingLocalWallet } = useGlobalContext();
+  const { initializeLWContract, isLoadingLWContract } = useContractLocalWallet(
+    mgsContractDetails.address,
+    mgsContractDetails.abi
+  );
+  const { initializeMetamaskContract, isLoadingMetamaskContract } =
+    useContractMetamask(mgsContractDetails.address, mgsContractDetails.abi);
+
+  const { showToast } = useToastMsg();
 
   useEffect(() => {
     console.log("The Resource Type: ", resourceType);
@@ -124,6 +153,30 @@ const MGSToResources = () => {
           />
         </InputGroup>
       </div>
+
+      <ModalFooter style={{ border: "none", paddingTop: 16, paddingBottom: 0 }}>
+        <Button
+          color="warning"
+          style={{ fontSize: "16px" }}
+          onClick={async () =>
+            await MGSToResourceHandler({
+              userData,
+              MGSCost,
+              resourceAmountField,
+              usingLocalWallet,
+              setIsTransactionLoading,
+              initializeLWContract,
+              initializeMetamaskContract,
+              resourceType,
+              setUserData,
+              showToast,
+            })
+          }
+          disabled={isTransactionLoading}
+        >
+          {isTransactionLoading ? <SimpleSpinner /> : "Redeem"}
+        </Button>
+      </ModalFooter>
     </div>
   );
 };
