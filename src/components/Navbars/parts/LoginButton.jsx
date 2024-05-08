@@ -3,21 +3,11 @@ import { Button } from "reactstrap";
 import { useLocation } from "react-router-dom";
 
 import { useNavigation } from "hooks/useNavigation.js";
-import useToastMsg from "hooks/useToastMsg.js";
-import { useLWLogin } from "hooks/useLWLogin.js";
-import { handlePlayerCreate } from "bigHandlers/handlePlayerCreate";
-// import { useWeb3Login } from "hooks/useWeb3Login";
-import { getPlayerByWallet } from "api";
-import { getMGSBalance } from "api";
 import { useMetaMask } from "contexts/web3/MetaMaskContextProvider";
-import { set } from "react-hook-form";
 
 const LoginButton = (props) => {
   const { navigate } = useNavigation();
   const location = useLocation();
-  const { showToast } = useToastMsg();
-  // const { signMessage } = useWeb3Login();
-  const { loginUser } = useLWLogin();
   const { metamaskLogin } = useMetaMask();
 
   return (

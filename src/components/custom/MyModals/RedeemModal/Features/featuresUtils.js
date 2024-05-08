@@ -10,6 +10,12 @@ export const removeSPCards = (arrayOfCards) => {
   return SPCardFreeArray;
 };
 
+export const keepOnlySPCards = (arrayOfCards) => {
+  const SPCardArray = arrayOfCards.filter((card) => card.level === 0);
+  console.log("From keepOnlySPCards: SPCardArray: ", SPCardArray);
+  return SPCardArray;
+};
+
 export const removeLegendaryCards = (arrayOfCards) => {
   const nonLegendaryCards = arrayOfCards.filter((card) => card.rarity !== 5);
   console.log(
@@ -17,6 +23,17 @@ export const removeLegendaryCards = (arrayOfCards) => {
     nonLegendaryCards
   );
   return nonLegendaryCards;
+};
+
+export const removeNonDisabledSPCards = (arrayOfCards) => {
+  const nonDisabledSPCards = arrayOfCards.filter((card) =>
+    Boolean(card.disabled)
+  );
+  console.log(
+    "From removeNonDisabledSPCards: nonDisabledSPCards: ",
+    nonDisabledSPCards
+  );
+  return nonDisabledSPCards;
 };
 
 export const fromTemplateToCard = (cardTemplate) => {

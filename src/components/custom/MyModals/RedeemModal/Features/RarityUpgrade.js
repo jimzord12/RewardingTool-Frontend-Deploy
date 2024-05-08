@@ -1,13 +1,11 @@
 import React from "react";
 import {
   Button,
-  DropdownToggle,
   Input,
   InputGroup,
   InputGroupAddon,
   InputGroupText,
   ListGroup,
-  ListGroupItem,
   ModalFooter,
 } from "reactstrap";
 
@@ -20,16 +18,31 @@ import {
 } from "./featuresUtils";
 import SimpleSpinner from "components/custom/SimpleSpinner/SimpleSpinner";
 import classNames from "classnames";
+import CustomListItem from "./MiniComps/CustomListItem/CustomListItem";
+import CustomDropdown from "./MiniComps/CustomDropdown/CustomDropdown";
+import RarityUpgradeHandler from "../FeaturesClickHandlers/RarityUpgradeHandler";
+import useContractLocalWallet from "hooks/useContractLocalWallet";
+import useContractMetamask from "hooks/useContractMetamask";
+import { mgsContractDetails } from "constants/mgsContractDetails";
+import useToastMsg from "hooks/useToastMsg";
 
 const upgradeCosts = [3, 5, 8, 12]; // Index 0: 1 -> 2, Index 1: 2 -> 3, Index 2: 3 -> 4, Index 3: 4 -> 5
 
-const RarityUpgrade = () => {
+const RarityUpgrade = ({ setModal }) => {
   const { setUserData, userData, usingLocalWallet } = useGlobalContext();
 
   const [isTransactionLoading, setIsTransactionLoading] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState(null);
   const [desiredRarity, setDesiredRarity] = React.useState(null);
   const [MGSCost, setMGSCost] = React.useState(0);
+
+  const { initializeLWContract, isLoadingLWContract } = useContractLocalWallet(
+    mgsContractDetails.address,
+    mgsContractDetails.abi
+  );
+  const { initializeMetamaskContract, isLoadingMetamaskContract } =
+    useContractMetamask(mgsContractDetails.address, mgsContractDetails.abi);
+  const { showToast } = useToastMsg();
 
   const nonSPCards = removeSPCards(userData.cards); // 1. Remove SP Cards, cuz they can't be upgraded
   const nonLegendaryCards = removeLegendaryCards(nonSPCards); // 2. Remove Legendary Cards, cuz they can't be upgraded any further
@@ -38,14 +51,6 @@ const RarityUpgrade = () => {
     fromTemplateToCard(card)
   );
   console.log("From RarityUpgrade: hydratedCards: ", hydratedCards);
-
-  const testArray = [
-    ...hydratedCards,
-    ...hydratedCards,
-    ...hydratedCards,
-    ...hydratedCards,
-    ...hydratedCards,
-  ];
 
   React.useEffect(() => {
     const currentRarity = selectedCard?.rarity;
@@ -65,6 +70,23 @@ const RarityUpgrade = () => {
   }, [desiredRarity, selectedCard?.rarity]);
 
   console.log("From RarityUpgrade: User Data: ", userData);
+  if (hydratedCards.length === 0)
+    return (
+      <div
+        style={{
+          color: "white",
+          textAlign: "center",
+          fontSize: "1.25rem",
+          border: "2px solid orange",
+          borderRadius: 10,
+          backgroundColor: "rgba(255, 165, 0, 0.3)",
+          marginTop: 10,
+        }}
+      >
+        You have no cards to upgrade!
+      </div>
+    );
+
   return (
     <div style={{ height: "100%" }}>
       <ListGroup
@@ -76,77 +98,14 @@ const RarityUpgrade = () => {
           scrollbarWidth: "none",
         }}
       >
-        {hydratedCards.length === 0 ? (
-          <div
-            style={{
-              color: "white",
-              textAlign: "center",
-              fontSize: "1.25rem",
-              border: "2px solid orange",
-              borderRadius: 10,
-              backgroundColor: "rgba(255, 165, 0, 0.3)",
-              marginTop: 10,
-            }}
-          >
-            You have no cards to upgrade!
-          </div>
-        ) : (
-          testArray.map((card) => (
-            <ListGroupItem
-              key={card.id}
-              style={{ backgroundColor: "purple", padding: "0.75rem" }}
-              active={selectedCard?.id === card.id}
-              onClick={() => setSelectedCard(card)}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-around",
-                }}
-              >
-                <div style={{ width: 50, height: 50 }}>
-                  <img
-                    src={card.image}
-                    alt={card.desc}
-                    style={{ objectFit: "contain", width: 50, height: 50 }}
-                  />
-                </div>
-                <div
-                  style={{
-                    margin: "0px 16px",
-                    border: "1px solid lightblue",
-                    height: 32,
-                  }}
-                />
-                <div>#{card.id}</div>
-                <div
-                  style={{
-                    margin: "0px 16px",
-                    border: "1px solid lightblue",
-                    height: 32,
-                  }}
-                />
-                <div>{rarityConverter(card.rarity).padEnd(12, " ")}</div>
-                <div
-                  style={{
-                    margin: "0px 16px",
-                    border: "1px solid lightblue",
-                    height: 32,
-                  }}
-                />
-                <div>{card.level}</div>
-                <div
-                  style={{
-                    margin: "0px 16px",
-                    border: "1px solid lightblue",
-                    height: 32,
-                  }}
-                />
-              </div>
-            </ListGroupItem>
-          ))
-        )}
+        {hydratedCards.map((card) => (
+          <CustomListItem
+            card={card}
+            selectedCard={selectedCard}
+            setSelectedCard={setSelectedCard}
+            setDesiredRarity={setDesiredRarity}
+          />
+        ))}
       </ListGroup>
 
       <div style={{ marginTop: 12 }}>
@@ -170,9 +129,11 @@ const RarityUpgrade = () => {
           }}
         >
           <h4 style={{ marginBottom: 4 }}>Upgrade to: </h4>
-          <DropdownToggle caret color="success">
-            Select Rarity
-          </DropdownToggle>
+          <CustomDropdown
+            currentCardRarity={selectedCard?.rarity}
+            desiredRarity={desiredRarity}
+            setDesiredRarity={setDesiredRarity}
+          />
         </div>
       </div>
 
@@ -212,10 +173,26 @@ const RarityUpgrade = () => {
         <Button
           color="warning"
           style={{ fontSize: "16px" }}
-          onClick={async () => {}}
-          // disabled={isTransactionLoading}
+          onClick={async () => {
+            const problem = await RarityUpgradeHandler({
+              userData,
+              MGSCost,
+              selectedCard,
+              desiredRarity,
+              usingLocalWallet,
+              setIsTransactionLoading,
+              initializeLWContract,
+              initializeMetamaskContract,
+              setUserData,
+              showToast,
+            });
+            if (problem === null) return;
+            setModal(false);
+            setSelectedCard(null);
+          }}
+          disabled={isTransactionLoading}
         >
-          {isTransactionLoading ? <SimpleSpinner /> : "Upgrade Rarity"}
+          {isTransactionLoading ? <SimpleSpinner /> : "Upgrade"}
         </Button>
       </ModalFooter>
     </div>

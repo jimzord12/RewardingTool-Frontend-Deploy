@@ -1,0 +1,9 @@
+.card-rarity-list-item:hover {
+  filter: brightness(80%);
+  box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.85); /* Inner shadow */
+}
+
+.card-rarity-list-item-selected {
+  filter: brightness(80%);
+  box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.85); /* Inner shadow */
+}

@@ -166,11 +166,25 @@ export const MetaMaskContextProvider = ({ children }) => {
   };
 
   const metamaskLogin = async () => {
-    const walletAddress = wallet.accounts[0];
-    if (!walletAddress) {
-      showToast("Login Error", "No Wallet found.", "error");
+    if (!hasMetamask) {
+      showToast(
+        "Login Error",
+        "No Wallet found. Please Install MetaMask or Use the Local Wallet",
+        "error"
+      );
       return;
     }
+
+    const walletAddress = wallet.accounts[0];
+    if (!walletAddress) {
+      showToast(
+        "Login Error",
+        "Please Connent your Wallet by using the 'Connect' Button",
+        "error"
+      );
+      return;
+    }
+
     try {
       // 1. Check Ownership of Wallet
       const resposnse = await signMessage();

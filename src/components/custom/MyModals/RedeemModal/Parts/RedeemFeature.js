@@ -3,10 +3,10 @@ import MGSToResources from "../Features/MGSToResources";
 import RarityUpgrade from "../Features/RarityUpgrade";
 import SPReactivation from "../Features/SPReactivation";
 
-const RedeemFeature = ({ rewardId }) => {
+const RedeemFeature = ({ rewardId, setModal }) => {
   if (rewardId === 1) return <MGSToResources />;
-  if (rewardId === 2) return <RarityUpgrade />;
-  if (rewardId === 3) return <SPReactivation />;
+  if (rewardId === 2) return <RarityUpgrade setModal={setModal} />;
+  if (rewardId === 3) return <SPReactivation setModal={setModal} />;
   return (
     <div>
       <h3

@@ -40,13 +40,19 @@ export default function Footer() {
           <Col md="3">
             <Nav>
               <NavItem>
-                <NavLink to="/" tag={Link}>
-                  Home
+                <NavLink
+                  to="https://genera-game-v3-new-graphics.vercel.app/"
+                  tag={Link}
+                >
+                  ONLINE GAME
                 </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink to="/landing-page" tag={Link}>
-                  Landing
+                <NavLink
+                  to="https://discord.com/channels/1237054901138489445/1237753387815145534/1237779276858654855"
+                  tag={Link}
+                >
+                  DISCORD
                 </NavLink>
               </NavItem>
               <NavItem>
@@ -55,8 +61,8 @@ export default function Footer() {
                 </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink to="/profile-page" tag={Link}>
-                  Profile
+                <NavLink to="https://life-genera.eu/media/" tag={Link}>
+                  YOUTUBE
                 </NavLink>
               </NavItem>
             </Nav>
@@ -64,24 +70,20 @@ export default function Footer() {
           <Col md="3">
             <Nav>
               <NavItem>
-                <NavLink href="https://creative-tim.com/contact-us?ref=blkdsr-footer">
+                <NavLink href="https://life-genera.eu/contact/">
                   Contact Us
                 </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink href="https://creative-tim.com/about-us?ref=blkdsr-footer">
-                  About Us
+                <NavLink href="https://life-genera.eu/about/">About Us</NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink href="https://life-genera.eu/genera-digital-social-platform/">
+                  TOOLS
                 </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink href="https://creative-tim.com/blog?ref=blkdsr-footer">
-                  Blog
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink href="https://opensource.org/licenses/MIT">
-                  License
-                </NavLink>
+                <NavLink href="https://life-genera.eu/">PROJECT SITE</NavLink>
               </NavItem>
             </Nav>
           </Col>
@@ -91,7 +93,7 @@ export default function Footer() {
               <Button
                 className="btn-icon btn-neutral btn-round btn-simple"
                 color="default"
-                href="https://twitter.com/creativetim"
+                href="https://twitter.com/GeneraProject"
                 id="tooltip622135962"
                 target="_blank"
               >
@@ -103,7 +105,7 @@ export default function Footer() {
               <Button
                 className="btn-icon btn-neutral btn-round btn-simple"
                 color="default"
-                href="https://www.facebook.com/creativetim"
+                href="https://www.facebook.com/profile.php?id=100088395187662"
                 id="tooltip230450801"
                 target="_blank"
               >
@@ -115,11 +117,11 @@ export default function Footer() {
               <Button
                 className="btn-icon btn-neutral btn-round btn-simple"
                 color="default"
-                href="https://dribbble.com/creativetim"
+                href="https://www.linkedin.com/company/genera-project/"
                 id="tooltip318450378"
                 target="_blank"
               >
-                <i className="fab fa-dribbble" />
+                <i className="fab fa-linkedin" />
               </Button>
               <UncontrolledTooltip delay={0} target="tooltip318450378">
                 Follow us

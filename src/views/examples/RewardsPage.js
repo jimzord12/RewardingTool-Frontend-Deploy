@@ -24,6 +24,7 @@ const rewardOptions = [
     instructions: [
       "Select a Resource",
       "Enter the desired amount (min: 1000)",
+      "The cost is based on type and amount of resource",
       "Press the 'Redeem' button",
     ],
   },
@@ -32,14 +33,23 @@ const rewardOptions = [
     name: "Card Rarity Upgrade",
     description: "Spend MGS to upgrade card rarity",
     image: MGS_to_Rarity,
-    instructions: ["Select a Card", "Press the 'Redeem' button"],
+    instructions: [
+      "Select a Card",
+      "Select desired Rarity",
+      "The cost is based on the Rarity difference",
+      "Press the 'Upgrade' button",
+    ],
   },
   {
     id: 3,
     name: "Enable Special Cards",
     description: "Spend MGS to re-enable disabled Special Cards",
     image: MGS_to_Enable_SP_Cards,
-    instructions: ["Select a Card", "Press the 'Redeem' button"],
+    instructions: [
+      "Select a Card",
+      "The Cost is based on the Card's Rarity",
+      "Press the 'Enable Card' button",
+    ],
   },
 ];
 

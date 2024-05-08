@@ -79,7 +79,7 @@ const MGSToResourcesModal = (props) => {
 
         <div>
           <RedeemModalInstructions arrayOfInstructions={instructions} />
-          <RedeemFeature rewardId={rewardId} />
+          <RedeemFeature rewardId={rewardId} setModal={setModal} />
         </div>
       </ModalBody>
     </Modal>

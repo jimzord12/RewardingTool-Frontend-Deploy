@@ -12,6 +12,12 @@ import {
 
 import CarouselText from "./CarouselText";
 
+const buttonLinks = [
+  "https://genera-game-v3-new-graphics.vercel.app/",
+  "https://discord.gg/Wv8nzm4KW6",
+  "https://life-genera.eu/",
+];
+
 export default function MyCarousel({ carouselItems }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [animating, setAnimating] = useState(false);
@@ -68,7 +74,7 @@ export default function MyCarousel({ carouselItems }) {
           <Button
             className="mt-4"
             color="warning"
-            href="https://demos.creative-tim.com/blk-design-system-react/#/documentation/alert"
+            href={buttonLinks[activeIndex]}
           >
             Check it out
           </Button>
