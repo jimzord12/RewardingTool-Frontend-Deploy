@@ -3,7 +3,7 @@ import axios from "axios";
 
 // const isProduction = import.meta.env.VITE_IS_PRODUCTION === "yes";
 // const isWSLocal = !isProduction && import.meta.env.VITE_IS_LOCAL_WS === "yes";
-const isDevMode = true;
+const isDevMode = false;
 
 console.log("🧪 - Api Config: isDevMode: ", isDevMode);
 // console.log("🧪 - Api Config: isWSLocal: ", isWSLocal);
