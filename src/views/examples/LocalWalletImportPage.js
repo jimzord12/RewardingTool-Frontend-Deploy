@@ -55,9 +55,10 @@ export default function LocalWalletImportPage() {
     provider,
     loginUserLocalWallet,
     usingLocalWallet,
+    retrieveWallet,
   } = useGlobalContext();
 
-  const { getPrivKey, getEthBalance, getEthBalance_2, retrieveWallet } =
+  const { getPrivKey, getEthBalance, getEthBalance_2 } =
     useLocalWallet(provider);
 
   const { validateForm, hasErrors, clearFormErrors, setHasErrors } =

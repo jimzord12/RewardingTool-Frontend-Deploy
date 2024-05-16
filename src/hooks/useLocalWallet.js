@@ -54,7 +54,11 @@ function useLocalWallet(provider) {
         return { localWalletExist: success, playerData, walletAddress };
       } else {
         console.log("💥 - No Local Wallet was found");
-        return { localWalletExist: false, playerData: null, walletAddress: null };
+        return {
+          localWalletExist: false,
+          playerData: null,
+          walletAddress: null,
+        };
       }
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -149,6 +153,7 @@ function useLocalWallet(provider) {
 
   return {
     wallet,
+    setWallet,
     deleteWallet,
     generateWallet,
     retrieveWallet,

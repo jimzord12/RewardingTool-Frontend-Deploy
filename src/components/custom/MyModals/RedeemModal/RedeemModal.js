@@ -1,16 +1,11 @@
 import React, { useRef, useEffect } from "react";
 import { Modal, ModalBody } from "reactstrap";
-import { toast } from "react-toastify";
 
 import "./RedeemModal.styles.css";
-import { useMetaMask } from "contexts/web3/MetaMaskContextProvider";
 import { useGlobalContext } from "contexts/GlobalContextProvider";
 
 import { getMGSBalance } from "api";
-import useContractLocalWallet from "hooks/useContractLocalWallet";
-import useContractMetamask from "hooks/useContractMetamask";
-import { mgsContractDetails } from "constants/mgsContractDetails";
-import useToastMsg from "hooks/useToastMsg";
+
 import RedeemModalTitle from "./Parts/RedeemModalTitle";
 import RedeemModalImage from "./Parts/RedeemModalImage";
 import RedeemModalDesc from "./Parts/RedeemModalDesc";
