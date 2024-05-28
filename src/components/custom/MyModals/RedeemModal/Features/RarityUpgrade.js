@@ -13,8 +13,8 @@ import { useGlobalContext } from "contexts/GlobalContextProvider";
 import {
   fromTemplateToCard,
   rarityConverter,
+  removeIfInMarketplace,
   removeLegendaryCards,
-  removeSPCards,
 } from "./featuresUtils";
 import SimpleSpinner from "components/custom/SimpleSpinner/SimpleSpinner";
 import classNames from "classnames";
@@ -44,8 +44,9 @@ const RarityUpgrade = ({ setModal }) => {
     useContractMetamask(mgsContractDetails.address, mgsContractDetails.abi);
   const { showToast } = useToastMsg();
 
-  const nonSPCards = removeSPCards(userData.cards); // 1. Remove SP Cards, cuz they can't be upgraded
-  const nonLegendaryCards = removeLegendaryCards(nonSPCards); // 2. Remove Legendary Cards, cuz they can't be upgraded any further
+  // const nonSPCards = removeSPCards(userData.cards); // 1. Remove SP Cards, cuz they can't be upgraded
+  const notForSaleCards = removeIfInMarketplace(userData.cards); // 3. Remove Cards that are not for sale
+  const nonLegendaryCards = removeLegendaryCards(notForSaleCards); // 2. Remove Legendary Cards, cuz they can't be upgraded any further
 
   const hydratedCards = nonLegendaryCards.map((card) =>
     fromTemplateToCard(card)

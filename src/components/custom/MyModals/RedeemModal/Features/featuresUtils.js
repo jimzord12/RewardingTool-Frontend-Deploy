@@ -16,6 +16,17 @@ export const keepOnlySPCards = (arrayOfCards) => {
   return SPCardArray;
 };
 
+export const removeIfInMarketplace = (arrayOfCards) => {
+  const notForSaleCardsArray = arrayOfCards.filter(
+    (card) => !Boolean(card.in_mp)
+  );
+  console.log(
+    "From notForSaleCards: notForSaleCardsArray: ",
+    notForSaleCardsArray
+  );
+  return notForSaleCardsArray;
+};
+
 export const removeLegendaryCards = (arrayOfCards) => {
   const nonLegendaryCards = arrayOfCards.filter((card) => card.rarity !== 5);
   console.log(
